@@ -1,6 +1,12 @@
+
+// current package
 package controller;
 
+// package import
+import model.GuiModel;
+import view.GuiView;
 
+// importing libraries req
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -8,15 +14,14 @@ import java.awt.event.MouseEvent;
 
 public class GuiController extends JPanel {
     private Point lastMousePoint;
-
     private boolean canDrag = false;
-    private int cameraX = 0;
-    private int cameraY = 0;
 
-    public GuiController() {
+    private GuiModel model;
+
+    public GuiController(GuiModel model) {
+        this.model = model;
         setBackground(Color.WHITE);
 
-        // logic for moving around the canvas --> GuiController
         MouseAdapter canvasControl = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -34,11 +39,10 @@ public class GuiController extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (canDrag) {
-                    int distanceX = e.getX() - lastMousePoint.x;
-                    int distanceY = e.getY() - lastMousePoint.y;
+                    int dx = e.getX() - lastMousePoint.x;
+                    int dy = e.getY() - lastMousePoint.y;
 
-                    cameraX -= distanceX;
-                    cameraY -= distanceY;
+                    model.moveCamera(dx, dy); // ✅ move logic to model
 
                     lastMousePoint = e.getPoint();
                     repaint();
@@ -46,8 +50,8 @@ public class GuiController extends JPanel {
             }
         };
 
-        this.addMouseListener(canvasControl);
-        this.addMouseMotionListener(canvasControl);
+        addMouseListener(canvasControl);
+        addMouseMotionListener(canvasControl);
     }
 
     @Override
@@ -55,9 +59,10 @@ public class GuiController extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.translate(-cameraX, -cameraY);
+        // ✅ read from model
+        g2.translate(-model.getCameraX(), -model.getCameraY());
 
         g2.setColor(Color.BLUE);
-        g2.fillOval(0,0,100,100);
+        g2.fillOval(0, 0, 100, 100);
     }
 }

@@ -1,6 +1,7 @@
 package view;
 
 import controller.GuiController;
+import model.GuiModel;
 
 import javax.swing.*;
 
@@ -13,7 +14,8 @@ public class GuiView extends JFrame {
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            this.add(new GuiController());
+            GuiModel model = new GuiModel();
+            this.add(new GuiController(model));
             this.setLocationRelativeTo(null);
             this.setVisible(true);
         });
