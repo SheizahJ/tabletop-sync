@@ -1,6 +1,6 @@
-import org.example.controller.ChatController;
-import org.example.model.ChatModel;
-import org.example.view.ChatView;
+import controller.ChatController;
+import model.ChatModel;
+import view.ChatView;
 
 import javax.swing.*;
 import java.io.BufferedReader;

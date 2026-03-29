@@ -1,6 +1,6 @@
 package view;
 
-import org.example.controller.ChatService;
+import controller.ChatService;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
 package controller;
 
-import org.example.view.ChatDashboard;
+import view.ChatDashboard;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

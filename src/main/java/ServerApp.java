@@ -1,4 +1,4 @@
-import org.example.controller.ClientHandler;
+import controller.ClientHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;

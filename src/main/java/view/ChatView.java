@@ -1,7 +1,7 @@
 package view;
 
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
-import org.example.controller.ChatService;
+import controller.ChatService;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,7 @@
 package controller;
 
-import org.example.model.ChatModel;
-import org.example.view.ChatView;
+import model.ChatModel;
+import view.ChatView;
 
 import javax.swing.*;
 import java.io.PrintWriter;
