@@ -15,7 +15,9 @@ public class GuiView extends JFrame {
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             GuiModel model = new GuiModel();
+
             this.add(new GuiController(model));
+
             this.setLocationRelativeTo(null);
             this.setVisible(true);
         });

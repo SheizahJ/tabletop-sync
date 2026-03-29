@@ -18,11 +18,11 @@ public class ChatDashboard extends JPanel {
         title.setHorizontalAlignment(SwingConstants.CENTER);
         add(title, BorderLayout.NORTH);
 
-        // ✅ initialize FIELD, not local
+        // initialize FIELD, not local
         model = new DefaultListModel<>();
         userList = new JList<>(model);
 
-        // ✅ wrap in scroll pane
+        // wrap in scroll pane
         add(new JScrollPane(userList), BorderLayout.CENTER);
 
         refresh(); // initial load
