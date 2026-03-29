@@ -59,9 +59,8 @@ public class GuiController extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // ✅ read from model
+        //read from model
         g2.translate(-model.getCameraX(), -model.getCameraY());
-
         g2.setColor(Color.BLUE);
         g2.fillOval(0, 0, 100, 100);
     }
