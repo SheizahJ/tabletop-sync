@@ -1,6 +1,7 @@
 import controller.ChatController;
 import model.ChatModel;
 import view.ChatView;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.io.BufferedReader;

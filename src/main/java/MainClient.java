@@ -7,6 +7,5 @@ public class MainClient {
         // creates instance of clientside GUI
         GuiView tableTop = new GuiView();
     }
-
 }
 
