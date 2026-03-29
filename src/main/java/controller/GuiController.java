@@ -42,7 +42,7 @@ public class GuiController extends JPanel {
                     int dx = e.getX() - lastMousePoint.x;
                     int dy = e.getY() - lastMousePoint.y;
 
-                    model.moveCamera(dx, dy); // ✅ move logic to model
+                    model.moveCamera(dx, dy); // move logic to model
 
                     lastMousePoint = e.getPoint();
                     repaint();
