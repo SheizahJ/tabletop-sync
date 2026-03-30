@@ -13,6 +13,14 @@ public class ChatController {
     private final PrintWriter out;
     public Socket socket;
 
+    /**
+     * This is the main "brain" of the communications aspect of this application.
+     *
+     * @param model Handles the distribution of messages
+     * @param view The GUI for the chat
+     * @param socket The connection over the internet
+     * @param out The text coming from the server to the GUI
+     */
     public ChatController(ChatModel model, ChatView view, Socket socket, PrintWriter out) {
         this.model = model;
         this.view = view;
@@ -25,6 +33,9 @@ public class ChatController {
         view.chatArea.textField.addActionListener(_ -> send());
     }
 
+    /**
+     * This takes the text from the text field and puts it into the main chat area
+     */
     private void send() {
         String msg = view.chatArea.textField.getText();
 
@@ -34,11 +45,18 @@ public class ChatController {
         }
     }
 
+    /**
+     * This takes the text from the user and puts it into the text area
+     * @param msg the message that you want to send over the network
+     */
     public void receive(String msg) {
         model.addMessage(msg);
         SwingUtilities.invokeLater(() -> view.chatArea.appendMessage(msg));
     }
 
+    /**
+     * Closes the instance of client
+     */
     public void shutdown() {
         try { if (socket != null && !socket.isClosed()) { socket.close(); } }
         catch (Exception ignored) {}

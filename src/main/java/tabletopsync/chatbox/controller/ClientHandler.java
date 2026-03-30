@@ -20,10 +20,16 @@ public class ClientHandler extends Thread {
         return username;
     }
 
+    /**
+     * Prints the message onto the screen
+     * @param message the message the user sends
+     */
     public void sendMessage(String message) { out.println(message); }
 
-    @Override
-    public void run() {
+    /**
+     * This method handles the code for the thread itself. This method specifically makes new users exist in the program.
+     */
+    @Override public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -59,6 +65,21 @@ public class ClientHandler extends Thread {
         finally { disconnect();}
     }
 
+    /**
+     * Handles chat commands entered by the user.
+     *
+     * <p>Supported commands:</p>
+     * <ul>
+     *   <li><b>/users</b> – Displays a list of currently connected users.</li>
+     *   <li><b>/quit</b> – Disconnects the client from the server.</li>
+     * </ul>
+     *
+     * <p>If an unknown command is entered, an error message is returned to the user.</p>
+     *
+     * @param input the raw user input string beginning with a '/' command prefix
+     *
+     * @see ChatService#getUserList()
+     */
     private void handleCommand(String input) {
         String[] parts = input.split(" ", 3);
         String cmd = parts[0];
@@ -75,6 +96,9 @@ public class ClientHandler extends Thread {
         }
     }
 
+    /**
+     * Disconnect from the server
+     */
     public void disconnect() {
         try { socket.close(); }
         catch (IOException ignored) {}

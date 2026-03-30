@@ -8,6 +8,11 @@ import java.awt.*;
 
 public class TableTopGUI extends JFrame {
 
+    /**
+     * This is the primary GUI for the application where we take our modules and combine them.
+     * @param chatView the in-game chat GUI
+     * @param canvasView the in-game whiteboard area
+     */
     public TableTopGUI(ChatView chatView, CanvasView canvasView) {
         this.setTitle("TableTopSync");
         this.setSize(1000, 800);

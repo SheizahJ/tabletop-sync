@@ -12,26 +12,27 @@ public class CanvasController extends JPanel {
 
     private CanvasModel model;
 
+    /**
+     *
+     * @param model the model for the canvas where it handles camera movement
+     */
     public CanvasController(CanvasModel model) {
         this.model = model;
         setBackground(Color.WHITE);
 
         MouseAdapter canvasControl = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
+            @Override public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON2) {
                     lastMousePoint = e.getPoint();
                     canDrag = true;
                 }
             }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
+            @Override public void mouseReleased(MouseEvent e) {
                 canDrag = false;
             }
 
-            @Override
-            public void mouseDragged(MouseEvent e) {
+            @Override public void mouseDragged(MouseEvent e) {
                 if (canDrag) {
                     int dx = e.getX() - lastMousePoint.x;
                     int dy = e.getY() - lastMousePoint.y;
@@ -48,8 +49,11 @@ public class CanvasController extends JPanel {
         addMouseMotionListener(canvasControl);
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
+    /**
+     * Draws to the screen
+     * @param g the <code>Graphics</code> object to protect
+     */
+    @Override protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
