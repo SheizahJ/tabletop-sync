@@ -1,13 +1,6 @@
+package tabletopsync.canvas.model;
 
-package model;
-
-import controller.GuiController;
-import view.GuiView;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public class GuiModel {
+public class CanvasModel {
     // handles camera functionality
     private int cameraX = 0;
     private int cameraY = 0;

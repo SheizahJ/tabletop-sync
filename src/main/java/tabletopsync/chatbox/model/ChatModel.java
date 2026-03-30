@@ -1,4 +1,4 @@
-package model;
+package tabletopsync.chatbox.model;
 
 import javax.swing.*;
 import java.util.ArrayList;

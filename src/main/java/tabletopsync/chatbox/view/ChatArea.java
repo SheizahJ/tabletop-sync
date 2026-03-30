@@ -1,4 +1,4 @@
-package view;
+package tabletopsync.chatbox.view;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,4 @@
-package controller;
-
-import view.ChatDashboard;
+package tabletopsync.chatbox.controller;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,12 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatService {
 
     public static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>();
-
-    private static ChatDashboard dashboard;
-
-    public static void setDashboard(ChatDashboard d) {
-        dashboard = d;
-    }
 
     public static void addClient(ClientHandler client) {
         String username = client.getUsername();
@@ -23,16 +15,10 @@ public class ChatService {
         clients.put(username, client);
         System.out.println(username + " has joined");
 
-        if (dashboard != null) {
-            dashboard.refresh();
-        }
     }
 
     public static void removeClient(ClientHandler client) {
         clients.remove(client.getUsername());
-        if (dashboard != null) {
-            dashboard.refresh();
-        }
         System.out.println(client.getUsername() + " has been removed");
     }
 

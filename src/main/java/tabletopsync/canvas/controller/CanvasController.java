@@ -1,24 +1,18 @@
+package tabletopsync.canvas.controller;
 
-// current package
-package controller;
-
-// package import
-import model.GuiModel;
-import view.GuiView;
-
-// importing libraries req
+import tabletopsync.canvas.model.CanvasModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GuiController extends JPanel {
+public class CanvasController extends JPanel {
     private Point lastMousePoint;
     private boolean canDrag = false;
 
-    private GuiModel model;
+    private CanvasModel model;
 
-    public GuiController(GuiModel model) {
+    public CanvasController(CanvasModel model) {
         this.model = model;
         setBackground(Color.WHITE);
 

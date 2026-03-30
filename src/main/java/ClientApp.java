@@ -1,7 +1,10 @@
-import controller.ChatController;
-import model.ChatModel;
-import view.ChatView;
-import com.formdev.flatlaf.FlatDarkLaf;
+import tabletopsync.chatbox.model.ChatModel;
+import tabletopsync.chatbox.view.ChatView;
+import tabletopsync.chatbox.controller.ChatController;
+import tabletopsync.canvas.model.CanvasModel;
+import tabletopsync.canvas.view.CanvasView;
+import tabletopsync.canvas.controller.CanvasController;
+import tabletopsync.linker.TableTopGUI;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -30,6 +33,15 @@ public class ClientApp {
             ChatModel model = new ChatModel();
             ChatView view = new ChatView(username);
             ChatController controller = new ChatController(model, view, socket, out);
+
+            CanvasModel canvasModel = new CanvasModel();
+            CanvasController canvasController = new CanvasController(canvasModel);
+            CanvasView canvasView = new CanvasView();
+
+            SwingUtilities.invokeLater(() -> {
+                canvasView.add(canvasController);
+                new TableTopGUI(view, canvasView);
+            });
 
             // listen for messages
             new Thread(() -> {

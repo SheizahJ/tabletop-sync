@@ -1,4 +1,4 @@
-package controller;
+package tabletopsync.chatbox.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,7 +1,7 @@
-package controller;
+package tabletopsync.chatbox.controller;
 
-import model.ChatModel;
-import view.ChatView;
+import tabletopsync.chatbox.model.ChatModel;
+import tabletopsync.chatbox.view.ChatView;
 
 import javax.swing.*;
 import java.io.PrintWriter;
