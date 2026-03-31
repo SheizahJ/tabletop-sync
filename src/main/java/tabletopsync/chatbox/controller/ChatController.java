@@ -1,11 +1,14 @@
 package tabletopsync.chatbox.controller;
 
 import tabletopsync.chatbox.model.ChatModel;
+import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.chatbox.model.PersistenceModel;
 import tabletopsync.chatbox.view.ChatView;
 
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Time;
 import java.util.Arrays;
 
 public class ChatController {
@@ -47,14 +50,35 @@ public class ChatController {
     /**
      * This takes the text from the user and puts it into the text area
      * @param message the message that you want to send over the network
+     *
+     *  MODIFICATION: Persistence in messages serverwide
      */
     public void receive(String message) {
         if (message.startsWith("USER_LIST:")) {
             String[] users = message.substring(10).split(",");
             SwingUtilities.invokeLater(() -> view.getChatArea().updateUsers(Arrays.asList(users)));
-        } else {
+        }
+        else {
             SwingUtilities.invokeLater(() -> view.getChatArea().appendMessage(message));
         }
+        // TODO: record the message onto JSON with metadata on who sent it and at what time
+        String username = null;
+        String messageContent = message;
+        if (message.contains(":")) {
+            String[] parts = message.split(":",2);
+
+            ClientHandler clientHandler = new ClientHandler(socket);
+            username = clientHandler.getUsername();
+            messageContent = parts[1].trim();
+        }
+
+        MessageObject object = new MessageObject(
+                username,
+                messageContent,
+                new Time(System.currentTimeMillis())
+        );
+
+        PersistenceModel.saveMessage(object);
     }
 
     /**

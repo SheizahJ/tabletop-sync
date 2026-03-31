@@ -1,0 +1,44 @@
+package tabletopsync.chatbox.model;
+
+import java.sql.Time;
+
+//https://www.geeksforgeeks.org/java/convert-java-object-to-json-string-using-jackson-api/
+public class MessageObject {
+    private String username;
+    private String message;
+    private Time timestamp;
+
+    public MessageObject(String username, String message, Time timestamp) {
+        this.username = username;
+        this.message = message;
+        this.timestamp = timestamp;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Time getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Time timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override public String toString() {
+        return "username=" + username + ", message=" + message + ", timestamp=" + timestamp;
+    }
+}
