@@ -1,47 +1,35 @@
 package tabletopsync.chatbox.view;
 
-import tabletopsync.chatbox.controller.ChatService;
-
+import tabletopsync.chatbox.model.UserMenuModel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * A sidebar panel displaying the list of currently connected users.
+ * Renders the data held in {@link UserMenuModel} via a scrollable {@link JList}.
+ */
 public class UserMenu extends JPanel {
-
-    private DefaultListModel<String> userListModel;
+    private final UserMenuModel model;
 
     /**
-     * TODO:
-     *  User List Panel Feature:
-     *  - Toggle visibility of a sidebar panel showing connected users
-     *  - Button updates label based on panel state (Show / Hide Users)
-     *  - Panel subscribes to user model updates and refreshes automatically
-     *  - User list remains consistent regardless of visibility state
+     * Constructs the user menu panel backed by the given model.
+     *
+     * @param model the data model providing the list of connected usernames
      */
-    public UserMenu() {
+    public UserMenu(UserMenuModel model) {
+        this.model = model;
         setLayout(new BorderLayout());
-
-        userListModel = new DefaultListModel<>();
-        JList<String> userList = new JList<>(userListModel);
-
+        JList<String> userList = new JList<>(model.getListModel());
         add(new JScrollPane(userList), BorderLayout.CENTER);
-        refreshList();
     }
 
-    public void refreshList() {
-        userListModel.clear();
-
-        // directly loop through the concurrent hashmap, then put it into a list
-        for (String username : ChatService.clients.keySet()) {
-            userListModel.addElement(username);
-        }
-    }
-
+    /**
+     * Updates the displayed user list with the provided usernames.
+     *
+     * @param users the current list of connected usernames
+     */
     public void updateUsers(List<String> users) {
-        userListModel.clear();
-        for (String user : users) {
-            userListModel.addElement(user);
-        }
+        model.setUsers(users);
     }
-
 }

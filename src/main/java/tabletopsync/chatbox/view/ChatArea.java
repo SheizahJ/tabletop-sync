@@ -1,5 +1,7 @@
 package tabletopsync.chatbox.view;
 
+import tabletopsync.chatbox.model.UserMenuModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -23,7 +25,8 @@ public class ChatArea extends JPanel {
 
         add(top, BorderLayout.NORTH);
 
-        userMenu = new UserMenu();
+        UserMenuModel userMenuModel = new UserMenuModel();
+        userMenu = new UserMenu(userMenuModel);
         userMenu.setVisible(false);
 
         top.add(userMenu, BorderLayout.SOUTH);

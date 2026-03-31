@@ -12,9 +12,7 @@ public class ClientHandler extends Thread {
     private PrintWriter out;
     private String username;
 
-    public ClientHandler(Socket socket) {
-        this.socket = socket;
-    }
+    public ClientHandler(Socket socket) { this.socket = socket; }
 
     public String getUsername() {
         return username;
@@ -51,15 +49,10 @@ public class ClientHandler extends Thread {
             // Listen for messages
             String message;
             while ((message = in.readLine()) != null) {
-
                 // Commands
-                if (message.startsWith("/")) {
-                    handleCommand(message);
-                } else {
-                    ChatService.broadcast(username + ": " + message);
-                }
+                if (message.startsWith("/")) { handleCommand(message); }
+                else { ChatService.broadcast(username + ": " + message); }
             }
-
         }
         catch (IOException _) {}
         finally { disconnect();}
@@ -84,16 +77,13 @@ public class ClientHandler extends Thread {
         String[] parts = input.split(" ", 3);
         String cmd = parts[0];
 
-        if (cmd.equals("/users")) {
-            sendMessage(ChatService.getUserList());
-        }
-        else if (cmd.equals("/quit")) {
+        if (cmd.equals("/users")) { sendMessage(ChatService.getUserList()); }
+        else if (cmd.equals("/quit"))
+        {
             sendMessage("You have disconnected.");
             disconnect();
         }
-        else {
-            sendMessage("Unknown command");
-        }
+        else { sendMessage("Unknown command"); }
     }
 
     /**

@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class ChatController {
-    private final ChatModel model;
     private final ChatView view;
     private final PrintWriter out;
     public Socket socket;
@@ -23,7 +22,6 @@ public class ChatController {
      * @param out The text coming from the server to the GUI
      */
     public ChatController(ChatModel model, ChatView view, Socket socket, PrintWriter out) {
-        this.model = model;
         this.view = view;
         this.socket = socket;
         this.out = out;
@@ -48,7 +46,7 @@ public class ChatController {
 
     /**
      * This takes the text from the user and puts it into the text area
-     * @param msg the message that you want to send over the network
+     * @param message the message that you want to send over the network
      */
     public void receive(String message) {
         if (message.startsWith("USER_LIST:")) {
