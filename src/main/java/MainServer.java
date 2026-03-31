@@ -1,4 +1,4 @@
-import controller.ClientHandler;
+import tabletopsync.chatbox.controller.ClientHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
