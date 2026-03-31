@@ -2,6 +2,7 @@ package tabletopsync.chatbox.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ChatArea extends JPanel {
 
@@ -9,8 +10,35 @@ public class ChatArea extends JPanel {
     public JTextField textField;
     public JButton sendButton;
 
+    private final UserMenu userMenu;
+
     public ChatArea() {
         setLayout(new BorderLayout());
+
+        JPanel top = new JPanel(new BorderLayout());
+        JButton showUsersButton = new JButton("Show Users");
+        top.add(showUsersButton, BorderLayout.WEST);
+
+        top.setBorder(BorderFactory.createEmptyBorder(5, 2, 15, 2));
+
+        add(top, BorderLayout.NORTH);
+
+        userMenu = new UserMenu();
+        userMenu.setVisible(false);
+
+        top.add(userMenu, BorderLayout.SOUTH);
+
+        showUsersButton.addActionListener(e -> {
+            boolean isVisible = userMenu.isVisible();
+            userMenu.setVisible(!isVisible);
+
+            showUsersButton.setText(isVisible ? "Show Users" : "Hide Users");
+
+            top.revalidate();
+            top.repaint();
+        });
+
+        JPanel center = new JPanel(new BorderLayout());
 
         textArea = new JTextArea();
         textArea.setMargin(new Insets(5, 5, 5, 5));
@@ -19,9 +47,12 @@ public class ChatArea extends JPanel {
         textArea.setLineWrap(true);
         textArea.setEditable(false);
 
-        add(new JScrollPane(textArea), BorderLayout.CENTER);
+        center.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        add(center, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
+        bottom.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
+
         textField = new JTextField();
         sendButton = new JButton("SEND");
 
@@ -33,5 +64,9 @@ public class ChatArea extends JPanel {
 
     public void appendMessage(String msg) {
         textArea.append(msg + "\n");
+    }
+
+    public void updateUsers(List<String> users) {
+        userMenu.updateUsers(users);
     }
 }

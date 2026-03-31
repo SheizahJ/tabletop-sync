@@ -1,11 +1,17 @@
 package tabletopsync.chatbox.controller;
 
+import javax.swing.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatService {
 
-    public static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>();
+    public static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>(); // thread-safe hashmap
+
+    public static void broadcastUserList() {
+        String userListMessage = "USER_LIST:" + String.join(",", clients.keySet());
+        broadcast(userListMessage);
+    }
 
     /**
      * This adds client to the list of clients for the server to handle
@@ -18,7 +24,7 @@ public class ChatService {
 
         clients.put(username, client);
         System.out.println(username + " has joined");
-
+        broadcastUserList();
     }
 
     /**
@@ -28,6 +34,7 @@ public class ChatService {
     public static void removeClient(ClientHandler client) {
         clients.remove(client.getUsername());
         System.out.println(client.getUsername() + " has been removed");
+        broadcastUserList();
     }
 
     /**

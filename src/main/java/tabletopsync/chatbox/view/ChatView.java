@@ -24,4 +24,8 @@ public class ChatView {
     }
 
     public void setOnClose(Runnable onClose) {}
+
+    public ChatArea getChatArea() {
+        return chatArea;
+    }
 }

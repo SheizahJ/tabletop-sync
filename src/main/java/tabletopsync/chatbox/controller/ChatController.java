@@ -6,6 +6,7 @@ import tabletopsync.chatbox.view.ChatView;
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ChatController {
     private final ChatModel model;
@@ -49,9 +50,13 @@ public class ChatController {
      * This takes the text from the user and puts it into the text area
      * @param msg the message that you want to send over the network
      */
-    public void receive(String msg) {
-        model.addMessage(msg);
-        SwingUtilities.invokeLater(() -> view.chatArea.appendMessage(msg));
+    public void receive(String message) {
+        if (message.startsWith("USER_LIST:")) {
+            String[] users = message.substring(10).split(",");
+            SwingUtilities.invokeLater(() -> view.getChatArea().updateUsers(Arrays.asList(users)));
+        } else {
+            SwingUtilities.invokeLater(() -> view.getChatArea().appendMessage(message));
+        }
     }
 
     /**
