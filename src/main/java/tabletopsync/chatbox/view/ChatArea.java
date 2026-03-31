@@ -23,7 +23,7 @@ public class ChatArea extends JPanel {
 
         JPanel bottom = new JPanel(new BorderLayout());
         textField = new JTextField();
-        sendButton = new JButton("Send");
+        sendButton = new JButton("SEND");
 
         bottom.add(textField, BorderLayout.CENTER);
         bottom.add(sendButton, BorderLayout.EAST);
