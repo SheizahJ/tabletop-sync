@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Time;
 import java.util.Arrays;
+import java.util.List;
 
 public class ChatController {
     private final ChatView view;
@@ -33,6 +34,22 @@ public class ChatController {
 
         view.chatArea.sendButton.addActionListener(_ -> send());
         view.chatArea.textField.addActionListener(_ -> send());
+
+        List<MessageObject> chatHistory = PersistenceModel.loadChatMessages();
+        List<MessageObject> systemHistory = PersistenceModel.loadSystemMessages();
+
+        SwingUtilities.invokeLater(() -> {
+            // Load system logs
+            for (MessageObject msg : systemHistory) {
+                view.getChatArea().appendMessage(msg.getMessage());
+            }
+
+            // Load chat messages
+            for (MessageObject msg : chatHistory) {
+                String formatted = msg.getUsername() + ": " + msg.getMessage();
+                view.getChatArea().appendMessage(formatted);
+            }
+        });
     }
 
     /**
@@ -54,6 +71,9 @@ public class ChatController {
      *  MODIFICATION: Persistence in messages serverwide
      */
     public void receive(String message) {
+
+        boolean isSystem = message.contains("joined") || message.contains("left") || message.contains("disconnected");
+
         if (message.startsWith("USER_LIST:")) {
             String[] users = message.substring(10).split(",");
             SwingUtilities.invokeLater(() -> view.getChatArea().updateUsers(Arrays.asList(users)));
@@ -64,21 +84,27 @@ public class ChatController {
         // TODO: record the message onto JSON with metadata on who sent it and at what time
         String username = null;
         String messageContent = message;
-        if (message.contains(":")) {
-            String[] parts = message.split(":",2);
 
-            ClientHandler clientHandler = new ClientHandler(socket);
-            username = clientHandler.getUsername();
+        if (message.contains(":")) {
+            String[] parts = message.split(":", 2);
+            username = parts[0].trim();
             messageContent = parts[1].trim();
         }
+
+        String type = isSystem ? "SYSTEM" : "CHAT";
 
         MessageObject object = new MessageObject(
                 username,
                 messageContent,
-                new Time(System.currentTimeMillis())
+                new Time(System.currentTimeMillis()),
+                type
         );
 
-        PersistenceModel.saveMessage(object);
+        if (isSystem) {
+            PersistenceModel.saveSystemMessage(object);
+        } else {
+            PersistenceModel.saveChatMessage(object);
+        }
     }
 
     /**

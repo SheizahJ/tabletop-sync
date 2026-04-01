@@ -7,11 +7,17 @@ public class MessageObject {
     private String username;
     private String message;
     private Time timestamp;
+    private String type;
 
-    public MessageObject(String username, String message, Time timestamp) {
+    public MessageObject() {
+        // Required for Jackson API
+    }
+
+    public MessageObject(String username, String message, Time timestamp, String type) {
         this.username = username;
         this.message = message;
         this.timestamp = timestamp;
+        this.type = type;
     }
 
     public String getUsername() {

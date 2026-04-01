@@ -8,7 +8,9 @@ import java.util.List;
 
 public class ChatArea extends JPanel {
 
-    private final JTextArea textArea;
+    private final JTextArea chatTextArea;
+    private final JTextArea systemTextArea;
+
     public JTextField textField;
     public JButton sendButton;
 
@@ -43,14 +45,42 @@ public class ChatArea extends JPanel {
 
         JPanel center = new JPanel(new BorderLayout());
 
-        textArea = new JTextArea();
-        textArea.setMargin(new Insets(5, 5, 5, 5));
-        textArea.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
-        textArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        textArea.setLineWrap(true);
-        textArea.setEditable(false);
+        chatTextArea = new JTextArea();
+        chatTextArea.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Communications"),
+                BorderFactory.createEmptyBorder(15,15,15,15)
+            )
+        );
+        chatTextArea.setMargin(new Insets(5, 5, 5, 5));
+        chatTextArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+        chatTextArea.setLineWrap(true);
+        chatTextArea.setEditable(false);
 
-        center.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        systemTextArea = new JTextArea();
+        systemTextArea.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createTitledBorder("Systems"),
+                        BorderFactory.createEmptyBorder(10,10,10,10)
+                )
+        );
+        systemTextArea.setMargin(new Insets(5, 5, 5, 5));
+        systemTextArea.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
+        systemTextArea.setForeground(Color.GRAY);
+        systemTextArea.setLineWrap(true);
+        systemTextArea.setEditable(false);
+
+        // Split pane (top = system, bottom = chat)
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                new JScrollPane(systemTextArea),
+                new JScrollPane(chatTextArea)
+        );
+
+        splitPane.setDividerLocation(150);
+        splitPane.setResizeWeight(0.3);
+
+        center.add(splitPane, BorderLayout.CENTER);
         add(center, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
@@ -66,7 +96,21 @@ public class ChatArea extends JPanel {
     }
 
     public void appendMessage(String msg) {
-        textArea.append(msg + "\n");
+
+        // Ignore user list messages
+        if (msg.startsWith("USER_LIST")) {
+            return;
+        }
+
+        // System messages
+        if (msg.contains("joined") || msg.contains("left") || msg.contains("disconnected")) {
+            systemTextArea.append(msg + "\n");
+            systemTextArea.setCaretPosition(systemTextArea.getDocument().getLength());
+        }
+        else {
+            chatTextArea.append(msg + "\n");
+            chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
+        }
     }
 
     public void updateUsers(List<String> users) {
