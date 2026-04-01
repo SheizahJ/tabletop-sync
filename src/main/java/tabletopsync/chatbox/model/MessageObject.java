@@ -44,7 +44,15 @@ public class MessageObject {
         this.timestamp = timestamp;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override public String toString() {
-        return "username=" + username + ", message=" + message + ", timestamp=" + timestamp;
+        return "username=" + username + ", message=" + message + ", timestamp=" + timestamp + ", type=" + type;
     }
 }

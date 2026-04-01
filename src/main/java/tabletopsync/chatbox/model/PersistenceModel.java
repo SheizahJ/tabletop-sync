@@ -25,6 +25,11 @@ public class PersistenceModel {
         saveToFile(SYSTEM_FILE, messageObject);
     }
 
+    /**
+     * General save method where you enter your file location and the messages you wanna save to it
+     * @param file specific filepath
+     * @param messageObject message you want to save
+     */
     private static void saveToFile(File file, MessageObject messageObject) {
         try (FileOutputStream fos = new FileOutputStream(file, true)) {
             String json = mapper.writeValueAsString(messageObject);
@@ -38,13 +43,9 @@ public class PersistenceModel {
     // LOAD METHODS
     // ========================
 
-    public static List<MessageObject> loadChatMessages() {
-        return loadFromFile(MESSAGE_FILE);
-    }
+    public static List<MessageObject> loadChatMessages() { return loadFromFile(MESSAGE_FILE); }
 
-    public static List<MessageObject> loadSystemMessages() {
-        return loadFromFile(SYSTEM_FILE);
-    }
+    public static List<MessageObject> loadSystemMessages() { return loadFromFile(SYSTEM_FILE); }
 
     private static List<MessageObject> loadFromFile(File file) {
         List<MessageObject> messages = new ArrayList<>();
