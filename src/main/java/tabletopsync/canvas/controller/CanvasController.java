@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
+
 public class CanvasController extends JPanel {
     private Point lastMousePoint;
     private boolean canDrag = false;
