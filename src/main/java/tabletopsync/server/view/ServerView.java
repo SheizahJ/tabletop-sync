@@ -1,6 +1,6 @@
 package tabletopsync.server.view;
 
-//import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -14,11 +14,11 @@ public class ServerView extends JFrame {
     public ServerView() {
 
         // try and apply the FlatLaf dark theme for the server window (looks good)
-//        try {
-//            UIManager.setLookAndFeel(new FlatMacDarkLaf());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Create main server window
         JFrame frame = new JFrame("Server");
