@@ -2,12 +2,25 @@ package tabletopsync.server.model;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.canvas.controller.CanvasController;
+//import tabletopsync.canvas.model.CanvasModel;
+//import tabletopsync.canvas.view.CanvasView;
+import tabletopsync.chatbox.controller.ChatController;
+import tabletopsync.chatbox.controller.ChatService;
+import tabletopsync.chatbox.controller.ClientViewHandler;
+//import tabletopsync.chatbox.model.MessageObject;
 //import server dependents
+//import tabletopsync.chatbox.view.ChatArea;
+//import tabletopsync.chatbox.view.ChatView;
+//import tabletopsync.chatbox.view.UserMenu;
+import tabletopsync.linker.TableTopGUI;
+import tabletopsync.server.controller.ClientAppController;
 import tabletopsync.server.controller.ServerController;
-import tabletopsync.server.view.ServerView;
+//import tabletopsync.server.view.ServerView;
 
+//import javax.swing.filechooser.FileView;
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +28,79 @@ import java.util.List;
 public class ServerModel {
 
     // TODO: figure out a better server flow for controller -> model and model -> controller
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+    // CONTROLLER OBJECTS
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+    // SERVER:
+    /// Controllers
+    private ServerController serverController;
+    private ClientAppController clientController;
 
-    //create mapper object
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // LINKER (links modules together):
+    private TableTopGUI  tableTopGUI;
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // CHATBOX:
+    // Controllers
+    private ChatController chatController;
+    private ChatService chatService;
+    private ClientViewHandler clientViewHandler;
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // CANVAS
+    /// Controllers:
+    private CanvasController canvasController;
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+    // OTHER OBJECTS:
+    /// Host & Port
+    public static final String HOST = "localhost";
+    public static final int PORT = 8080;
+
+    /// log file root
+    private static final File LOG_ROOT = new File("logs");
+
+    /// socket, reader, and writer
+    public Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+
+    /// mapper
     public static final ObjectMapper mapper = new ObjectMapper();
 
     // create file path objects
     private static final File SYSTEM_FILE = new File("logs/chatlogs/systemLogs.json");
     private static final File MESSAGE_FILE = new File("logs/chatlogs/messages.json");
+    // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    // TODO: for chat service (and all other user state functions), update a runnning list of users as a public
+    //  dictionary/keyset etc (data structure)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~
     // SAVE METHODS

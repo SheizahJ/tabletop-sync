@@ -6,13 +6,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ClientHandler extends Thread {
+public class ClientViewHandler extends Thread {
 
     private final Socket socket;
     private PrintWriter out;
     private String username;
 
-    public ClientHandler(Socket socket) { this.socket = socket; }
+    public ClientViewHandler(Socket socket) { this.socket = socket; }
 
     public String getUsername() {
         return username;

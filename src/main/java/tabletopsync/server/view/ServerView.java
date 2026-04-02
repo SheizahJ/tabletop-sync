@@ -9,64 +9,57 @@ import java.awt.*;
 
 public class ServerView extends JFrame {
     // Text area used to display server logs
-    private static JTextArea logArea;
+    private JTextArea logArea;
 
     public ServerView() {
 
+        // create a font
+        Font font = new Font("SansSerif", Font.PLAIN, 15);
+
         // try and apply the FlatLaf dark theme for the server window (looks good)
-        try {
-            UIManager.setLookAndFeel(new FlatMacDarkLaf());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { UIManager.setLookAndFeel(new FlatMacDarkLaf());}
+        catch (Exception e) {e.printStackTrace();}
 
-        // Create main server window
-        JFrame frame = new JFrame("Server");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(850, 600);
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
+        // server window (scroll) and text area with a font
+        // frame
+        setTitle("Server");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(850, 600);
+        setResizable(false);
+        setLocationRelativeTo(null);
 
-        // Text area that displays server messages and activity
+        // text area
         logArea = new JTextArea();
-        logArea.setEditable(false);            // Prevent editing
-        logArea.setLineWrap(true);             // Wrap long lines
-        logArea.setWrapStyleWord(true);        // Wrap at word boundaries
-        logArea.setFont(getReadableFont());    // Apply dyslexia-friendly font if available
+        logArea.setEditable(false);
+        logArea.setLineWrap(true);
+        logArea.setWrapStyleWord(true);
+        logArea.setFont(font);
         logArea.setBackground(new Color(24, 28, 34));
         logArea.setForeground(new Color(235, 240, 245));
         logArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Scroll pane allows the log to scroll when messages exceed the window
+        // scroll pane --> text area
         JScrollPane scrollPane = new JScrollPane(logArea);
 
-        // Add border styling around the log area
+        // border
         scrollPane.setBorder(new CompoundBorder(
                 new LineBorder(new Color(70, 80, 90), 1, true),
                 BorderFactory.createEmptyBorder(4, 4, 4, 4)
         ));
 
-        // Layout setup for the frame
-        frame.setLayout(new BorderLayout());
-        frame.add(scrollPane, BorderLayout.CENTER);
+        // frame layout
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
 
-        // Display the server window
-        frame.setVisible(true);
+        // set visible
+        setVisible(true);
     }
 
-    // Attempts to load OpenDyslexic font if installed, otherwise falls back to SansSerif
-    private Font getReadableFont() {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        return new Font("SansSerif", Font.PLAIN, 15);
-    }
-
-    // Adds a new message to the server log
-    public static void log(String message) {
-        // Ensures UI updates occur on the Swing event thread
+    /**
+     * sets a message to the server window
+     * Ensures UI updates occur on the Swing event thread
+     */
+    public void appendLog(String message) {
         SwingUtilities.invokeLater(() -> logArea.append(message + "\n"));
-    }
-
-    public void setVisible(boolean b) {
-
     }
 }
