@@ -6,10 +6,12 @@ import tabletopsync.chatbox.view.ChatView;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * primary GUI of linked modules for the application
+ */
 public class TableTopGUI extends JFrame {
 
     /**
-     * This is the primary GUI for the application where we take our modules and combine them.
      * @param chatView the in-game chat GUI
      * @param canvasView the in-game whiteboard area
      */
@@ -27,13 +29,10 @@ public class TableTopGUI extends JFrame {
                 canvasView,              // LEFT: canvas
                 chatView.panel        // RIGHT: chat
         );
-
         splitPane.setDividerLocation(1500);
-
         add(splitPane, BorderLayout.CENTER);
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
 }

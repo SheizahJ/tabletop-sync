@@ -3,17 +3,21 @@ package tabletopsync.chatbox.view;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * ----> provides GUI panel container for TableTopGUI
+ */
 public class ChatView {
 
     public JPanel panel;
-
     public ChatArea chatArea;
 
+    /**
+     * builds the chatview for a user
+     * @param username current client username
+     */
     public ChatView(String username) {
         JLabel usernameLabel = new JLabel("USER: " + username);
         panel = new JPanel(new BorderLayout());
-        panel.setLayout(new BorderLayout());
-
         panel.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
 
         usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

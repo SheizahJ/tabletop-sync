@@ -1,9 +1,15 @@
+<<<<<<< Updated upstream
 import tabletopsync.chatbox.controller.ClientHandler;
+=======
+import tabletopsync.server.view.ServerView;
+import tabletopsync.server.controller.ServerMainController;
+>>>>>>> Stashed changes
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+<<<<<<< Updated upstream
 public class MainServer {
 
     public static void main(String[] args) {
@@ -19,4 +25,13 @@ public class MainServer {
             e.printStackTrace();
         }
     }
+=======
+void main() {
+    SwingUtilities.invokeLater(() -> {
+        ServerView serverView = new ServerView();
+        ServerMainController controller = new ServerMainController(serverView);
+        controller.startServer(8080);
+        serverView.setVisible(true);
+    });
+>>>>>>> Stashed changes
 }

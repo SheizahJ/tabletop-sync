@@ -1,0 +1,193 @@
+package tabletopsync.server.controller;
+
+import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.server.service.PersistenceService;
+
+import java.io.*;
+import java.net.Socket;
+import java.sql.Time;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Handles a single client connection on its own thread.
+ * - reads messages from the client socket
+ * - sends messages back to the client
+ * - broadcasts messages to other clients
+ * - persists chat and system messages
+ * - handles safe disconnects
+ */
+public class ClientHandler extends Thread {
+
+    private final Socket socket;
+    private PrintWriter out;
+    private String username;
+
+    // Thread-safe collection of all connected clients
+    private static final ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
+
+    public ClientHandler(Socket socket) {
+        this.socket = socket;
+    }
+
+    public String getUsername() { return username; }
+
+    /**
+     * Sends a message to this client.
+     * @param message The message to send
+     */
+    public void sendMessage(String message) {
+        if (out != null) {
+            out.println(message);
+        }
+    }
+
+    /**
+     * Registers the client and broadcasts a system message.
+     */
+    private void registerClient() {
+        if (username != null && !username.isBlank()) {
+            clients.put(username, this);
+            broadcastUserList();
+            broadcastSystemMessage(username + " joined the chat");
+        }
+    }
+
+    /**
+     * Unregisters the client and broadcasts a system message.
+     */
+    private void unregisterClient() {
+        if (username != null) {
+            clients.remove(username);
+            broadcastUserList();
+            broadcastSystemMessage(username + " left the chat");
+        }
+    }
+
+    /**
+     * Broadcasts a message to all connected clients.
+     * @param message The message to send
+     */
+    private static void broadcast(String message) {
+        for (ClientHandler client : clients.values()) {
+            client.sendMessage(message);
+        }
+    }
+
+    /**
+     * Broadcasts a system message to all connected clients and persists it.
+     * @param message The system message
+     */
+    private static void broadcastSystemMessage(String message) {
+        MessageObject systemMsg = new MessageObject(
+                null,
+                message,
+                new Time(System.currentTimeMillis()),
+                "SYSTEM"
+        );
+        PersistenceService.saveSystemMessage(systemMsg);
+        broadcast(message);
+    }
+
+    /**
+     * Broadcasts a user list update to all clients
+     */
+    private static void broadcastUserList() {
+        String userListMessage = "USER_LIST:" + String.join(",", clients.keySet());
+        broadcast(userListMessage);
+    }
+
+    /**
+     * Main thread method.
+     * Handles username assignment, message reading, chat and canvas updates.
+     */
+    @Override
+    public void run() {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            out = new PrintWriter(socket.getOutputStream(), true);
+
+            // Get username from client
+            username = in.readLine();
+
+            if (username == null || username.trim().isEmpty()) {
+                socket.close();
+                return;
+            }
+
+            // Register client
+            registerClient();
+
+            // Listen for messages
+            String message;
+            while ((message = in.readLine()) != null) {
+                if (message.startsWith("/")) {
+                    handleCommand(message);
+                }
+                // -------------------------------
+                // canvas update client
+                // -------------------------------
+                else if (message.startsWith("CANVAS:")) {
+                    try {
+                        String[] parts = message.substring(7).split(",");
+                        int x = Integer.parseInt(parts[0]);
+                        int y = Integer.parseInt(parts[1]);
+
+                        // broadcast to all clients with username
+                        broadcast("CANVAS:" + username + ":" + x + "," + y);
+                    } catch (Exception e) {
+                        sendMessage("ERROR: Invalid canvas update format");
+                    }
+                }
+                // -------------------------------
+                // regular chat message
+                // -------------------------------
+                else {
+                    String formatted = username + ": " + message;
+                    broadcast(formatted);
+
+                    MessageObject chatMsg = new MessageObject(
+                            username,
+                            message,
+                            new Time(System.currentTimeMillis()),
+                            "CHAT"
+                    );
+                    PersistenceService.saveChatMessage(chatMsg);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Connection error with " + username + ": " + e.getMessage());
+        } finally {
+            disconnect();
+        }
+    }
+
+    /**
+     * Handles client commands such as /quit or /users
+     * @param input raw input starting with /
+     */
+    private void handleCommand(String input) {
+        String[] parts = input.split(" ", 2);
+        String cmd = parts[0];
+
+        if (cmd.equals("/users")) {
+            sendMessage("Users: " + clients.keySet());
+        } else if (cmd.equals("/quit")) {
+            sendMessage("You have disconnected.");
+            disconnect();
+        } else {
+            sendMessage("Unknown command");
+        }
+    }
+
+    /**
+     * Disconnects the client safely
+     */
+    public void disconnect() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ignored) {}
+
+        unregisterClient();
+    }
+}

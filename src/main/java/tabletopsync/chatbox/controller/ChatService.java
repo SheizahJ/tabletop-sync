@@ -4,9 +4,17 @@ import javax.swing.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manages connected clients and message broadcasting.
+ * Thread-safe using ConcurrentHashMap for client storage.
+ */
 public class ChatService {
 
+<<<<<<< Updated upstream
     public static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>(); // thread-safe hashmap
+=======
+    public static final Map<String, ChatClientHandler> clients = new ConcurrentHashMap<>(); // thread-safe hashmap
+>>>>>>> Stashed changes
 
     /**
      * Broadcasts the current list of connected users to all clients.
@@ -29,9 +37,12 @@ public class ChatService {
      * This adds client to the list of clients for the server to handle
      * @param client each instance of the application the user opens to connect to the server
      */
+<<<<<<< Updated upstream
     public static void addClient(ClientHandler client) {
+=======
+    public static void addClient(ChatClientHandler client) {
+>>>>>>> Stashed changes
         String username = client.getUsername();
-
         if (username == null || username.isBlank()) return;
 
         clients.put(username, client);
@@ -43,7 +54,11 @@ public class ChatService {
      * This removes the client from the list of clients for the server to handle
      * @param client each instance of the application the user opens to connect to the server
      */
+<<<<<<< Updated upstream
     public static void removeClient(ClientHandler client) {
+=======
+    public static void removeClient(ChatClientHandler client) {
+>>>>>>> Stashed changes
         clients.remove(client.getUsername());
         System.out.println(client.getUsername() + " has been removed");
         broadcastUserList();
@@ -54,7 +69,13 @@ public class ChatService {
      * @param message the message being sent from a user
      */
     public static void broadcast(String message) {
+<<<<<<< Updated upstream
         for (ClientHandler client : clients.values()) { client.sendMessage(message); }
+=======
+        for (ChatClientHandler client : clients.values()) {
+            client.sendMessage(message);
+        }
+>>>>>>> Stashed changes
     }
 
     /**
