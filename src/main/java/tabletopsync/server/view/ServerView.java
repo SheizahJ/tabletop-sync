@@ -1,24 +1,24 @@
 package tabletopsync.server.view;
 
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+//import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class ServerView {
+public class ServerView extends JFrame {
     // Text area used to display server logs
     private static JTextArea logArea;
 
     public ServerView() {
 
         // try and apply the FlatLaf dark theme for the server window (looks good)
-        try {
-            UIManager.setLookAndFeel(new FlatMacDarkLaf());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         // Create main server window
         JFrame frame = new JFrame("Server");
@@ -57,22 +57,16 @@ public class ServerView {
     // Attempts to load OpenDyslexic font if installed, otherwise falls back to SansSerif
     private Font getReadableFont() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        // Check if OpenDyslexic exists on the system
-        for (String font : ge.getAvailableFontFamilyNames()) {
-            if (font.equalsIgnoreCase("OpenDyslexic")) {
-                return new Font("OpenDyslexic", Font.PLAIN, 15);
-            }
-        }
-
-        // Fallback font if OpenDyslexic is not available
         return new Font("SansSerif", Font.PLAIN, 15);
     }
 
     // Adds a new message to the server log
     public static void log(String message) {
-
         // Ensures UI updates occur on the Swing event thread
         SwingUtilities.invokeLater(() -> logArea.append(message + "\n"));
+    }
+
+    public void setVisible(boolean b) {
+
     }
 }
