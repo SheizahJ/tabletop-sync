@@ -2,8 +2,9 @@ package tabletopsync.chatbox.controller;
 
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.model.MessageObject;
-import tabletopsync.chatbox.model.PersistenceModel;
+import tabletopsync.server.controller.ServerController;
 import tabletopsync.chatbox.view.ChatView;
+import tabletopsync.server.model.ServerModel;
 
 import javax.swing.*;
 import java.io.PrintWriter;
@@ -16,6 +17,8 @@ public class ChatController {
     private final ChatView view;
     private final PrintWriter out;
     public Socket socket;
+    // create server controller object
+    ServerController serverController = new ServerController();
 
     /**
      * This is the main "brain" of the communications aspect of this application.
@@ -35,8 +38,11 @@ public class ChatController {
         view.chatArea.sendButton.addActionListener(_ -> send());
         view.chatArea.textField.addActionListener(_ -> send());
 
-        List<MessageObject> chatHistory = PersistenceModel.loadChatMessages();
-        List<MessageObject> systemHistory = PersistenceModel.loadSystemMessages();
+        // TODO: MAKE THIS INTO A FUNCTION IN THE SERVER CONTROLLER, AND THEN REFERENCE IT HERE AS
+        //  LIST = SERVERCONTROLLER FUNCTION
+        // interact with server
+        List<MessageObject> chatHistory = serverController.getChatHistory();
+        List<MessageObject> systemHistory = serverController.getSystemHistory();
 
         SwingUtilities.invokeLater(() -> {
             // Load system logs
@@ -101,9 +107,9 @@ public class ChatController {
         );
 
         if (isSystem) {
-            PersistenceModel.saveSystemMessage(object);
+            ServerController.sendSystemMessage(object);
         } else {
-            PersistenceModel.saveChatMessage(object);
+            ServerController.sendChatMessage(object);
         }
     }
 

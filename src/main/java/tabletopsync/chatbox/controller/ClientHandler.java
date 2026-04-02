@@ -19,7 +19,7 @@ public class ClientHandler extends Thread {
     }
 
     /**
-     * Prints the message onto the screen
+     * Prints the message onto the screen (view)
      * @param message the message the user sends
      */
     public void sendMessage(String message) { out.println(message); }
