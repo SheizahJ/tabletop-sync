@@ -1,6 +1,9 @@
 package tabletopsync.server.controller;
 
+import tabletopsync.chatbox.controller.ChatClientHandler;
 import tabletopsync.server.view.ServerView;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +12,7 @@ import java.net.Socket;
  * ServerMainController:
  * Main entry point for server logic
  *
+ * READ------------------>
  * WHAT IT HANDLES:
  * - Starting the server socket
  * - Client connections
@@ -48,7 +52,7 @@ public class ServerMainController {
                     sendServerLog("Client connected: " + socket.getInetAddress());
 
                     // Spawn a dedicated thread for each client
-                    ClientHandler clientHandler = new ClientHandler(socket);
+                    ChatClientHandler clientHandler = new ChatClientHandler(socket);
                     clientHandler.start();
                 }
             } catch (IOException e) {
@@ -66,7 +70,7 @@ public class ServerMainController {
      * @param message the message to display
      */
     public void sendServerLog(String message) {
-        javax.swing.SwingUtilities.invokeLater(() -> view.appendLog(message));
+        SwingUtilities.invokeLater(() -> view.appendLog(message));
     }
 
     /*--------------------------------
@@ -74,6 +78,7 @@ public class ServerMainController {
      --------------------------------*/
 
     /**
+     * ***NEW added @teammates:
      * Shuts down the server and closes everything safely
      */
     public void shutdownServer() {
