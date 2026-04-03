@@ -1,30 +1,19 @@
 package tabletopsync.chatbox.model;
 
-import javax.swing.DefaultListModel;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents the data model for the connected users list.
- * Holds the list of usernames displayed in UserMenu.
+ * Maintains the list of active users
  */
 public class UserMenuModel {
 
-    private final DefaultListModel<String> userListModel = new DefaultListModel<>();
+    private final List<String> users = new ArrayList<>();
 
-    /**
-     * Returns the list model used to back the JList in the view
-     * @return DefaultListModel
-     */
-    public DefaultListModel<String> getListModel() {
-        return userListModel;
+    public void setUsers(List<String> userList) {
+        users.clear();
+        users.addAll(userList);
     }
 
-    /**
-     * Replaces the current user list with a new list
-     * @param users the updated list of connected usernames
-     */
-    public void setUsers(List<String> users) {
-        userListModel.clear();
-        for (String user : users) userListModel.addElement(user);
-    }
+    public List<String> getUsers() { return new ArrayList<>(users); }
 }

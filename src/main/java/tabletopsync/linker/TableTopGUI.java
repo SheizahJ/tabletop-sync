@@ -1,38 +1,36 @@
 package tabletopsync.linker;
 
-import tabletopsync.canvas.view.CanvasView;
-import tabletopsync.chatbox.view.ChatView;
-
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * primary GUI of linked modules for the application
+ * TableTopGUI links multiple modules (chat + canvas) into a single window
+ * - Acts as the main client GUI frame
+ * - Embeds ChatView and CanvasView side by side
  */
 public class TableTopGUI extends JFrame {
 
     /**
-     * @param chatView the in-game chat GUI
-     * @param canvasView the in-game whiteboard area
+     * Constructs the main GUI
+     * @param chatPanel the chat module panel
+     * @param canvasPanel the canvas module panel
      */
-    public TableTopGUI(ChatView chatView, CanvasView canvasView) {
-        this.setTitle("TableTopSync");
-        this.setSize(1000, 800);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    public TableTopGUI(JPanel chatPanel, JPanel canvasPanel) {
+        setTitle("Tabletop Sync");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1200, 800);
+        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Split screen
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                canvasView,              // LEFT: canvas
-                chatView.panel        // RIGHT: chat
-        );
-        splitPane.setDividerLocation(1500);
-        add(splitPane, BorderLayout.CENTER);
+        // Add canvas panel to center
+        add(canvasPanel, BorderLayout.CENTER);
 
-        setLocationRelativeTo(null);
+        // Add chat panel to the right side
+        add(chatPanel, BorderLayout.EAST);
+
+        // Optional: set preferred width for chat panel
+        chatPanel.setPreferredSize(new Dimension(350, 800));
+
         setVisible(true);
     }
 }

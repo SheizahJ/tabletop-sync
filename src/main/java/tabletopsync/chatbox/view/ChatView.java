@@ -4,36 +4,21 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * ----> provides GUI panel container for TableTopGUI
+ * Chat GUI panel for displaying messages
  */
-public class ChatView {
+public class ChatView extends JPanel {
 
-    public JPanel panel;
-    public ChatArea chatArea;
+    private final JTextArea chatArea;
 
-    /**
-     * builds the chatview for a user
-     * @param username current client username
-     */
     public ChatView(String username) {
-        JLabel usernameLabel = new JLabel("USER: " + username);
-        panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
-
-        usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        usernameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        panel.add(usernameLabel, BorderLayout.NORTH);
-
-        chatArea = new ChatArea();
-        panel.add(chatArea, BorderLayout.CENTER);
-        chatArea.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        panel.setSize(800, 600);
-        panel.setVisible(true);
+        setLayout(new BorderLayout());
+        chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+        chatArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        add(new JScrollPane(chatArea), BorderLayout.CENTER);
     }
 
-    public void setOnClose(Runnable onClose) {}
-
-    public ChatArea getChatArea() {
-        return chatArea;
-    }
+    public void appendMessage(String message) { chatArea.append(message + "\n"); }
 }
