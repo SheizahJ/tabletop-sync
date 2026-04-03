@@ -41,8 +41,10 @@ void main() {
         CanvasView canvasView = new CanvasView();
         canvasView.add(canvasController); // attach controller to view
 
-        // attach network listener for canvas movement
-        canvasController.setNetworkListener((x, y) -> out.println("CANVAS:" + x + "," + y));
+        // TODO: reorient this to print to the server to update the location and broadcast it!!!!
+
+//        // attach network listener for canvas movement
+//        canvasController.setNetworkListener((x, y) -> out.println("CANVAS:" + x + "," + y));
 
         SwingUtilities.invokeLater(() -> new TableTopGUI(chatView, canvasView));
 
