@@ -13,16 +13,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static tabletopsync.canvas.controller.CanvasController.selectedSprite;
+import static tabletopsync.canvas.controller.CanvasController.sprites;
+
 // TODO: Create a constant variable in Canvas somewhere to store grid size (50x50)
 public class Sprite {
-    private static List<Sprite> sprites = new ArrayList<>();
-    private static Sprite selectedSprite;
-
-    // OBJECT VARIABLES
     private BufferedImage spriteImage;
+    private SelectionBox selectionBox;
     private boolean isLocked;
     private boolean isSelected;
-    private String selectedBy;
     private int width;
     private int height;
     private Point position;
@@ -30,8 +29,7 @@ public class Sprite {
     // CONSTRUCTOR
     public Sprite(URL imageURL) throws IOException {
         this.spriteImage = ImageIO.read(imageURL);
-
-        // Defaults
+        this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
     }
 
@@ -39,7 +37,6 @@ public class Sprite {
     private void resetSpriteDefaults() {
         this.isLocked = false;
         this.isSelected = false;
-        this.selectedBy = null;
         this.width = 100;
         this.height = 100;
         this.position = new Point(0, 0);
@@ -47,6 +44,10 @@ public class Sprite {
 
     public BufferedImage getImage() {
         return spriteImage;
+    }
+
+    public SelectionBox getSelectionBox() {
+        return selectionBox;
     }
 
     public void setLockedState(boolean locked) {
@@ -59,10 +60,6 @@ public class Sprite {
 
     public boolean isSelected() {
         return isSelected;
-    }
-
-    public String getSelectedBy() {
-        return selectedBy;
     }
 
     public void setSize(int width, int height) {
@@ -82,37 +79,30 @@ public class Sprite {
         return position;
     }
 
-    // STATIC METHODS
-    public static List<Sprite> getCreatedSprites() {
-        return sprites;
-    }
-
-    public static Sprite getSelectedSprite() {
-        return selectedSprite;
-    }
-
     // SPRITE METHODS
     public void move(int x, int y) {
         this.position.setLocation(x, y);
     }
 
+    public void delete() {
+        sprites.remove(this);
+    }
+
     public void select(String username) {
         selectedSprite = this;
         this.isSelected = true;
-        this.selectedBy = username;
 
         // bring sprite to front
         sprites.remove(selectedSprite);
         sprites.add(selectedSprite);
 
         // TODO: create a box around the selected sprite w/ player colour
+        selectionBox.show(username);
     }
 
     public void deselect() {
         selectedSprite = null;
         this.isSelected = false;
-        this.selectedBy = null;
-
-        // TODO: destroy the box (if any) around the sprite
+        selectionBox.hide();
     }
 }
