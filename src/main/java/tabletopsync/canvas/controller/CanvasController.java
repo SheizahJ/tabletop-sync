@@ -7,21 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
-    private static boolean dragHeld;
+    private static boolean spriteCanMove = false;
+    private boolean cameraCanMove = false;
     private static Point selectedOffset;
-
-    private Point lastMousePoint;
-    private boolean canDrag = false;
+    private Point lastCameraPoint;
 
     private final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
@@ -30,12 +26,18 @@ public class CanvasController extends JPanel {
         this.model = model;
         setBackground(Color.WHITE);
 
-        // CREATE TEST SPRITES ---------------------
-        URL url = getClass().getResource("/test_images/mario.png");
-        addDefaultSprite(url);
-        addDefaultSprite(url);
-        addDefaultSprite(url);
+        // listen to model updates for repaint
+        model.addListener((x, y) -> SwingUtilities.invokeLater(this::repaint));
 
+        // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
+        // TODO: Create "Add Sprite" button to do this instead
+        URL url = getClass().getResource("/test_images/mario.png");
+        addSpriteToCanvas(url);
+        addSpriteToCanvas(url);
+        addSpriteToCanvas(url);
+        // ------------------------------------------------------------
+
+        // Sprite adapter
         MouseAdapter spriteMouseAdapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -61,12 +63,9 @@ public class CanvasController extends JPanel {
                     int offsetX = spritePosition.x - mouseX;
                     int offsetY = spritePosition.y - mouseY;
 
-                    System.out.println(offsetX + ", " + offsetY);
-
                     // select sprite
                     if (isInWidthBounds && isInHeightBounds) {
-                        System.out.println("Clicked on sprite at index: " + i);
-                        dragHeld = true;
+                        spriteCanMove = true;
                         selectedOffset = new Point(offsetX, offsetY);
                         sprite.select("Player #1"); // TODO: get username
                         break;
@@ -81,18 +80,19 @@ public class CanvasController extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                dragHeld = false;
+                spriteCanMove = false;
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (dragHeld) {
+                if (spriteCanMove) {
                     // move sprite with mouse
                     Sprite selectedSprite = Sprite.getSelectedSprite();
                     selectedSprite.move(e.getX() + selectedOffset.x, e.getY() + selectedOffset.y);
                     System.out.println(Sprite.getSelectedSprite().getPosition());
 
                     // TODO: notify server of change
+
                     repaint();
                 }
             }
@@ -101,24 +101,21 @@ public class CanvasController extends JPanel {
         addMouseListener(spriteMouseAdapter);
         addMouseMotionListener(spriteMouseAdapter);
 
-
-        // listen to model updates for repaint
-        model.addListener((x, y) -> SwingUtilities.invokeLater(this::repaint));
-
+        // Canvas adapter
         MouseAdapter canvasControl = new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON2) {
-                    lastMousePoint = e.getPoint();
-                    canDrag = true;
+                    lastCameraPoint = e.getPoint();
+                    cameraCanMove = true;
                 }
             }
 
-            @Override public void mouseReleased(MouseEvent e) { canDrag = false; }
+            @Override public void mouseReleased(MouseEvent e) { cameraCanMove = false; }
 
             @Override public void mouseDragged(MouseEvent e) {
-                if (canDrag) {
-                    int dx = e.getX() - lastMousePoint.x;
-                    int dy = e.getY() - lastMousePoint.y;
+                if (cameraCanMove) {
+                    int dx = e.getX() - lastCameraPoint.x;
+                    int dy = e.getY() - lastCameraPoint.y;
 
                     // move camera in model
                     model.moveCamera(dx, dy);
@@ -126,7 +123,7 @@ public class CanvasController extends JPanel {
                     // notify server
                     if (networkListener != null) networkListener.onCameraDragged(model.getCameraX(), model.getCameraY());
 
-                    lastMousePoint = e.getPoint();
+                    lastCameraPoint = e.getPoint();
                 }
             }
         };
@@ -142,13 +139,10 @@ public class CanvasController extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        // move camera
         g2.translate(-model.getCameraX(), -model.getCameraY());
 
-
-        // SPRITE TEST
-//        g2.setColor(Color.BLUE);
-//        g2.fillOval(0, 0, 100, 100);
-
+        // draw all sprites
         for (Sprite s : Sprite.getCreatedSprites()) {
             g2.drawImage(
                     s.getImage(),
@@ -161,16 +155,18 @@ public class CanvasController extends JPanel {
         }
     }
 
-    public void addDefaultSprite(URL fileURL) {
+    public void addSpriteToCanvas(URL fileURL) {
         try {
             if (fileURL != null) {
                 Sprite sprite = new Sprite(fileURL);
-                sprite.move(Sprite.getCreatedSprites().size() * 150, 0); // FOR TESTING PURPOSES
+
+                // Creates sprite with the camera's current position
+                sprite.move(model.getCameraX(), model.getCameraY());
                 Sprite.getCreatedSprites().add(sprite);
                 repaint();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error when creating sprite: " + e.getMessage());
         }
     }
 

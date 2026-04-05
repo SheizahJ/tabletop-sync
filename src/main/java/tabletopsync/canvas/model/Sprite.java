@@ -32,6 +32,11 @@ public class Sprite {
         this.spriteImage = ImageIO.read(imageURL);
 
         // Defaults
+        resetSpriteDefaults();
+    }
+
+    // GETTERS & SETTERS
+    private void resetSpriteDefaults() {
         this.isLocked = false;
         this.isSelected = false;
         this.selectedBy = null;
@@ -40,8 +45,6 @@ public class Sprite {
         this.position = new Point(0, 0);
     }
 
-
-    // GETTERS & SETTERS
     public BufferedImage getImage() {
         return spriteImage;
     }
@@ -84,11 +87,11 @@ public class Sprite {
         return sprites;
     }
 
-    // SPRITE METHODS
     public static Sprite getSelectedSprite() {
         return selectedSprite;
     }
 
+    // SPRITE METHODS
     public void move(int x, int y) {
         this.position.setLocation(x, y);
     }
@@ -97,6 +100,10 @@ public class Sprite {
         selectedSprite = this;
         this.isSelected = true;
         this.selectedBy = username;
+
+        // bring sprite to front
+        sprites.remove(selectedSprite);
+        sprites.add(selectedSprite);
 
         // TODO: create a box around the selected sprite w/ player colour
     }
