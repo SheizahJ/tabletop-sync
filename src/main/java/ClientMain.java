@@ -16,68 +16,70 @@ import java.net.Socket;
  * - Sets up MVC chat and canvas
  * - Handles real-time canvas updates
  */
-void main() {
-    try {
-        Socket socket = new Socket("localhost", 8080);
+public class ClientMain {
+    void main() {
+        try {
+            Socket socket = new Socket("localhost", 8080);
 
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        // ask username
-        String username = JOptionPane.showInputDialog("Enter username:");
-        if (username == null || username.trim().isEmpty()) return;
+            // ask username
+            String username = JOptionPane.showInputDialog("Enter username:");
+            if (username == null || username.trim().isEmpty()) return;
 
-        out.println(username); // send username to server
+            out.println(username); // send username to server
 
-        // -----------------------
-        // MVC setup
-        // -----------------------
-        ChatModel chatModel = new ChatModel();
-        ChatView chatView = new ChatView(username);
-        ChatController chatController = new ChatController(chatModel, chatView, socket, out);
+            // -----------------------
+            // MVC setup
+            // -----------------------
+            ChatModel chatModel = new ChatModel();
+            ChatView chatView = new ChatView(username);
+            ChatController chatController = new ChatController(chatModel, chatView, socket, out);
 
-        CanvasModel canvasModel = new CanvasModel();
-        CanvasController canvasController = new CanvasController(canvasModel);
-        CanvasView canvasView = new CanvasView();
-        canvasView.add(canvasController); // attach controller to view
+            CanvasModel canvasModel = new CanvasModel();
+            CanvasController canvasController = new CanvasController(canvasModel);
+            CanvasView canvasView = new CanvasView();
+            canvasView.add(canvasController); // attach controller to view
 
-        // TODO: reorient this to print to the server to update the location and broadcast it!!!!
+            // TODO: reorient this to print to the server to update the location and broadcast it!!!!
 
 //        // attach network listener for canvas movement
 //        canvasController.setNetworkListener((x, y) -> out.println("CANVAS:" + x + "," + y));
 
-        SwingUtilities.invokeLater(() -> new TableTopGUI(chatView, canvasView));
+            SwingUtilities.invokeLater(() -> new TableTopGUI(chatView, canvasView));
 
-        // -----------------------
-        // listen for messages
-        // -----------------------
-        new Thread(() -> {
-            try {
-                String line;
-                while ((line = in.readLine()) != null) {
+            // -----------------------
+            // listen for messages
+            // -----------------------
+            new Thread(() -> {
+                try {
+                    String line;
+                    while ((line = in.readLine()) != null) {
 
-                    // check for canvas updates from server
-                    if (line.startsWith("CANVAS:")) {
-                        // format: CANVAS:x,y
-                        String[] coords = line.substring(7).split(",");
-                        int x = Integer.parseInt(coords[0]);
-                        int y = Integer.parseInt(coords[1]);
+                        // check for canvas updates from server
+                        if (line.startsWith("CANVAS:")) {
+                            // format: CANVAS:x,y
+                            String[] coords = line.substring(7).split(",");
+                            int x = Integer.parseInt(coords[0]);
+                            int y = Integer.parseInt(coords[1]);
 
-                        // update model (repaints automatically via listener)
-                        canvasModel.setCamera(x, y);
+                            // update model (repaints automatically via listener)
+                            canvasModel.setCamera(x, y);
 
-                    } else {
-                        // all other messages -> chat
-                        chatController.receive(line);
+                        } else {
+                            // all other messages -> chat
+                            chatController.receive(line);
+                        }
                     }
+                } catch (IOException ignored) {
                 }
-            } catch (IOException ignored) {
-            }
-        }).start();
+            }).start();
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // note: maintains original structure and comments
     }
-
-    // note: maintains original structure and comments
 }
