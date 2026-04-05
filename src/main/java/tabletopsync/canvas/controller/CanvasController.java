@@ -33,8 +33,8 @@ public class CanvasController extends JPanel {
         // TODO: Create "Add Sprite" button to do this instead
         URL url = getClass().getResource("/test_images/mario.png");
         addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
+//        addSpriteToCanvas(url);
+//        addSpriteToCanvas(url);
         // ------------------------------------------------------------
 
         // Sprite adapter
@@ -47,21 +47,25 @@ public class CanvasController extends JPanel {
                 }
 
                 // get the mouse click coordinates
-                int mouseX = e.getX();
-                int mouseY = e.getY();
+                int relativeX = e.getX() - Math.abs(model.getCameraX());
+                int relativeY = e.getY() - Math.abs(model.getCameraY());
 
                 // check all sprites for selection
                 for (int i = Sprite.getCreatedSprites().size() - 1; i >= 0; i--) {
                     Sprite sprite = Sprite.getCreatedSprites().get(i);
                     Point spritePosition = sprite.getPosition();
 
-                    boolean isInWidthBounds = mouseX >= spritePosition.x &&
-                            mouseX <= spritePosition.x + sprite.getWidth();
-                    boolean isInHeightBounds = mouseY >= spritePosition.y &&
-                            mouseY <= spritePosition.y + sprite.getHeight();
+                    boolean isInWidthBounds = relativeX >= spritePosition.x &&
+                            relativeX <= spritePosition.x + sprite.getWidth();
+                    boolean isInHeightBounds = relativeY >= spritePosition.y &&
+                            relativeY <= spritePosition.y + sprite.getHeight();
 
-                    int offsetX = spritePosition.x - mouseX;
-                    int offsetY = spritePosition.y - mouseY;
+//                    System.out.print("Sprite Position: " + spritePosition.x + ", " + spritePosition.y + " || ");
+//                    System.out.print("Mouse Position: " + mouseX + ", " + mouseY + " || ");
+//                    System.out.println("In Bounds: " + isInWidthBounds + ", " + isInHeightBounds);
+
+                    int offsetX = spritePosition.x - e.getX();
+                    int offsetY = spritePosition.y - e.getY();
 
                     // select sprite
                     if (isInWidthBounds && isInHeightBounds) {
@@ -89,7 +93,6 @@ public class CanvasController extends JPanel {
                     // move sprite with mouse
                     Sprite selectedSprite = Sprite.getSelectedSprite();
                     selectedSprite.move(e.getX() + selectedOffset.x, e.getY() + selectedOffset.y);
-                    System.out.println(Sprite.getSelectedSprite().getPosition());
 
                     // TODO: notify server of change
 
