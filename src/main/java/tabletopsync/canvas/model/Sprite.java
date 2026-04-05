@@ -5,15 +5,23 @@ import javax.swing.*;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: Create a constant variable in Canvas somewhere to store grid size (50x50)
 public class Sprite {
+    private static List<Sprite> sprites = new ArrayList<>();
+    private static Sprite selectedSprite;
+
+    // OBJECT VARIABLES
     private BufferedImage spriteImage;
     private boolean isLocked;
+    private boolean isSelected;
     private String selectedBy;
     private int width;
     private int height;
@@ -25,6 +33,7 @@ public class Sprite {
 
         // Defaults
         this.isLocked = false;
+        this.isSelected = false;
         this.selectedBy = null;
         this.width = 100;
         this.height = 100;
@@ -45,8 +54,8 @@ public class Sprite {
         return isLocked;
     }
 
-    public void setSelectedBy(String username) {
-        this.selectedBy = username;
+    public boolean isSelected() {
+        return isSelected;
     }
 
     public String getSelectedBy() {
@@ -56,10 +65,6 @@ public class Sprite {
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
-    }
-
-    public int[] getSize() {
-        return new int[]{width, height};
     }
 
     public int getWidth() {
@@ -74,8 +79,33 @@ public class Sprite {
         return position;
     }
 
+    // STATIC METHODS
+    public static List<Sprite> getCreatedSprites() {
+        return sprites;
+    }
+
     // SPRITE METHODS
-    public void moveSprite(int x, int y) {
-        this.position.move(x, y);
+    public static Sprite getSelectedSprite() {
+        return selectedSprite;
+    }
+
+    public void move(int x, int y) {
+        this.position.setLocation(x, y);
+    }
+
+    public void select(String username) {
+        selectedSprite = this;
+        this.isSelected = true;
+        this.selectedBy = username;
+
+        // TODO: create a box around the selected sprite w/ player colour
+    }
+
+    public void deselect() {
+        selectedSprite = null;
+        this.isSelected = false;
+        this.selectedBy = null;
+
+        // TODO: destroy the box (if any) around the sprite
     }
 }
