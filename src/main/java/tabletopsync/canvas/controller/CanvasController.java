@@ -62,6 +62,28 @@ public class CanvasController extends JPanel {
         SpriteMouseAdapter spriteMouseAdapter = new SpriteMouseAdapter();
         addMouseListener(spriteMouseAdapter);
         addMouseMotionListener(spriteMouseAdapter);
+
+        // allow panel to receive keyboard input
+        setFocusable(true);
+
+        // listen for delete key
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
+
+                    if (selectedSprite != null) {
+                        // remove sprite
+                        selectedSprite.delete();
+                        // clear selection
+                        selectedSprite = null;
+                        // redraw canvas
+                        repaint();
+                    }
+
+                }
+            }
+        });
     }
 
     /**
@@ -213,6 +235,7 @@ public class CanvasController extends JPanel {
             if (e.getButton() != MouseEvent.BUTTON1) {
                 return;
             }
+            requestFocusInWindow();
 
             // deselect previous sprite
             if (selectedSprite != null) {

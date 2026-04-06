@@ -54,7 +54,7 @@ public class Sprite {
             this.spriteImage = original;
         }
 
-        // keep these exactly the same
+
         this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
     }
