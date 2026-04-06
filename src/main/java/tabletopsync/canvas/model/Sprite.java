@@ -28,7 +28,33 @@ public class Sprite {
 
     // CONSTRUCTOR
     public Sprite(URL imageURL) throws IOException {
-        this.spriteImage = ImageIO.read(imageURL);
+        BufferedImage original = ImageIO.read(imageURL);
+        // Max sure the sprite is a max size we choose, if not make it smaller
+        int maxSize = 512;
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        if (width > maxSize || height > maxSize) {
+
+            double scale = Math.min((double) maxSize / width, (double) maxSize / height);
+
+            int newWidth = (int)(width * scale);
+            int newHeight = (int)(height * scale);
+
+            Image scaled = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+            BufferedImage resized = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resized.createGraphics();
+            g2.drawImage(scaled, 0, 0, null);
+            g2.dispose();
+
+            this.spriteImage = resized;
+
+        } else {
+            this.spriteImage = original;
+        }
+
+        // keep these exactly the same
         this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
     }
