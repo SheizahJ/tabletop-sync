@@ -1,10 +1,13 @@
 package tabletopsync.linker;
 
+import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.view.CanvasView;
 import tabletopsync.chatbox.view.ChatView;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.File;
 
 /**
  * This is the primary GUI for the application
@@ -24,10 +27,44 @@ public class TableTopGUI extends JFrame {
 
         setLayout(new BorderLayout());
 
-        // Split screen
+        // get the canvas controller from canvas view
+        CanvasController canvasController = (CanvasController) canvasView.getComponent(0);
+
+        // top bar for canvas buttons
+        JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        canvasTopBar.setBackground(Color.WHITE);
+
+        JButton addSpriteButton = new JButton("Add Sprite");
+
+        addSpriteButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose a sprite");
+
+            // allow png / jpg / jpeg only
+            FileNameExtensionFilter imageFilter =
+                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
+            fileChooser.setFileFilter(imageFilter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                canvasController.addSpriteFromFile(selectedFile);
+            }
+        });
+
+        canvasTopBar.add(addSpriteButton);
+
+        // wrapper for canvas area
+        JPanel canvasWrapper = new JPanel(new BorderLayout());
+        canvasWrapper.add(canvasTopBar, BorderLayout.NORTH);
+        canvasWrapper.add(canvasView, BorderLayout.CENTER);
+
+        // split screen
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
-                canvasView,       // LEFT: canvas
+                canvasWrapper,    // LEFT: canvas area with button
                 chatView.panel    // RIGHT: chat
         );
         splitPane.setDividerLocation(1500);

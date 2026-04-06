@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -128,6 +129,15 @@ public class CanvasController extends JPanel {
             }
         } catch (IOException e) {
             System.err.println("Error when creating sprite: " + e.getMessage());
+        }
+    }
+    public void addSpriteFromFile(File file) {
+        try {
+            if (file != null) {
+                addSpriteToCanvas(file.toURI().toURL());
+            }
+        } catch (Exception e) {
+            System.err.println("Error when adding sprite from file: " + e.getMessage());
         }
     }
 
