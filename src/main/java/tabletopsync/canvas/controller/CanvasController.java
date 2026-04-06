@@ -23,7 +23,8 @@ public class CanvasController extends JPanel {
     private static boolean cameraCanMove = false;
     private static Point selectedOffset;
     private static Point lastCameraPoint;
-
+    // size of each grid square
+    private static final int GRID_SIZE = 50;
     private final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
 
@@ -54,6 +55,34 @@ public class CanvasController extends JPanel {
     }
 
     /**
+     * Draws the canvas grid background
+     */
+    private void drawCanvasGrid(Graphics2D g2) {
+
+        g2.setColor(new Color(220,220,220)); // light gray grid color
+
+        int width = getWidth();
+        int height = getHeight();
+
+        int cameraX = model.getCameraX();
+        int cameraY = model.getCameraY();
+
+        // offset grid so it moves with camera
+        int startX = Math.floorMod(-cameraX, GRID_SIZE);
+        int startY = Math.floorMod(-cameraY, GRID_SIZE);
+
+        // vertical grid lines
+        for (int x = startX; x < width; x += GRID_SIZE) {
+            g2.drawLine(x + cameraX, cameraY, x + cameraX, height + cameraY);
+        }
+
+        // horizontal grid lines
+        for (int y = startY; y < height; y += GRID_SIZE) {
+            g2.drawLine(cameraX, y + cameraY, width + cameraX, y + cameraY);
+        }
+    }
+
+    /**
      * draws sprite
      */
     @Override protected void paintComponent(Graphics g) {
@@ -63,7 +92,10 @@ public class CanvasController extends JPanel {
         // move camera
         g2.translate(-model.getCameraX(), -model.getCameraY());
 
-        // draw all sprites
+        // draw the grid first (background)
+        drawCanvasGrid(g2);
+
+        // draw sprites on top of grid
         drawSpritesOnCanvas(g2);
     }
 
