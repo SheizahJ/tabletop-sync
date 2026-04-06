@@ -6,6 +6,23 @@ import java.util.List;
 public class CanvasModel {
     private int cameraX = 0;
     private int cameraY = 0;
+    // zoom variables
+    private double zoom = 1.0;
+    private final double MIN_ZOOM = 0.25;
+    private final double MAX_ZOOM = 3.0;
+
+    public double getZoom() {
+        return zoom;
+    }
+
+    public void zoom(double amount) {
+        zoom += amount;
+
+        if (zoom < MIN_ZOOM) zoom = MIN_ZOOM;
+        if (zoom > MAX_ZOOM) zoom = MAX_ZOOM;
+
+        notifyListeners();
+    }
 
     private final List<CameraListener> listeners = new ArrayList<>();
 

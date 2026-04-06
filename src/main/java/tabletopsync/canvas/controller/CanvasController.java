@@ -48,6 +48,15 @@ public class CanvasController extends JPanel {
         addMouseListener(canvasControl);
         addMouseMotionListener(canvasControl);
 
+        // zoom using mouse wheel
+        addMouseWheelListener(e -> {
+            if (e.getWheelRotation() < 0) {
+                model.zoom(0.1); // zoom in
+            } else {
+                model.zoom(-0.1); // zoom out
+            }
+        });
+
         // Sprite adapter
         SpriteMouseAdapter spriteMouseAdapter = new SpriteMouseAdapter();
         addMouseListener(spriteMouseAdapter);
@@ -88,6 +97,9 @@ public class CanvasController extends JPanel {
     @Override protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+
+        // apply zoom
+        g2.scale(model.getZoom(), model.getZoom());
 
         // move camera
         g2.translate(-model.getCameraX(), -model.getCameraY());
