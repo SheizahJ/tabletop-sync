@@ -3,6 +3,7 @@ package tabletopsync.canvas.controller;
 import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
+import tabletopsync.canvas.model.SpritePopup;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,13 +25,18 @@ public class CanvasController extends JPanel {
     private static boolean cameraCanMove = false;
     private static Point selectedOffset;
     private static Point lastCameraPoint;
+
+    private static SpritePopup spritePopup;
+
     // size of each grid square
     private static final int GRID_SIZE = 50;
     private final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
 
+
     public CanvasController(CanvasModel model) {
         this.model = model;
+        spritePopup = new SpritePopup(this);
         setBackground(Color.WHITE);
 
         // listen to model updates for repaint
@@ -75,12 +81,33 @@ public class CanvasController extends JPanel {
                     if (selectedSprite != null) {
                         // remove sprite
                         selectedSprite.delete();
-                        // clear selection
-                        selectedSprite = null;
                         // redraw canvas
                         repaint();
                     }
 
+                }
+            }
+        });
+
+        // Sprite Popup Menu
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    showMenu(e);
+                }
+            }
+
+            private void showMenu(MouseEvent e) {
+                if (selectedSprite != null) {
+                    spritePopup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
@@ -232,7 +259,7 @@ public class CanvasController extends JPanel {
         @Override
         public void mousePressed(MouseEvent e) {
             // only register if mouse button 1 (left click)
-            if (e.getButton() != MouseEvent.BUTTON1) {
+            if (e.getButton() != MouseEvent.BUTTON1 && e.getButton() != MouseEvent.BUTTON3) {
                 return;
             }
             requestFocusInWindow();
@@ -276,7 +303,7 @@ public class CanvasController extends JPanel {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (isSelecting) {
+            if (isSelecting && selectedSprite != null && !selectedSprite.isLocked()) {
                 // move sprite with mouse
                 int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
                 int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();

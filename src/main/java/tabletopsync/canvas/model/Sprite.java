@@ -20,6 +20,7 @@ import static tabletopsync.canvas.controller.CanvasController.sprites;
 public class Sprite {
     private BufferedImage spriteImage;
     private SelectionBox selectionBox;
+    private SpritePopup popup;
     private boolean isLocked;
     private boolean isSelected;
     private int width;
@@ -112,6 +113,7 @@ public class Sprite {
 
     public void delete() {
         sprites.remove(this);
+        selectedSprite = null;
     }
 
     public void select(String username) {
