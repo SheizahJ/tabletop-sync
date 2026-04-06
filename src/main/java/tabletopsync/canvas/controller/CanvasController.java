@@ -19,14 +19,17 @@ import java.util.List;
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
+    // camera
+    private static boolean cameraCanMove = false;
+    private static Point lastCameraPoint;
+
+    // sprite
     public static List<Sprite> sprites = new ArrayList<>();
     public static Sprite selectedSprite;
     private static boolean isSelecting = false;
-    private static boolean cameraCanMove = false;
     private static Point selectedOffset;
-    private static Point lastCameraPoint;
-
     private static SpritePopup spritePopup;
+    public static boolean spriteSnapsToGrid = true;
 
     // size of each grid square
     private static final int GRID_SIZE = 50;
@@ -180,6 +183,7 @@ public class CanvasController extends JPanel {
             System.err.println("Error when creating sprite: " + e.getMessage());
         }
     }
+
     public void addSpriteFromFile(File file) {
         try {
             if (file != null) {
@@ -307,7 +311,18 @@ public class CanvasController extends JPanel {
                 // move sprite with mouse
                 int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
                 int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
-                selectedSprite.move(worldX + selectedOffset.x, worldY + selectedOffset.y);
+
+                int targetX = worldX + selectedOffset.x;
+                int targetY = worldY + selectedOffset.y;
+
+                if (spriteSnapsToGrid) {
+                    int snapX = Math.round((float)targetX / GRID_SIZE) * GRID_SIZE;
+                    int snapY = Math.round((float)targetY / GRID_SIZE) * GRID_SIZE;
+                    selectedSprite.move(snapX, snapY);
+                }
+                else {
+                    selectedSprite.move(targetX, targetY);
+                }
 
                 // TODO: notify server of change
 

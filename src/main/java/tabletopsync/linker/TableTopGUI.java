@@ -7,6 +7,7 @@ import tabletopsync.chatbox.view.ChatView;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.io.File;
 
 /**
@@ -55,6 +56,20 @@ public class TableTopGUI extends JFrame {
         });
 
         canvasTopBar.add(addSpriteButton);
+
+        // snap to grid feature
+        JCheckBox snapToGrid = new JCheckBox("Snap to Grid", true);
+
+        snapToGrid.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                CanvasController.spriteSnapsToGrid = true;
+            }
+            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                CanvasController.spriteSnapsToGrid = false;
+            }
+        });
+
+        canvasTopBar.add(snapToGrid);
 
         // wrapper for canvas area
         JPanel canvasWrapper = new JPanel(new BorderLayout());
