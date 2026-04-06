@@ -67,27 +67,32 @@ public class CanvasController extends JPanel {
      * Draws the canvas grid background
      */
     private void drawCanvasGrid(Graphics2D g2) {
-
-        g2.setColor(new Color(220,220,220)); // light gray grid color
-
-        int width = getWidth();
-        int height = getHeight();
+        g2.setColor(new Color(220, 220, 220)); // light gray grid color
 
         int cameraX = model.getCameraX();
         int cameraY = model.getCameraY();
 
-        // offset grid so it moves with camera
-        int startX = Math.floorMod(-cameraX, GRID_SIZE);
-        int startY = Math.floorMod(-cameraY, GRID_SIZE);
+        double zoom = model.getZoom();
 
-        // vertical grid lines
-        for (int x = startX; x < width; x += GRID_SIZE) {
-            g2.drawLine(x + cameraX, cameraY, x + cameraX, height + cameraY);
+        // visible canvas size in world coordinates
+        int visibleWorldWidth = (int) Math.ceil(getWidth() / zoom);
+        int visibleWorldHeight = (int) Math.ceil(getHeight() / zoom);
+
+        // find first grid line before the visible area
+        int startX = (int) Math.floor((double) cameraX / GRID_SIZE) * GRID_SIZE;
+        int startY = (int) Math.floor((double) cameraY / GRID_SIZE) * GRID_SIZE;
+
+        int endX = cameraX + visibleWorldWidth;
+        int endY = cameraY + visibleWorldHeight;
+
+        // vertical lines
+        for (int x = startX; x <= endX; x += GRID_SIZE) {
+            g2.drawLine(x, cameraY, x, endY);
         }
 
-        // horizontal grid lines
-        for (int y = startY; y < height; y += GRID_SIZE) {
-            g2.drawLine(cameraX, y + cameraY, width + cameraX, y + cameraY);
+        // horizontal lines
+        for (int y = startY; y <= endY; y += GRID_SIZE) {
+            g2.drawLine(cameraX, y, endX, y);
         }
     }
 
@@ -206,8 +211,8 @@ public class CanvasController extends JPanel {
             }
 
             // get the mouse click coordinates
-            int worldX = e.getX() + model.getCameraX();
-            int worldY = e.getY() + model.getCameraY();
+            int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
+            int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
 
             // check all sprites for selection
             for (int i = sprites.size() - 1; i >= 0; i--) {
@@ -240,8 +245,8 @@ public class CanvasController extends JPanel {
         public void mouseDragged(MouseEvent e) {
             if (isSelecting) {
                 // move sprite with mouse
-                int worldX = e.getX() + model.getCameraX();
-                int worldY = e.getY() + model.getCameraY();
+                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
                 selectedSprite.move(worldX + selectedOffset.x, worldY + selectedOffset.y);
 
                 // TODO: notify server of change
