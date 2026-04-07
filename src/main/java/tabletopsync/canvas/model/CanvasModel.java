@@ -4,24 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasModel {
+    // camera variables
+    public static final int GRID_SIZE = 50;
+
+    private boolean cameraCanMove = false;
     private int cameraX = 0;
     private int cameraY = 0;
-    // zoom variables
     private double zoom = 1.0;
     private final double MIN_ZOOM = 0.25;
     private final double MAX_ZOOM = 3.0;
 
-    public double getZoom() {
-        return zoom;
+    // sprite variables
+    private List<Sprite> sprites = new ArrayList<>();
+    private Sprite selectedSprite;
+    private boolean isSelecting = false;
+    private boolean spriteSnapsToGrid = true;
+
+    // CAMERA METHODS
+
+    public boolean canCameraMove() {
+        return cameraCanMove;
     }
 
-    public void zoom(double amount) {
-        zoom += amount;
-
-        if (zoom < MIN_ZOOM) zoom = MIN_ZOOM;
-        if (zoom > MAX_ZOOM) zoom = MAX_ZOOM;
-
-        notifyListeners();
+    public void setCameraCanMove(boolean moveable) {
+        this.cameraCanMove = moveable;
     }
 
     private final List<CameraListener> listeners = new ArrayList<>();
@@ -45,6 +51,65 @@ public class CanvasModel {
         for (CameraListener l : listeners) {
             l.cameraMoved(cameraX, cameraY);
         }
+    }
+
+    public double getZoom() {
+        return zoom;
+    }
+
+    public void zoom(double amount) {
+        zoom += amount;
+
+        if (zoom < MIN_ZOOM) zoom = MIN_ZOOM;
+        if (zoom > MAX_ZOOM) zoom = MAX_ZOOM;
+
+        notifyListeners();
+    }
+
+    // SPRITE METHODS
+    public List<Sprite> getSpritesOnCanvas() {
+        return sprites;
+    }
+
+    public void addSprite(Sprite sprite) {
+        sprites.add(sprite);
+    }
+
+    public void removeSprite(Sprite sprite) {
+        sprites.remove(sprite);
+        selectedSprite = null;
+    }
+
+    public Sprite getSelectedSprite() {
+        return selectedSprite;
+    }
+
+    public void selectSprite(Sprite sprite) {
+        this.selectedSprite = sprite;
+        setIsSelecting(true);
+    }
+
+    public void unselectSprites() {
+        this.selectedSprite = null;
+        setIsSelecting(false);
+    }
+
+    public boolean isSelecting() {
+        System.out.println(isSelecting);
+        System.out.println(this.selectedSprite);
+        return isSelecting && this.selectedSprite != null;
+    }
+
+    public void setIsSelecting(boolean selecting) {
+        this.isSelecting = selecting;
+    }
+
+    public boolean snapsToGrid() {
+        return spriteSnapsToGrid;
+    }
+
+    public void setSnapToGridState(boolean enabled) {
+        this.spriteSnapsToGrid = enabled;
     }
 
     // Functional interface

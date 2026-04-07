@@ -59,13 +59,14 @@ public class TableTopGUI extends JFrame {
 
         // snap to grid feature
         JCheckBox snapToGrid = new JCheckBox("Snap to Grid", true);
+        canvasController.model.setSnapToGridState(true);
 
         snapToGrid.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                CanvasController.spriteSnapsToGrid = true;
+                canvasController.model.setSnapToGridState(true);
             }
             else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                CanvasController.spriteSnapsToGrid = false;
+                canvasController.model.setSnapToGridState(false);
             }
         });
 

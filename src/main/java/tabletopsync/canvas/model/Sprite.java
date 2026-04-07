@@ -2,24 +2,16 @@ package tabletopsync.canvas.model;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-import static tabletopsync.canvas.controller.CanvasController.selectedSprite;
-import static tabletopsync.canvas.controller.CanvasController.sprites;
 
-// TODO: Create a constant variable in Canvas somewhere to store grid size (50x50)
 public class Sprite {
-    private BufferedImage spriteImage;
-    private SelectionBox selectionBox;
+    private final CanvasModel model;
+    private final BufferedImage spriteImage;
+    private final SelectionBox selectionBox;
     private SpritePopup popup;
     private boolean isLocked;
     private boolean isSelected;
@@ -28,8 +20,10 @@ public class Sprite {
     private Point position;
 
     // CONSTRUCTOR
-    public Sprite(URL imageURL) throws IOException {
+    public Sprite(CanvasModel model, URL imageURL) throws IOException {
+        this.model = model;
         BufferedImage original = ImageIO.read(imageURL);
+
         // Max sure the sprite is a max size we choose, if not make it smaller
         int maxSize = 512;
         int width = original.getWidth();
@@ -111,26 +105,19 @@ public class Sprite {
         this.position.setLocation(x, y);
     }
 
-    public void delete() {
-        sprites.remove(this);
-        selectedSprite = null;
-    }
-
     public void select(String username) {
-        selectedSprite = this;
-        this.isSelected = true;
-
         // bring sprite to front
-        sprites.remove(selectedSprite);
-        sprites.add(selectedSprite);
+        model.removeSprite(this);
+        model.addSprite(this);
 
-        // TODO: create a box around the selected sprite w/ player colour
+        this.isSelected = true;
+        model.selectSprite(this);
         selectionBox.show(username);
     }
 
     public void deselect() {
-        selectedSprite = null;
         this.isSelected = false;
+        model.unselectSprites();
         selectionBox.hide();
     }
 }

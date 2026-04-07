@@ -12,34 +12,22 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
-    // camera
-    private static boolean cameraCanMove = false;
-    private static Point lastCameraPoint;
+    private final SpritePopup spritePopup;
+    private Point lastCameraPoint;
+    private Point selectedOffset;
 
-    // sprite
-    public static List<Sprite> sprites = new ArrayList<>();
-    public static Sprite selectedSprite;
-    private static boolean isSelecting = false;
-    private static Point selectedOffset;
-    private static SpritePopup spritePopup;
-    public static boolean spriteSnapsToGrid = true;
-
-    // size of each grid square
-    private static final int GRID_SIZE = 50;
-    private final CanvasModel model;
+    public final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
 
 
     public CanvasController(CanvasModel model) {
         this.model = model;
-        spritePopup = new SpritePopup(this);
+        spritePopup = new SpritePopup(this, model);
         setBackground(Color.WHITE);
 
         // listen to model updates for repaint
@@ -80,14 +68,14 @@ public class CanvasController extends JPanel {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
                 if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
-
+                    Sprite selectedSprite = model.getSelectedSprite();
                     if (selectedSprite != null) {
                         // remove sprite
-                        selectedSprite.delete();
+                        model.removeSprite(selectedSprite);
+
                         // redraw canvas
                         repaint();
                     }
-
                 }
             }
         });
@@ -109,7 +97,7 @@ public class CanvasController extends JPanel {
             }
 
             private void showMenu(MouseEvent e) {
-                if (selectedSprite != null) {
+                if (model.getSelectedSprite() != null) {
                     spritePopup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -132,6 +120,7 @@ public class CanvasController extends JPanel {
         int visibleWorldHeight = (int) Math.ceil(getHeight() / zoom);
 
         // find first grid line before the visible area
+        int GRID_SIZE = CanvasModel.GRID_SIZE;
         int startX = (int) Math.floor((double) cameraX / GRID_SIZE) * GRID_SIZE;
         int startY = (int) Math.floor((double) cameraY / GRID_SIZE) * GRID_SIZE;
 
@@ -172,11 +161,11 @@ public class CanvasController extends JPanel {
     public void addSpriteToCanvas(URL fileURL) {
         try {
             if (fileURL != null) {
-                Sprite sprite = new Sprite(fileURL);
+                Sprite sprite = new Sprite(model, fileURL);
 
                 // Creates sprite with the camera's current position
                 sprite.move(model.getCameraX(), model.getCameraY());
-                sprites.add(sprite);
+                model.addSprite(sprite);
                 repaint();
             }
         } catch (IOException e) {
@@ -195,7 +184,7 @@ public class CanvasController extends JPanel {
     }
 
     public void drawSpritesOnCanvas(Graphics2D g2) {
-        for (Sprite s : sprites) {
+        for (Sprite s : model.getSpritesOnCanvas()) {
             g2.drawImage(
                     s.getImage(),
                     s.getPosition().x,
@@ -237,14 +226,14 @@ public class CanvasController extends JPanel {
         @Override public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON2) {
                 lastCameraPoint = e.getPoint();
-                cameraCanMove = true;
+                model.setCameraCanMove(true);
             }
         }
 
-        @Override public void mouseReleased(MouseEvent e) { cameraCanMove = false; }
+        @Override public void mouseReleased(MouseEvent e) { model.setCameraCanMove(false); }
 
         @Override public void mouseDragged(MouseEvent e) {
-            if (cameraCanMove) {
+            if (model.canCameraMove()) {
                 int dx = e.getX() - lastCameraPoint.x;
                 int dy = e.getY() - lastCameraPoint.y;
 
@@ -269,8 +258,8 @@ public class CanvasController extends JPanel {
             requestFocusInWindow();
 
             // deselect previous sprite
-            if (selectedSprite != null) {
-                selectedSprite.deselect();
+            if (model.getSelectedSprite() != null) {
+                model.getSelectedSprite().deselect();
                 repaint();
             }
 
@@ -279,21 +268,18 @@ public class CanvasController extends JPanel {
             int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
 
             // check all sprites for selection
-            for (int i = sprites.size() - 1; i >= 0; i--) {
-                Sprite sprite = sprites.get(i);
+            for (int i = model.getSpritesOnCanvas().size() - 1; i >= 0; i--) {
+                Sprite sprite = model.getSpritesOnCanvas().get(i);
                 Point pos = sprite.getPosition();
 
                 boolean isInWidthBounds = worldX >= pos.x && worldX <= pos.x + sprite.getWidth();
                 boolean isInHeightBounds = worldY >= pos.y && worldY <= pos.y + sprite.getHeight();
 
-//                sprite.deselect();
-
                 // select sprite
                 if (isInWidthBounds && isInHeightBounds) {
-                    isSelecting = true;
-                    selectedSprite = sprite;
+                    model.selectSprite(sprite);
+                    model.getSelectedSprite().select("Player #1"); // TODO: get username
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
-                    selectedSprite.select("Player #1"); // TODO: get username
                     repaint();
                     break;
                 }
@@ -302,27 +288,25 @@ public class CanvasController extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            isSelecting = false;
+            model.setIsSelecting(false);
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (isSelecting && selectedSprite != null && !selectedSprite.isLocked()) {
-                // move sprite with mouse
+            if (model.isSelecting() && !model.getSelectedSprite().isLocked()) {
                 int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
                 int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
 
                 int targetX = worldX + selectedOffset.x;
                 int targetY = worldY + selectedOffset.y;
 
-                if (spriteSnapsToGrid) {
-                    int snapX = Math.round((float)targetX / GRID_SIZE) * GRID_SIZE;
-                    int snapY = Math.round((float)targetY / GRID_SIZE) * GRID_SIZE;
-                    selectedSprite.move(snapX, snapY);
+                if (model.snapsToGrid()) {
+                    int grid = CanvasModel.GRID_SIZE;
+                    targetX = Math.round((float)targetX / grid) * grid;
+                    targetY = Math.round((float)targetY / grid) * grid;
                 }
-                else {
-                    selectedSprite.move(targetX, targetY);
-                }
+
+                model.getSelectedSprite().move(targetX, targetY);
 
                 // TODO: notify server of change
 
