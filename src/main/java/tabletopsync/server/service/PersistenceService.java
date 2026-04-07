@@ -32,12 +32,23 @@ public class PersistenceService {
         saveToFile(ServerModel.SYSTEM_FILE, messageObject);
     }
 
+    // GitHub doesn't like empty files or directories, so I make them on runtime -rami.
+    private static void ensureFileExistence(File file) {
+        try {
+            File parent = file.getParentFile();
+            if (parent != null && !parent.exists()) { parent.mkdirs(); }
+            if (!file.exists()) { file.createNewFile(); }
+        }
+        catch (IOException e) { e.printStackTrace(); }
+    }
+
     /**
      * File write method
      * @param file target file
      * @param messageObject message object to serialize
      */
     private static void saveToFile(File file, MessageObject messageObject) {
+        ensureFileExistence(file);
         try (FileOutputStream fos = new FileOutputStream(file, true)) {
             String json = mapper.writeValueAsString(messageObject);
             fos.write((json + "\n").getBytes());
