@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
@@ -20,6 +22,10 @@ public class CanvasController extends JPanel {
     private final SpritePopup spritePopup;
     private Point lastCameraPoint;
     private Point selectedOffset;
+    private static final int MAP_HANDLE_SIZE = 12;
+    private static final int MIN_MAP_SIZE = 50;
+    private Point mapResizeStartPoint;
+    private Dimension mapResizeStartSize;
 
     public final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
@@ -151,11 +157,72 @@ public class CanvasController extends JPanel {
         // move camera
         g2.translate(-model.getCameraX(), -model.getCameraY());
 
+        // draw map if one exists
+        if (model.getMapImage() != null) {
+            g2.drawImage(
+                    model.getMapImage(),
+                    model.getMapX(),
+                    model.getMapY(),
+                    model.getMapWidth(),
+                    model.getMapHeight(),
+                    null
+            );
+
+            drawMapResizeHandle(g2);
+        }
+
         // draw the grid first (background)
         drawCanvasGrid(g2);
 
         // draw sprites on top of grid
         drawSpritesOnCanvas(g2);
+    }
+
+
+    public void setMapFromFile(File file) {
+        try {
+            BufferedImage img = ImageIO.read(file);
+            model.setMapImage(img);
+
+            // place map at current canvas view
+            model.setMapPosition(model.getCameraX(), model.getCameraY());
+
+            repaint();
+        } catch (IOException e) {
+            System.err.println("Failed to load map image: " + e.getMessage());
+        }
+    }
+
+    private Rectangle getMapBounds() {
+        return new Rectangle(
+                model.getMapX(),
+                model.getMapY(),
+                model.getMapWidth(),
+                model.getMapHeight()
+        );
+    }
+
+    private Rectangle getMapResizeHandleBounds() {
+        return new Rectangle(
+                model.getMapX() + model.getMapWidth() - MAP_HANDLE_SIZE,
+                model.getMapY() + model.getMapHeight() - MAP_HANDLE_SIZE,
+                MAP_HANDLE_SIZE,
+                MAP_HANDLE_SIZE
+        );
+    }
+
+    private void drawMapResizeHandle(Graphics2D g2) {
+        if (model.getMapImage() == null) {
+            return;
+        }
+
+        Rectangle handle = getMapResizeHandleBounds();
+
+        g2.setColor(Color.WHITE);
+        g2.fillRect(handle.x, handle.y, handle.width, handle.height);
+
+        g2.setColor(Color.BLACK);
+        g2.drawRect(handle.x, handle.y, handle.width, handle.height);
     }
 
     public void addSpriteToCanvas(URL fileURL) {
@@ -267,6 +334,15 @@ public class CanvasController extends JPanel {
             int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
             int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
 
+            // start resizing map if the handle is clicked
+            if (model.getMapImage() != null && getMapResizeHandleBounds().contains(worldX, worldY)) {
+                model.setMapResizing(true);
+                mapResizeStartPoint = new Point(worldX, worldY);
+                mapResizeStartSize = new Dimension(model.getMapWidth(), model.getMapHeight());
+                repaint();
+                return;
+            }
+
             // check all sprites for selection
             for (int i = model.getSpritesOnCanvas().size() - 1; i >= 0; i--) {
                 Sprite sprite = model.getSpritesOnCanvas().get(i);
@@ -289,10 +365,26 @@ public class CanvasController extends JPanel {
         @Override
         public void mouseReleased(MouseEvent e) {
             model.setIsSelecting(false);
+            model.setMapResizing(false);
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            if (model.isMapResizing()) {
+                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+
+                int newWidth = mapResizeStartSize.width + (worldX - mapResizeStartPoint.x);
+                int newHeight = mapResizeStartSize.height + (worldY - mapResizeStartPoint.y);
+
+                newWidth = Math.max(MIN_MAP_SIZE, newWidth);
+                newHeight = Math.max(MIN_MAP_SIZE, newHeight);
+
+                model.setMapSize(newWidth, newHeight);
+                repaint();
+                return;
+            }
+            
             if (model.isSelecting() && !model.getSelectedSprite().isLocked()) {
                 int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
                 int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();

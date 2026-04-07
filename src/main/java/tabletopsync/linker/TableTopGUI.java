@@ -57,6 +57,28 @@ public class TableTopGUI extends JFrame {
 
         canvasTopBar.add(addSpriteButton);
 
+        JButton changeMapButton = new JButton("Change Map");
+
+        changeMapButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose map image");
+
+            FileNameExtensionFilter filter =
+                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
+
+            fileChooser.setFileFilter(filter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                canvasController.setMapFromFile(selectedFile);
+            }
+        });
+
+        canvasTopBar.add(changeMapButton);
+
         // snap to grid feature
         JCheckBox snapToGrid = new JCheckBox("Snap to Grid", true);
         canvasController.model.setSnapToGridState(true);

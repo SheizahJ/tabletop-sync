@@ -1,6 +1,7 @@
 package tabletopsync.canvas.model;
 
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public class CanvasModel {
@@ -13,6 +14,59 @@ public class CanvasModel {
     private double zoom = 1.0;
     private final double MIN_ZOOM = 0.25;
     private final double MAX_ZOOM = 3.0;
+    // map background
+    private BufferedImage mapImage;
+    private int mapX = 0;
+    private int mapY = 0;
+    private int mapWidth = 0;
+    private int mapHeight = 0;
+    private boolean mapIsResizing = false;
+
+
+    public BufferedImage getMapImage() {
+        return mapImage;
+    }
+
+
+    public void setMapImage(BufferedImage image) {
+        this.mapImage = image;
+
+        if (image != null) {
+            this.mapWidth = image.getWidth();
+            this.mapHeight = image.getHeight();
+        }
+
+        notifyListeners();
+    }
+    // Background getters and setter
+    public int getMapX() {
+        return mapX;
+    }
+    public int getMapY() {
+        return mapY;
+    }
+    public void setMapPosition(int x, int y) {
+        this.mapX = x;
+        this.mapY = y;
+        notifyListeners();
+    }
+    public int getMapWidth() {
+        return mapWidth;
+    }
+    public int getMapHeight() {
+        return mapHeight;
+    }
+    public void setMapSize(int width, int height) {
+        this.mapWidth = width;
+        this.mapHeight = height;
+        notifyListeners();
+    }
+    public boolean isMapResizing() {
+        return mapIsResizing;
+    }
+    public void setMapResizing(boolean resizing) {
+        this.mapIsResizing = resizing;
+    }
 
     // sprite variables
     private List<Sprite> sprites = new ArrayList<>();
