@@ -1,6 +1,5 @@
 # TabletopSync 
 
----
 ## Meet the Team 
 
 - **Sheizah Jimenez**: 
@@ -14,7 +13,6 @@
 - **Ramiyan Gangatharan**: 
   - Lead Back-End Developer + Network Support
 
----
 ## Project Overview 
 
 ### Description
@@ -51,26 +49,22 @@ TabletopSync is a multiplayer 2D tabletop RPG board application that allows mult
 
 _**TODO**: ADD DATA FLOW DIAGRAMS + UI DESIGN CONCEPTS HERE..._
 
----
 ## Project Demo
 
 _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 
----
 ## How to Run
 1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
 2. Run `MainServer.java` 
 3. Run `ClientApp.java`
    * Can run multiple Clients at once...
 
----
 ## AI Disclosure
 
 - Assistance with debugging code snippets.
 - Minor UI inquiries (e.g. How to create items in a JPopupMenu)
 - Assisted with mathematical equations related to the camera movement, grid-related features, sprite dragging, etc.
 
----
 ## Resources
 - _**TODO**: ADD LATER IF ANY..._
 
