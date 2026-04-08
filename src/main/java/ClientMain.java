@@ -5,6 +5,7 @@ import tabletopsync.chatbox.controller.ChatController;
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.linker.TableTopGUI;
+import tabletopsync.login.LoginView;
 
 import javax.swing.*;
 import java.io.*;
@@ -25,7 +26,10 @@ public class ClientMain extends JFrame {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            // TODO: replace this with proper GUI
             // ask username
+            LoginView loginView = new LoginView();
+            loginView.setVisible(true);
             String username = JOptionPane.showInputDialog("Enter username:");
             if (username == null || username.trim().isEmpty()) return;
 
