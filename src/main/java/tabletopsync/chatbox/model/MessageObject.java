@@ -12,6 +12,7 @@ public class MessageObject {
     private Time timestamp;
     private String type;
 
+    // DO NOT REMOVE
     public MessageObject() {
         // Required for Jackson API
     }
