@@ -27,6 +27,17 @@ public class CanvasModel {
         return mapImage;
     }
 
+    //---------------------QUARANTINE------------------------//
+    public String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    //------------------------------------------------------//
 
     public void setMapImage(BufferedImage image) {
         this.mapImage = image;

@@ -4,6 +4,8 @@ import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
+import tabletopsync.chatbox.controller.ChatClientHandler;
+import tabletopsync.server.controller.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -354,7 +356,7 @@ public class CanvasController extends JPanel {
                 // select sprite
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
-                    model.getSelectedSprite().select("Player #1"); // TODO: get username
+                    model.getSelectedSprite().select(model.username); // TODO: get username
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
                     repaint();
                     break;

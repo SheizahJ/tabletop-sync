@@ -43,6 +43,10 @@ public class ClientMain extends JFrame {
             ChatController chatController = new ChatController(chatView, socket, out);
 
             CanvasModel canvasModel = new CanvasModel();
+
+            // rami's stuff
+            canvasModel.setUsername(username);
+
             CanvasController canvasController = new CanvasController(canvasModel);
             CanvasView canvasView = new CanvasView();
             canvasView.add(canvasController); // attach controller to view
