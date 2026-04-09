@@ -80,7 +80,7 @@ public class CanvasModel {
     }
 
     // sprite variables
-    private List<Sprite> sprites = new ArrayList<>();
+    private final List<Sprite> sprites = new ArrayList<>();
     private Sprite selectedSprite;
     private boolean isSelecting = false;
     private boolean spriteSnapsToGrid = true;

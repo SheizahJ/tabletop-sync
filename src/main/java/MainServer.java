@@ -9,7 +9,7 @@ import javax.swing.*;
  * - Starts ServerMainController on defined port
  */
 public class MainServer {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Create server GUI
             ServerView serverView = new ServerView();
