@@ -6,6 +6,8 @@ import tabletopsync.server.service.PersistenceService;
 import java.io.*;
 import java.net.Socket;
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -63,6 +65,19 @@ public class ClientHandler extends Thread {
         }
     }
 
+    // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
+    private static boolean isNewMessage(MessageObject message) {
+        List<MessageObject> existingMessages = new ArrayList<>();
+        existingMessages.addAll(PersistenceService.loadChatMessages());
+        existingMessages.addAll(PersistenceService.loadSystemMessages());
+
+        return existingMessages.stream().noneMatch(msg ->
+                msg.getUsername() != null &&
+                msg.getUsername().equals(message.getUsername()) &&
+                msg.getMessage().equals(message.getMessage())
+        );
+    }
+
     /**
      * Broadcasts a message to all connected clients.
      * @param message The message to send
@@ -84,7 +99,10 @@ public class ClientHandler extends Thread {
                 new Time(System.currentTimeMillis()),
                 "SYSTEM"
         );
-        PersistenceService.saveSystemMessage(systemMsg);
+
+        if (isNewMessage(systemMsg)) {
+            PersistenceService.saveSystemMessage(systemMsg);
+        }
         broadcast(message);
     }
 
@@ -151,7 +169,10 @@ public class ClientHandler extends Thread {
                             new Time(System.currentTimeMillis()),
                             "CHAT"
                     );
-                    PersistenceService.saveChatMessage(chatMsg);
+                    if (isNewMessage(chatMsg)) {
+                        PersistenceService.saveChatMessage(chatMsg);
+                    }
+
                 }
             }
         } catch (IOException e) {

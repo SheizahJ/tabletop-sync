@@ -37,7 +37,7 @@ public class ChatArea extends JPanel {
         userMenu.setVisible(false);
         top.add(userMenu, BorderLayout.SOUTH);
 
-        showUsersButton.addActionListener(e -> {
+        showUsersButton.addActionListener(_ -> {
             boolean visible = userMenu.isVisible();
             userMenu.setVisible(!visible);
             showUsersButton.setText(visible ? "Show Users" : "Hide Users");

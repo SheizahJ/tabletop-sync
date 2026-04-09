@@ -10,7 +10,7 @@ import java.awt.*;
  * Simple server GUI that displays logs
  */
 public class ServerView extends JFrame {
-    private JTextArea logArea;
+    private final JTextArea logArea;
 
     public ServerView() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);

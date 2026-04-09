@@ -5,6 +5,7 @@ import tabletopsync.chatbox.controller.ChatController;
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.linker.TableTopGUI;
+import tabletopsync.login.LoginView;
 
 import javax.swing.*;
 import java.io.*;
@@ -16,7 +17,8 @@ import java.net.Socket;
  * - Sets up MVC chat and canvas
  * - Handles real-time canvas updates
  */
-public class ClientMain {
+
+public class ClientMain extends JFrame {
     void main() {
         try {
             Socket socket = new Socket("localhost", 8080);
@@ -24,7 +26,10 @@ public class ClientMain {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            // TODO: replace this with proper GUI
             // ask username
+            LoginView loginView = new LoginView();
+            loginView.setVisible(true);
             String username = JOptionPane.showInputDialog("Enter username:");
             if (username == null || username.trim().isEmpty()) return;
 
@@ -35,7 +40,7 @@ public class ClientMain {
             // -----------------------
             ChatModel chatModel = new ChatModel();
             ChatView chatView = new ChatView(username);
-            ChatController chatController = new ChatController(chatModel, chatView, socket, out);
+            ChatController chatController = new ChatController(chatView, socket, out);
 
             CanvasModel canvasModel = new CanvasModel();
             CanvasController canvasController = new CanvasController(canvasModel);
