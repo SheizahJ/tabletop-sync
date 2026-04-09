@@ -4,8 +4,6 @@ import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
-import tabletopsync.chatbox.controller.ChatClientHandler;
-import tabletopsync.server.controller.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
