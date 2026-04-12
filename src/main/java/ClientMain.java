@@ -48,6 +48,11 @@ public class ClientMain extends JFrame {
             canvasModel.setUsername(username);
 
             CanvasController canvasController = new CanvasController(canvasModel);
+
+            canvasController.setSpriteMoveListener((uuid, x, y) ->
+                    out.println("SPRITE_MOVE:" + uuid + ":" + x + ":" + y)
+            );
+            
             CanvasView canvasView = new CanvasView();
             canvasView.add(canvasController); // attach controller to view
 

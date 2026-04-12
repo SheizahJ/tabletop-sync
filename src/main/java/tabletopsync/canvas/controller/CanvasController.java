@@ -22,6 +22,7 @@ public class CanvasController extends JPanel {
     private final SpritePopup spritePopup;
     private Point lastCameraPoint;
     private Point selectedOffset;
+    private SpriteMoveListener spriteMoveListener;
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
     private Point mapResizeStartPoint;
@@ -289,6 +290,14 @@ public class CanvasController extends JPanel {
         void onCameraDragged(int x, int y);
     }
 
+    public interface SpriteMoveListener {
+        void onSpriteMoved(String uuid, int x, int y);
+    }
+
+    public void setSpriteMoveListener(SpriteMoveListener listener) {
+        this.spriteMoveListener = listener;
+    }
+
     public class CanvasMouseAdapter extends MouseAdapter {
         @Override public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON2) {
@@ -364,6 +373,15 @@ public class CanvasController extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            if (model.getSelectedSprite() != null && spriteMoveListener != null) {
+                Sprite sprite = model.getSelectedSprite();
+                spriteMoveListener.onSpriteMoved(
+                        sprite.getUuid(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
+            }
+
             model.setIsSelecting(false);
             model.setMapResizing(false);
         }
