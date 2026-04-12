@@ -157,6 +157,23 @@ public class ClientHandler extends Thread {
                     }
                 }
                 // -------------------------------
+                // Sprite move update from client
+                // format: SPRITE_MOVE:uuid:x:y
+                // -------------------------------
+                else if (message.startsWith("SPRITE_MOVE:")) {
+                    try {
+                        String[] parts = message.split(":");
+                        String uuid = parts[1];
+                        int x = Integer.parseInt(parts[2]);
+                        int y = Integer.parseInt(parts[3]);
+
+                        // broadcast sprite movement to all clients
+                        broadcast("SPRITE_MOVE:" + uuid + ":" + x + ":" + y);
+                    } catch (Exception e) {
+                        sendMessage("ERROR: Invalid sprite move format");
+                    }
+                }
+                // -------------------------------
                 // Regular chat message
                 // -------------------------------
                 else {
