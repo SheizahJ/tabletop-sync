@@ -52,6 +52,10 @@ public class ClientMain extends JFrame {
             canvasController.setSpriteMoveListener((uuid, x, y) ->
                     out.println("SPRITE_MOVE:" + uuid + ":" + x + ":" + y)
             );
+            canvasController.setSpriteAddListener((uuid, resourcePath, x, y) ->
+                    out.println("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y)
+            );
+
 
             CanvasView canvasView = new CanvasView();
             canvasView.add(canvasController); // attach controller to view
@@ -99,7 +103,25 @@ public class ClientMain extends JFrame {
                             } catch (Exception e) {
                                 System.out.println("Invalid sprite move update: " + line);
                             }
-                        } else {
+                        } else if (line.startsWith("SPRITE_ADD:")) {
+                            try {
+                                String[] parts = line.split(":");
+                                String uuid = parts[1];
+                                String resourcePath = parts[2];
+                                int x = Integer.parseInt(parts[3]);
+                                int y = Integer.parseInt(parts[4]);
+
+                                // only add if sprite does not already exist
+                                if (canvasModel.getSpriteByUuid(uuid) == null) {
+                                    SwingUtilities.invokeLater(() ->
+                                            canvasController.addSpriteFromNetwork(resourcePath, uuid, x, y)
+                                    );
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Invalid sprite add update: " + line);
+                            }
+                        }
+                        else {
                             // all other messages -> chat
                             chatController.receive(line);
                         }

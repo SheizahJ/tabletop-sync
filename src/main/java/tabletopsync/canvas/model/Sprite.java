@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class Sprite {
     private final String uuid;
+    private final String resourcePath;
     private final CanvasModel model;
     private final BufferedImage spriteImage;
     private final SelectionBox selectionBox;
@@ -21,16 +22,18 @@ public class Sprite {
     private int height;
     private Point position;
 
-    // CONSTRUCTOR for a brand-new sprite
-    public Sprite(CanvasModel model, URL imageURL) throws IOException {
-        this(model, imageURL, UUID.randomUUID().toString());
+    // CONSTRUCTOR for a brand-new sprite from a shared resource path
+    public Sprite(CanvasModel model, String resourcePath) throws IOException {
+        this(model, resourcePath, UUID.randomUUID().toString());
     }
 
     // CONSTRUCTOR for an already existing sprite with a known uuid
-    public Sprite(CanvasModel model, URL imageURL, String uuid) throws IOException {
+    public Sprite(CanvasModel model, String resourcePath, String uuid) throws IOException {
         this.model = model;
         this.uuid = uuid;
+        this.resourcePath = resourcePath;
 
+        URL imageURL = getClass().getResource(resourcePath);
         BufferedImage original = ImageIO.read(imageURL);
 
         // make sure the sprite is a max size we choose, if not make it smaller
@@ -62,8 +65,17 @@ public class Sprite {
         resetSpriteDefaults();
     }
 
+    //keep compatibility with existing URL-based code for now
+    public Sprite(CanvasModel model, URL imageURL) throws IOException {
+        this(model, "/test_images/mario.png", UUID.randomUUID().toString());
+    }
+
     public String getUuid() {
         return uuid;
+    }
+
+    public String getResourcePath() {
+        return resourcePath;
     }
 
     // GETTERS & SETTERS

@@ -174,6 +174,24 @@ public class ClientHandler extends Thread {
                     }
                 }
                 // -------------------------------
+                // Sprite add update from client
+                // format: SPRITE_ADD:uuid:resourcePath:x:y
+                // -------------------------------
+                else if (message.startsWith("SPRITE_ADD:")) {
+                    try {
+                        String[] parts = message.split(":");
+                        String uuid = parts[1];
+                        String resourcePath = parts[2];
+                        int x = Integer.parseInt(parts[3]);
+                        int y = Integer.parseInt(parts[4]);
+
+                        // broadcast sprite creation to all clients
+                        broadcast("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y);
+                    } catch (Exception e) {
+                        sendMessage("ERROR: Invalid sprite add format");
+                    }
+                }
+                // -------------------------------
                 // Regular chat message
                 // -------------------------------
                 else {

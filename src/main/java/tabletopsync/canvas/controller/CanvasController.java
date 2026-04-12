@@ -23,6 +23,7 @@ public class CanvasController extends JPanel {
     private Point lastCameraPoint;
     private Point selectedOffset;
     private SpriteMoveListener spriteMoveListener;
+    private SpriteAddListener spriteAddListener;
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
     private Point mapResizeStartPoint;
@@ -42,10 +43,10 @@ public class CanvasController extends JPanel {
 
         // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
         // TODO: Create "Add Sprite" button to do this instead
-        URL url = getClass().getResource("/test_images/mario.png");
-        addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
+        String resourcePath = "/test_images/mario.png";
+        addSharedSpriteToCanvas(resourcePath);
+        addSharedSpriteToCanvas(resourcePath);
+        addSharedSpriteToCanvas(resourcePath);
         // ------------------------------------------------------------
 
         // Canvas adapter
@@ -251,6 +252,38 @@ public class CanvasController extends JPanel {
         }
     }
 
+    public void addSpriteFromNetwork(String resourcePath, String uuid, int x, int y) {
+        try {
+            Sprite sprite = new Sprite(model, resourcePath, uuid);
+            sprite.move(x, y);
+            model.addSprite(sprite);
+            repaint();
+        } catch (IOException e) {
+            System.err.println("Error when adding sprite from network: " + e.getMessage());
+        }
+    }
+
+    public void addSharedSpriteToCanvas(String resourcePath) {
+        try {
+            Sprite sprite = new Sprite(model, resourcePath);
+            sprite.move(model.getCameraX(), model.getCameraY());
+            model.addSprite(sprite);
+
+            if (spriteAddListener != null) {
+                spriteAddListener.onSpriteAdded(
+                        sprite.getUuid(),
+                        sprite.getResourcePath(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
+            }
+
+            repaint();
+        } catch (IOException e) {
+            System.err.println("Error when creating shared sprite: " + e.getMessage());
+        }
+    }
+
     public void drawSpritesOnCanvas(Graphics2D g2) {
         for (Sprite s : model.getSpritesOnCanvas()) {
             g2.drawImage(
@@ -296,6 +329,14 @@ public class CanvasController extends JPanel {
 
     public void setSpriteMoveListener(SpriteMoveListener listener) {
         this.spriteMoveListener = listener;
+    }
+
+    public interface SpriteAddListener {
+        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
+    }
+
+    public void setSpriteAddListener(SpriteAddListener listener) {
+        this.spriteAddListener = listener;
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
