@@ -43,10 +43,7 @@ public class CanvasController extends JPanel {
 
         // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
         // TODO: Create "Add Sprite" button to do this instead
-        String resourcePath = "/test_images/mario.png";
-        addSharedSpriteToCanvas(resourcePath);
-        addSharedSpriteToCanvas(resourcePath);
-        addSharedSpriteToCanvas(resourcePath);
+
         // ------------------------------------------------------------
 
         // Canvas adapter

@@ -67,7 +67,36 @@ public class Sprite {
 
     //keep compatibility with existing URL-based code for now
     public Sprite(CanvasModel model, URL imageURL) throws IOException {
-        this(model, "/test_images/mario.png", UUID.randomUUID().toString());
+        this.model = model;
+        this.uuid = UUID.randomUUID().toString();
+        this.resourcePath = null;
+
+        BufferedImage original = ImageIO.read(imageURL);
+
+        int maxSize = 512;
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        if (width > maxSize || height > maxSize) {
+            double scale = Math.min((double) maxSize / width, (double) maxSize / height);
+
+            int newWidth = (int)(width * scale);
+            int newHeight = (int)(height * scale);
+
+            Image scaled = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+            BufferedImage resized = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resized.createGraphics();
+            g2.drawImage(scaled, 0, 0, null);
+            g2.dispose();
+
+            this.spriteImage = resized;
+        } else {
+            this.spriteImage = original;
+        }
+
+        this.selectionBox = new SelectionBox(this);
+        resetSpriteDefaults();
     }
 
     public String getUuid() {

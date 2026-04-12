@@ -56,6 +56,10 @@ public class ClientMain extends JFrame {
                     out.println("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y)
             );
 
+            canvasController.addSharedSpriteToCanvas("/test_images/mario.png");
+            canvasController.addSharedSpriteToCanvas("/test_images/mario.png");
+            canvasController.addSharedSpriteToCanvas("/test_images/mario.png");
+
 
             CanvasView canvasView = new CanvasView();
             canvasView.add(canvasController); // attach controller to view
