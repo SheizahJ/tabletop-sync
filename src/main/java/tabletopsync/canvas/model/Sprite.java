@@ -6,9 +6,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.UUID;
 
 
 public class Sprite {
+    private final String uuid;
     private final CanvasModel model;
     private final BufferedImage spriteImage;
     private final SelectionBox selectionBox;
@@ -19,12 +21,19 @@ public class Sprite {
     private int height;
     private Point position;
 
-    // CONSTRUCTOR
+    // CONSTRUCTOR for a brand-new sprite
     public Sprite(CanvasModel model, URL imageURL) throws IOException {
+        this(model, imageURL, UUID.randomUUID().toString());
+    }
+
+    // CONSTRUCTOR for an already existing sprite with a known uuid
+    public Sprite(CanvasModel model, URL imageURL, String uuid) throws IOException {
         this.model = model;
+        this.uuid = uuid;
+
         BufferedImage original = ImageIO.read(imageURL);
 
-        // Max sure the sprite is a max size we choose, if not make it smaller
+        // make sure the sprite is a max size we choose, if not make it smaller
         int maxSize = 512;
         int width = original.getWidth();
         int height = original.getHeight();
@@ -49,9 +58,12 @@ public class Sprite {
             this.spriteImage = original;
         }
 
-
         this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     // GETTERS & SETTERS

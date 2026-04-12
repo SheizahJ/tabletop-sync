@@ -186,4 +186,14 @@ public class CanvasModel {
         listeners.add(listener);
     }
 
+    // getter for sprite with uuid
+    public Sprite getSpriteByUuid(String uuid) {
+        for (Sprite sprite : sprites) {
+            if (sprite.getUuid().equals(uuid)) {
+                return sprite;
+            }
+        }
+        return null;
+    }
+
 }
