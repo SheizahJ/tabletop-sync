@@ -52,7 +52,7 @@ public class ClientMain extends JFrame {
             canvasController.setSpriteMoveListener((uuid, x, y) ->
                     out.println("SPRITE_MOVE:" + uuid + ":" + x + ":" + y)
             );
-            
+
             CanvasView canvasView = new CanvasView();
             canvasView.add(canvasController); // attach controller to view
 
@@ -81,6 +81,24 @@ public class ClientMain extends JFrame {
                             // update model (repaints automatically via listener)
                             canvasModel.setCamera(x, y);
 
+                        } else if (line.startsWith("SPRITE_MOVE:")) {
+                            try {
+                                String[] parts = line.split(":");
+                                String uuid = parts[1];
+                                int x = Integer.parseInt(parts[2]);
+                                int y = Integer.parseInt(parts[3]);
+
+                                // find sprite by uuid
+                                var sprite = canvasModel.getSpriteByUuid(uuid);
+
+                                if (sprite != null) {
+                                    sprite.move(x, y);
+
+                                    SwingUtilities.invokeLater(canvasController::repaint);
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Invalid sprite move update: " + line);
+                            }
                         } else {
                             // all other messages -> chat
                             chatController.receive(line);
