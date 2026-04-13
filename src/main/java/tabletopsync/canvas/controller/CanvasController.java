@@ -22,8 +22,6 @@ public class CanvasController extends JPanel {
     private final SpritePopup spritePopup;
     private Point lastCameraPoint;
     private Point selectedOffset;
-    private SpriteMoveListener spriteMoveListener;
-    private SpriteAddListener spriteAddListener;
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
     private Point mapResizeStartPoint;
@@ -266,8 +264,8 @@ public class CanvasController extends JPanel {
             sprite.move(model.getCameraX(), model.getCameraY());
             model.addSprite(sprite);
 
-            if (spriteAddListener != null) {
-                spriteAddListener.onSpriteAdded(
+            if (networkListener != null) {
+                networkListener.onSpriteAdded(
                         sprite.getUuid(),
                         sprite.getResourcePath(),
                         sprite.getPosition().x,
@@ -317,23 +315,12 @@ public class CanvasController extends JPanel {
 
     // interface for server updates
     public interface CanvasUpdateListener {
-        void onCameraDragged(int x, int y);
-    }
-
-    public interface SpriteMoveListener {
+        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
         void onSpriteMoved(String uuid, int x, int y);
     }
 
-    public void setSpriteMoveListener(SpriteMoveListener listener) {
-        this.spriteMoveListener = listener;
-    }
-
-    public interface SpriteAddListener {
-        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
-    }
-
-    public void setSpriteAddListener(SpriteAddListener listener) {
-        this.spriteAddListener = listener;
+    public void setCanvasListener(CanvasUpdateListener listener) {
+        this.networkListener = listener;
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
@@ -353,9 +340,6 @@ public class CanvasController extends JPanel {
 
                 // move camera in model
                 model.moveCamera(dx, dy);
-
-                // notify server
-                if (networkListener != null) networkListener.onCameraDragged(model.getCameraX(), model.getCameraY());
 
                 lastCameraPoint = e.getPoint();
             }
@@ -411,9 +395,9 @@ public class CanvasController extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (model.getSelectedSprite() != null && spriteMoveListener != null) {
+            if (model.getSelectedSprite() != null && networkListener != null) {
                 Sprite sprite = model.getSelectedSprite();
-                spriteMoveListener.onSpriteMoved(
+                networkListener.onSpriteMoved(
                         sprite.getUuid(),
                         sprite.getPosition().x,
                         sprite.getPosition().y

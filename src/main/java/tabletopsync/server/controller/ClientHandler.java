@@ -1,9 +1,11 @@
 package tabletopsync.server.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -23,9 +25,6 @@ public class ClientHandler extends Thread {
     private final Socket socket;
     private PrintWriter out;
     private String username;
-
-    // Thread-safe collection of all connected clients
-    private static final ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -48,7 +47,7 @@ public class ClientHandler extends Thread {
      */
     private void registerClient() {
         if (username != null && !username.isBlank()) {
-            clients.put(username, this);
+            ServerModel.clients.put(username, this);
             broadcastUserList();
             broadcastSystemMessage(username + " joined the chat");
         }
@@ -59,7 +58,7 @@ public class ClientHandler extends Thread {
      */
     private void unregisterClient() {
         if (username != null) {
-            clients.remove(username);
+            ServerModel.clients.remove(username);
             broadcastUserList();
             broadcastSystemMessage(username + " left the chat");
         }
@@ -83,7 +82,8 @@ public class ClientHandler extends Thread {
      * @param message The message to send
      */
     private static void broadcast(String message) {
-        for (ClientHandler client : clients.values()) {
+        for (ClientHandler client : ServerModel.clients.values()) {
+            System.out.println(client);
             client.sendMessage(message);
         }
     }
@@ -110,7 +110,7 @@ public class ClientHandler extends Thread {
      * Broadcasts a user list update to all clients
      */
     private static void broadcastUserList() {
-        String userListMessage = "USER_LIST:" + String.join(",", clients.keySet());
+        String userListMessage = "USER_LIST:" + String.join(",", ServerModel.clients.keySet());
         broadcast(userListMessage);
     }
 
@@ -157,6 +157,20 @@ public class ClientHandler extends Thread {
                     }
                 }
                 // -------------------------------
+                // Initializes the canvas requested by the client
+                // format: INIT_CANVAS
+                // -------------------------------
+                else if (message.startsWith("INIT_CANVAS")) {
+                    System.out.println("Attempting to initialize " + username + "'s canvas...");
+                    System.out.println("Sprites in Server: " + ServerModel.sprites);
+                    if (ServerModel.sprites.isEmpty()) {
+                        broadcast("INIT_CANVAS:" + username);
+                    } else {
+                        String spriteData = String.join(",", ServerModel.sprites.values());
+                        broadcast("INIT_CANVAS:" + username + ":" + spriteData);
+                    }
+                }
+                // -------------------------------
                 // Sprite move update from client
                 // format: SPRITE_MOVE:uuid:x:y
                 // -------------------------------
@@ -164,12 +178,20 @@ public class ClientHandler extends Thread {
                     try {
                         String[] parts = message.split(":");
                         String uuid = parts[1];
+
                         int x = Integer.parseInt(parts[2]);
                         int y = Integer.parseInt(parts[3]);
 
+                        // update Server Model's sprite data
+                        String[] spriteData = ServerModel.sprites.get(uuid).split(";");
+                        String resourcePath = spriteData[1];
+                        ServerModel.sprites.put(uuid, uuid + ";" + resourcePath + ";" + x + ";" + y);
+
+//                        System.out.println(uuid + ", " + x + ", " + y);
+
                         // broadcast sprite movement to all clients
                         broadcast("SPRITE_MOVE:" + uuid + ":" + x + ":" + y);
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         sendMessage("ERROR: Invalid sprite move format");
                     }
                 }
@@ -184,6 +206,8 @@ public class ClientHandler extends Thread {
                         String resourcePath = parts[2];
                         int x = Integer.parseInt(parts[3]);
                         int y = Integer.parseInt(parts[4]);
+
+                        ServerModel.sprites.put(uuid, uuid + ";" + resourcePath + ";" + x + ";" + y);
 
                         // broadcast sprite creation to all clients
                         broadcast("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y);
@@ -211,7 +235,7 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Connection error with " + username + ": " + e.getMessage());
+            System.err.println("Connection error with " + username + ": " + e.getMessage());
         } finally {
             disconnect();
         }
@@ -226,7 +250,7 @@ public class ClientHandler extends Thread {
         String cmd = parts[0];
 
         if (cmd.equals("/users")) {
-            sendMessage("Users: " + clients.keySet());
+            sendMessage("Users: " + ServerModel.clients.keySet());
         } else if (cmd.equals("/quit")) {
             sendMessage("You have disconnected.");
             disconnect();

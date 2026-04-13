@@ -160,8 +160,6 @@ public class CanvasModel {
     }
 
     public boolean isSelecting() {
-        System.out.println(isSelecting);
-        System.out.println(this.selectedSprite);
         return isSelecting && this.selectedSprite != null;
     }
 
