@@ -385,7 +385,7 @@ public class CanvasController extends JPanel {
                 // select sprite
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
-                    model.getSelectedSprite().select(model.username); // TODO: get username
+                    model.getSelectedSprite().select(model.username);
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
                     repaint();
                     break;
@@ -395,15 +395,6 @@ public class CanvasController extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (model.getSelectedSprite() != null && networkListener != null) {
-                Sprite sprite = model.getSelectedSprite();
-                networkListener.onSpriteMoved(
-                        sprite.getUuid(),
-                        sprite.getPosition().x,
-                        sprite.getPosition().y
-                );
-            }
-
             model.setIsSelecting(false);
             model.setMapResizing(false);
         }
@@ -440,7 +431,14 @@ public class CanvasController extends JPanel {
 
                 model.getSelectedSprite().move(targetX, targetY);
 
-                // TODO: notify server of change
+                if (model.getSelectedSprite() != null && networkListener != null) {
+                    Sprite sprite = model.getSelectedSprite();
+                    networkListener.onSpriteMoved(
+                            sprite.getUuid(),
+                            sprite.getPosition().x,
+                            sprite.getPosition().y
+                    );
+                }
 
                 repaint();
             }
