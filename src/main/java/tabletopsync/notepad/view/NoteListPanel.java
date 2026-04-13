@@ -9,8 +9,8 @@ import java.io.File;
 import java.util.function.Consumer;
 
 public class NoteListPanel extends JPanel {
-    private JList<File> notesList;
-    private JButton newButton;
+    private final JList<File> notesList;
+    private final JButton newButton;
 
     public NoteListPanel() {
         notesList = new JList<>();

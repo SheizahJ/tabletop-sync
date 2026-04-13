@@ -13,8 +13,8 @@ public class NotepadController {
             DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
                     .withZone(ZoneId.systemDefault());
 
-    private NotepadModel model;
-    private NotepadPanel view;
+    private final NotepadModel model;
+    private final NotepadPanel view;
 
     public NotepadController(NotepadModel model, NotepadPanel view, NavigationController nav) {
         this.model = model;

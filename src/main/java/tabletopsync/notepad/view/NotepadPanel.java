@@ -7,12 +7,12 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class NotepadPanel extends JPanel {
-    private JTextField titleField;
-    private JLabel lastSavedLabel;
-    private JTextArea notesArea;
-    private JButton saveButton;
-    private JButton deleteButton;
-    private JButton backButton;
+    private final JTextField titleField;
+    private final JLabel lastSavedLabel;
+    private final JTextArea notesArea;
+    private final JButton saveButton;
+    private final JButton deleteButton;
+    private final JButton backButton;
 
     public NotepadPanel() {
         titleField = new JTextField("Untitled*");
@@ -30,7 +30,7 @@ public class NotepadPanel extends JPanel {
         notesArea.addAncestorListener(new AncestorListener() {
             @Override
             public void ancestorAdded(AncestorEvent event) {
-                SwingUtilities.invokeLater(() -> notesArea.requestFocusInWindow());
+                SwingUtilities.invokeLater(notesArea::requestFocusInWindow);
             }
 
             @Override public void ancestorRemoved(AncestorEvent event) {}

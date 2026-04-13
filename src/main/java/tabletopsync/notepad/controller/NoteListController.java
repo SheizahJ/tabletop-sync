@@ -4,8 +4,8 @@ import tabletopsync.notepad.model.NoteListModel;
 import tabletopsync.notepad.view.NoteListPanel;
 
 public class NoteListController {
-    private NoteListModel model;
-    private NoteListPanel view;
+    private final NoteListModel model;
+    private final NoteListPanel view;
 
     public NoteListController(NoteListModel model, NoteListPanel view) {
         this.model = model;

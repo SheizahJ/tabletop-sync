@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.io.File;
 
 public class NoteListModel {
-    private DefaultListModel<File> listModel = new DefaultListModel<>();
+    private final DefaultListModel<File> listModel = new DefaultListModel<>();
 
     public void refreshNotes() {
         listModel.clear();
