@@ -4,8 +4,6 @@ import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
-import tabletopsync.chatbox.controller.ChatClientHandler;
-import tabletopsync.server.controller.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,10 +41,7 @@ public class CanvasController extends JPanel {
 
         // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
         // TODO: Create "Add Sprite" button to do this instead
-        URL url = getClass().getResource("/test_images/mario.png");
-        addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
-        addSpriteToCanvas(url);
+
         // ------------------------------------------------------------
 
         // Canvas adapter
@@ -252,6 +247,38 @@ public class CanvasController extends JPanel {
         }
     }
 
+    public void addSpriteFromNetwork(String resourcePath, String uuid, int x, int y) {
+        try {
+            Sprite sprite = new Sprite(model, resourcePath, uuid);
+            sprite.move(x, y);
+            model.addSprite(sprite);
+            repaint();
+        } catch (IOException e) {
+            System.err.println("Error when adding sprite from network: " + e.getMessage());
+        }
+    }
+
+    public void addSharedSpriteToCanvas(String resourcePath) {
+        try {
+            Sprite sprite = new Sprite(model, resourcePath);
+            sprite.move(model.getCameraX(), model.getCameraY());
+            model.addSprite(sprite);
+
+            if (networkListener != null) {
+                networkListener.onSpriteAdded(
+                        sprite.getUuid(),
+                        sprite.getResourcePath(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
+            }
+
+            repaint();
+        } catch (IOException e) {
+            System.err.println("Error when creating shared sprite: " + e.getMessage());
+        }
+    }
+
     public void drawSpritesOnCanvas(Graphics2D g2) {
         for (Sprite s : model.getSpritesOnCanvas()) {
             g2.drawImage(
@@ -288,7 +315,12 @@ public class CanvasController extends JPanel {
 
     // interface for server updates
     public interface CanvasUpdateListener {
-        void onCameraDragged(int x, int y);
+        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
+        void onSpriteMoved(String uuid, int x, int y);
+    }
+
+    public void setCanvasListener(CanvasUpdateListener listener) {
+        this.networkListener = listener;
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
@@ -308,9 +340,6 @@ public class CanvasController extends JPanel {
 
                 // move camera in model
                 model.moveCamera(dx, dy);
-
-                // notify server
-                if (networkListener != null) networkListener.onCameraDragged(model.getCameraX(), model.getCameraY());
 
                 lastCameraPoint = e.getPoint();
             }
@@ -356,7 +385,7 @@ public class CanvasController extends JPanel {
                 // select sprite
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
-                    model.getSelectedSprite().select(model.username); // TODO: get username
+                    model.getSelectedSprite().select(model.username);
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
                     repaint();
                     break;
@@ -402,7 +431,14 @@ public class CanvasController extends JPanel {
 
                 model.getSelectedSprite().move(targetX, targetY);
 
-                // TODO: notify server of change
+                if (model.getSelectedSprite() != null && networkListener != null) {
+                    Sprite sprite = model.getSelectedSprite();
+                    networkListener.onSpriteMoved(
+                            sprite.getUuid(),
+                            sprite.getPosition().x,
+                            sprite.getPosition().y
+                    );
+                }
 
                 repaint();
             }

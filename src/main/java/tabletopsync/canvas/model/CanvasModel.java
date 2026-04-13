@@ -80,7 +80,7 @@ public class CanvasModel {
     }
 
     // sprite variables
-    private List<Sprite> sprites = new ArrayList<>();
+    private final List<Sprite> sprites = new ArrayList<>();
     private Sprite selectedSprite;
     private boolean isSelecting = false;
     private boolean spriteSnapsToGrid = true;
@@ -160,8 +160,6 @@ public class CanvasModel {
     }
 
     public boolean isSelecting() {
-        System.out.println(isSelecting);
-        System.out.println(this.selectedSprite);
         return isSelecting && this.selectedSprite != null;
     }
 
@@ -184,6 +182,16 @@ public class CanvasModel {
 
     public void addListener(CameraListener listener) {
         listeners.add(listener);
+    }
+
+    // getter for sprite with uuid
+    public Sprite getSpriteByUuid(String uuid) {
+        for (Sprite sprite : sprites) {
+            if (sprite.getUuid().equals(uuid)) {
+                return sprite;
+            }
+        }
+        return null;
     }
 
 }

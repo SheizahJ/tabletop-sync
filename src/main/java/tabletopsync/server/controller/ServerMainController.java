@@ -1,6 +1,6 @@
 package tabletopsync.server.controller;
 
-import tabletopsync.chatbox.controller.ChatClientHandler;
+import tabletopsync.server.controller.ClientHandler;
 import tabletopsync.server.view.ServerView;
 
 import javax.swing.*;
@@ -52,7 +52,7 @@ public class ServerMainController {
                     sendServerLog("Client connected: " + socket.getInetAddress());
 
                     // Spawn a dedicated thread for each client
-                    ChatClientHandler clientHandler = new ChatClientHandler(socket);
+                    ClientHandler clientHandler = new ClientHandler(socket);
                     clientHandler.start();
                 }
             } catch (IOException e) {

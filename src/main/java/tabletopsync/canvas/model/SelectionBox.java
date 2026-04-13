@@ -3,7 +3,7 @@ package tabletopsync.canvas.model;
 import java.awt.*;
 
 public class SelectionBox {
-    private Sprite owner;
+    private final Sprite owner;
     private String selectedBy;
     private boolean visible = false;
 

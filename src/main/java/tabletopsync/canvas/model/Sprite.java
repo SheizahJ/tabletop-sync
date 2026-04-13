@@ -6,9 +6,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.UUID;
 
 
 public class Sprite {
+    private final String uuid;
+    private final String resourcePath;
     private final CanvasModel model;
     private final BufferedImage spriteImage;
     private final SelectionBox selectionBox;
@@ -19,12 +22,21 @@ public class Sprite {
     private int height;
     private Point position;
 
-    // CONSTRUCTOR
-    public Sprite(CanvasModel model, URL imageURL) throws IOException {
+    // CONSTRUCTOR for a brand-new sprite from a shared resource path
+    public Sprite(CanvasModel model, String resourcePath) throws IOException {
+        this(model, resourcePath, UUID.randomUUID().toString());
+    }
+
+    // CONSTRUCTOR for an already existing sprite with a known uuid
+    public Sprite(CanvasModel model, String resourcePath, String uuid) throws IOException {
         this.model = model;
+        this.uuid = uuid;
+        this.resourcePath = resourcePath;
+
+        URL imageURL = getClass().getResource(resourcePath);
         BufferedImage original = ImageIO.read(imageURL);
 
-        // Max sure the sprite is a max size we choose, if not make it smaller
+        // make sure the sprite is a max size we choose, if not make it smaller
         int maxSize = 512;
         int width = original.getWidth();
         int height = original.getHeight();
@@ -49,9 +61,50 @@ public class Sprite {
             this.spriteImage = original;
         }
 
+        this.selectionBox = new SelectionBox(this);
+        resetSpriteDefaults();
+    }
+
+    //keep compatibility with existing URL-based code for now
+    public Sprite(CanvasModel model, URL imageURL) throws IOException {
+        this.model = model;
+        this.uuid = UUID.randomUUID().toString();
+        this.resourcePath = null;
+
+        BufferedImage original = ImageIO.read(imageURL);
+
+        int maxSize = 512;
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        if (width > maxSize || height > maxSize) {
+            double scale = Math.min((double) maxSize / width, (double) maxSize / height);
+
+            int newWidth = (int)(width * scale);
+            int newHeight = (int)(height * scale);
+
+            Image scaled = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+            BufferedImage resized = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = resized.createGraphics();
+            g2.drawImage(scaled, 0, 0, null);
+            g2.dispose();
+
+            this.spriteImage = resized;
+        } else {
+            this.spriteImage = original;
+        }
 
         this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getResourcePath() {
+        return resourcePath;
     }
 
     // GETTERS & SETTERS
