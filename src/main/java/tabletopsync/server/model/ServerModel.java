@@ -37,6 +37,7 @@ public class ServerModel {
     // ========================
     public static final File SYSTEM_FILE = new File("logs/chatlogs/systemLogs.json");
     public static final File MESSAGE_FILE = new File("logs/chatlogs/messages.json");
+    public static final File NOTES_FOLDER = new File("logs/notes");
 
 
     // ========================

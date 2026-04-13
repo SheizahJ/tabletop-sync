@@ -3,6 +3,7 @@ package tabletopsync.linker;
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.view.CanvasView;
 import tabletopsync.chatbox.view.ChatView;
+import tabletopsync.notepad.controller.NavigationController;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -99,11 +100,20 @@ public class TableTopGUI extends JFrame {
         canvasWrapper.add(canvasTopBar, BorderLayout.NORTH);
         canvasWrapper.add(canvasView, BorderLayout.CENTER);
 
+        // notepad panels
+        JPanel notepadContainer = new JPanel(new BorderLayout());
+        new NavigationController(notepadContainer);
+
+        JPanel rightPanel = new JPanel(new BorderLayout());
+
+        rightPanel.add(chatView.panel, BorderLayout.CENTER);
+        rightPanel.add(notepadContainer, BorderLayout.SOUTH);
+
         // split screen
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 canvasWrapper,    // LEFT: canvas area with button
-                chatView.panel    // RIGHT: chat
+                rightPanel    // RIGHT: chat
         );
         splitPane.setDividerLocation(1500);
         add(splitPane, BorderLayout.CENTER);
