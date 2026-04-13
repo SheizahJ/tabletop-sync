@@ -1,29 +1,44 @@
 package tabletopsync.notepad.view;
 
-import tabletopsync.server.model.ServerModel;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.function.Consumer;
 
 public class NoteListPanel extends JPanel {
-    private JList<String> notesList;
+    private JList<File> notesList;
     private JButton newButton;
 
     public NoteListPanel() {
-        File[] files = ServerModel.NOTES_FOLDER.listFiles();
-        String[] notes = new String[files.length];
+        notesList = new JList<>();
 
-        for (int i = 0; i < files.length; i++) {
-            notes[i] = files[i].getName();
-        }
+        notesList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list,
+                                                          Object value,
+                                                          int index,
+                                                          boolean isSelected,
+                                                          boolean cellHasFocus) {
 
-        notesList = new JList<>(notes);
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+                if (value instanceof File) {
+                    setText(((File) value).getName());
+                }
+
+                return this;
+            }
+        });
+
         JScrollPane scrollPane = new JScrollPane(notesList);
         newButton = new JButton("new");
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(3,3,3,3);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
@@ -40,11 +55,29 @@ public class NoteListPanel extends JPanel {
         this.add(newButton,gbc);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(400,400);
-        frame.add(new NoteListPanel());
-        frame.setVisible(true);
+    public File getSelectedNote() {
+        return notesList.getSelectedValue();
+    }
+
+    public void setListModel(ListModel<File> model) {
+        notesList.setModel(model);
+    }
+
+    public void addNewButtonListener(ActionListener listener) {
+        newButton.addActionListener(listener);
+    }
+
+    public void onNoteDoubleClicked(Consumer<File> action) {
+        notesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = notesList.locationToIndex(e.getPoint());
+                    if (index >= 0) {
+                        action.accept(notesList.getModel().getElementAt(index));
+                    }
+                }
+            }
+        });
     }
 }
