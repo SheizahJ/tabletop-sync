@@ -1,5 +1,7 @@
 package tabletopsync.notepad.view;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -15,6 +17,12 @@ public class NotepadPanel extends JPanel {
     private final JButton backButton;
 
     public NotepadPanel() {
+        try {
+            UIManager.setLookAndFeel( new FlatLightLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
+
         titleField = new JTextField("Untitled*");
         lastSavedLabel = new JLabel("Last saved: ");
         notesArea = new JTextArea();

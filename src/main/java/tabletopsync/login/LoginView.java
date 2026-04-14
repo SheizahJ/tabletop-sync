@@ -1,5 +1,7 @@
 package tabletopsync.login;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -9,6 +11,11 @@ public class LoginView extends JDialog {
     private String submittedColor;
 
     public LoginView() throws IOException {
+        try {
+            UIManager.setLookAndFeel( new FlatLightLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
         super((Frame) null, "TableTopSync", true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setSize(800, 500);
@@ -36,8 +43,15 @@ public class LoginView extends JDialog {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
+//        if (color == null || color.trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this,
+//                    "Choose a color before continuing.",
+//                    "Color Required",
+//                    JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
         this.submittedUsername = username.trim();
-        this.submittedColor = color;
+//        this.submittedColor = color;
         this.dispose();
     }
 

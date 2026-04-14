@@ -1,5 +1,6 @@
 package tabletopsync.chatbox.view;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.chatbox.model.UserMenuModel;
 
 import javax.swing.*;
@@ -24,6 +25,12 @@ public class ChatArea extends JPanel {
     private final UserMenu userMenu;
 
     public ChatArea() {
+        try {
+            UIManager.setLookAndFeel( new FlatLightLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
+
         setLayout(new BorderLayout());
 
         JPanel top = new JPanel(new BorderLayout());

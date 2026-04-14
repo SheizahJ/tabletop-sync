@@ -22,6 +22,7 @@ public class TableTopGUI extends JFrame {
      * @param canvasView the in-game whiteboard area
      */
     public TableTopGUI(ChatView chatView, CanvasView canvasView) {
+
         this.setTitle("TableTopSync");
         this.setSize(1000, 800);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);

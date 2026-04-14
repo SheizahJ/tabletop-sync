@@ -1,10 +1,14 @@
+import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.view.CanvasView;
+
 import tabletopsync.chatbox.controller.ChatController;
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
+
 import tabletopsync.linker.TableTopGUI;
+
 import tabletopsync.login.LoginModel;
 import tabletopsync.login.LoginView;
 
@@ -23,6 +27,7 @@ import java.util.*;
 public class ClientMain extends JFrame {
     void main() {
         try {
+            FlatLightLaf.setup();
             Socket socket = new Socket("localhost", 8080);
 
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -33,14 +38,16 @@ public class ClientMain extends JFrame {
             loginView.setVisible(true);
 
             String username = loginView.getSubmittedUsername();
+//            String colorSelection = loginView.getSubmittedColor();
 
-            if (username == null) {
-                System.exit(0);
-            }
-
+            if (username == null) { System.exit(0); }
+//            if (colorSelection == null) { System.exit(0); }
             loginModel.setUsername(username);
+//            loginModel.setColor(colorSelection);
+
             // set color
             out.println(loginModel.getUsername()); // send username to server
+//            out.println(loginModel.getColor());
 
             // -----------------------
             // MVC setup

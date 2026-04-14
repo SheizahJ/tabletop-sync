@@ -1,6 +1,7 @@
 package tabletopsync.login;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class LoginComponents {
@@ -33,25 +34,27 @@ public class LoginComponents {
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setBackground(Color.LIGHT_GRAY);
-        rightPanel.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 60));
 
         JLabel loginLabel = new JLabel("Login");
         loginLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         loginLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel usernameLabel = new JLabel("Username: ");
+        usernameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JTextField usernameField = new JTextField();
         usernameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
         usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Build the button here so it can reference usernameField and dialogue directly
         JButton loginBtn = new JButton("Join the Server");
         loginBtn.setFocusPainted(false);
+        loginBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        loginBtn.setMargin(new Insets(5, 5, 5, 5));
         loginBtn.addActionListener(e -> {
-            // Read the field NOW, at click time, not at construction time
             String username = usernameField.getText();
-            dialogue.submit(username, null); // null color until colorPicker is wired up
+            dialogue.submit(username, null);
         });
 
         rightPanel.add(loginLabel);
@@ -59,13 +62,23 @@ public class LoginComponents {
         rightPanel.add(usernameLabel);
         rightPanel.add(usernameField);
         rightPanel.add(Box.createVerticalStrut(30));
-        rightPanel.add(colorPicker());
+        rightPanel.add(colorPicker(rightPanel));
         rightPanel.add(Box.createVerticalStrut(20));
         rightPanel.add(loginBtn);
         return rightPanel;
     }
 
-    public static JButton colorPicker() {
-        return new JButton("Pick a Colour");
+    public static JPanel colorPicker(JPanel panelBackground) {
+        // TODO: make a way for the user to see the current colour selected,
+        //  then push it to the server as their dedicated colour
+        JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        colorPanel.setBackground(panelBackground.getBackground());
+        colorPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        colorPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+
+        JButton redButton = new JButton("Red");
+        redButton.setBackground(Color.RED);
+        colorPanel.add(redButton);
+        return colorPanel;
     }
 }
