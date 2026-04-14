@@ -34,6 +34,14 @@ public class NoteListPanel extends JPanel {
         });
 
         JScrollPane scrollPane = new JScrollPane(notesList);
+
+        notesList.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createTitledBorder("Notes"),
+                        BorderFactory.createEmptyBorder(10,10,10,10)
+                )
+        );
+
         newButton = new JButton("new");
 
         this.setLayout(new GridBagLayout());

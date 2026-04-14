@@ -29,8 +29,6 @@ public class ClientMain extends JFrame {
 
             // TODO: replace this with proper GUI
             // ask username
-//            LoginView loginView = new LoginView();
-//            loginView.setVisible(true);
             String username = JOptionPane.showInputDialog("Enter username:");
             if (username == null || username.trim().isEmpty()) return;
 

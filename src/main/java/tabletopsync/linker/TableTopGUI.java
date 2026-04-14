@@ -103,22 +103,36 @@ public class TableTopGUI extends JFrame {
         // notepad panels
         JPanel notepadContainer = new JPanel(new BorderLayout());
         new NavigationController(notepadContainer);
+        notepadContainer.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
 
-        JPanel rightPanel = new JPanel(new BorderLayout());
-
-        rightPanel.add(chatView.panel, BorderLayout.CENTER);
-        rightPanel.add(notepadContainer, BorderLayout.SOUTH);
 
         // split screen
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                canvasWrapper,    // LEFT: canvas area with button
-                rightPanel    // RIGHT: chat
-        );
+        // Inner split: chat on top, notepad on bottom
+        JSplitPane splitPane = getJSplitPane(chatView, notepadContainer, canvasWrapper);
+        splitPane.setResizeWeight(0.75); // 75% canvas, 25% right panel
+
+        add(splitPane, BorderLayout.CENTER);
         splitPane.setDividerLocation(1500);
         add(splitPane, BorderLayout.CENTER);
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private static JSplitPane getJSplitPane(ChatView chatView, JPanel notepadContainer, JPanel canvasWrapper) {
+        JSplitPane rightSplitPane = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                chatView.panel,       // TOP: chat
+                notepadContainer      // BOTTOM: notepad
+        );
+        rightSplitPane.setResizeWeight(0.6); // 60% chat, 40% notepad
+
+// Outer split: canvas on left, right split on right
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                canvasWrapper,        // LEFT: canvas
+                rightSplitPane        // RIGHT: chat + notepad stacked
+        );
+        return splitPane;
     }
 }

@@ -83,7 +83,6 @@ public class ClientHandler extends Thread {
      */
     private static void broadcast(String message) {
         for (ClientHandler client : ServerModel.clients.values()) {
-            System.out.println(client);
             client.sendMessage(message);
         }
     }
