@@ -5,6 +5,7 @@ import tabletopsync.chatbox.controller.ChatController;
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.linker.TableTopGUI;
+import tabletopsync.login.LoginModel;
 import tabletopsync.login.LoginView;
 
 import javax.swing.*;
@@ -27,24 +28,31 @@ public class ClientMain extends JFrame {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // TODO: replace this with proper GUI
-            // ask username
-            String username = JOptionPane.showInputDialog("Enter username:");
-            if (username == null || username.trim().isEmpty()) return;
+            LoginModel loginModel = new LoginModel();
+            LoginView loginView = new LoginView();
+            loginView.setVisible(true);
 
-            out.println(username); // send username to server
+            String username = loginView.getSubmittedUsername();
+
+            if (username == null) {
+                System.exit(0);
+            }
+
+            loginModel.setUsername(username);
+            // set color
+            out.println(loginModel.getUsername()); // send username to server
 
             // -----------------------
             // MVC setup
             // -----------------------
             ChatModel chatModel = new ChatModel();
-            ChatView chatView = new ChatView(username);
+            ChatView chatView = new ChatView(loginModel.getUsername());
             ChatController chatController = new ChatController(chatView, socket, out);
 
             CanvasModel canvasModel = new CanvasModel();
 
             // rami's stuff
-            canvasModel.setUsername(username);
+            canvasModel.setUsername(loginModel.getUsername());
 
             CanvasController canvasController = new CanvasController(canvasModel);
 
@@ -98,7 +106,7 @@ public class ClientMain extends JFrame {
 
                                 // only initializes current client
                                 String givenUser = parts[1];
-                                if (givenUser.equals(username)) {
+                                if (givenUser.equals(loginModel.getUsername())) {
                                     // creates client-only sprites
                                     if (parts.length == 2) {
                                         // FOR TESTING PURPOSES: Creates default sprites
