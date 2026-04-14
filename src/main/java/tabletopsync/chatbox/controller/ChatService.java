@@ -1,24 +1,19 @@
 package tabletopsync.chatbox.controller;
 
-import javax.swing.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Handles server-side client list and message broadcasting
+ */
 public class ChatService {
 
-    public static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>(); // thread-safe hashmap
+    public static final Map<String, ChatClientHandler> clients = new ConcurrentHashMap<>(); // thread-safe hashmap
 
     /**
      * Broadcasts the current list of connected users to all clients.
      *
-     * <p>Constructs a message prefixed with {@code USER_LIST:} followed by a
-     * comma-separated list of usernames, then sends it to every connected client.
-     * Clients use this prefix to distinguish user list updates from chat messages.</p>
-     *
-     * <p>This method is called automatically whenever a user joins or leaves,
-     * keeping all clients' user panels in sync.</p>
-     *
-     * <p>Example message format: {@code USER_LIST:alice,bob,charlie}</p>
+     * Constructs a message prefixed with USER_LIST: followed by a comma-separated list of usernames.
      */
     public static void broadcastUserList() {
         String userListMessage = "USER_LIST:" + String.join(",", clients.keySet());
@@ -29,7 +24,7 @@ public class ChatService {
      * This adds client to the list of clients for the server to handle
      * @param client each instance of the application the user opens to connect to the server
      */
-    public static void addClient(ClientHandler client) {
+    public static void addClient(ChatClientHandler client) {
         String username = client.getUsername();
 
         if (username == null || username.isBlank()) return;
@@ -43,7 +38,7 @@ public class ChatService {
      * This removes the client from the list of clients for the server to handle
      * @param client each instance of the application the user opens to connect to the server
      */
-    public static void removeClient(ClientHandler client) {
+    public static void removeClient(ChatClientHandler client) {
         clients.remove(client.getUsername());
         System.out.println(client.getUsername() + " has been removed");
         broadcastUserList();
@@ -54,7 +49,7 @@ public class ChatService {
      * @param message the message being sent from a user
      */
     public static void broadcast(String message) {
-        for (ClientHandler client : clients.values()) { client.sendMessage(message); }
+        for (ChatClientHandler client : clients.values()) { client.sendMessage(message); }
     }
 
     /**

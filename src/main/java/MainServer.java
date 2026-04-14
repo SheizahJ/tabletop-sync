@@ -1,22 +1,25 @@
-import tabletopsync.chatbox.controller.ClientHandler;
+import tabletopsync.server.view.ServerView;
+import tabletopsync.server.controller.ServerMainController;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import javax.swing.*;
 
+/**
+ * Entry point for the server application
+ * - Launches server GUI
+ * - Starts ServerMainController on defined port
+ */
 public class MainServer {
+    static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            // Create server GUI
+            ServerView serverView = new ServerView();
 
-    public static void main(String[] args) {
-        System.out.println("Server running on port 8080");
+            // Create controller and start listening on port 8080
+            ServerMainController controller = new ServerMainController(serverView);
+            controller.startServer(8080);
 
-        try (ServerSocket serverSocket = new ServerSocket(8080)) {
-
-            while (true) {
-                Socket socket = serverSocket.accept();
-                new ClientHandler(socket).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            // Make GUI visible
+            serverView.setVisible(true);
+        });
     }
 }
