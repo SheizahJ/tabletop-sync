@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 /**
@@ -27,6 +28,7 @@ public class TableTopGUI extends JFrame {
         this.setSize(1000, 800);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setJMenuBar(createMenuBar());
 
         setLayout(new BorderLayout());
 
@@ -134,5 +136,49 @@ public class TableTopGUI extends JFrame {
                 canvasWrapper,        // LEFT: canvas
                 rightSplitPane        // RIGHT: chat + notepad stacked
         );
+    }
+
+    private JMenuBar createMenuBar() {
+        /*
+            TODO:
+             - create the following JMenus':
+                - File
+                    - Exit
+                - Communications
+                    - Show/Hide Active Users
+                    - Show/Hide System Messages
+                    - Show/Hide Chat
+                    - Show/Hide Notepad
+                    - Clear Chat
+                    - Clear System Logs
+                - Canvas
+                    - Add Sprite
+                    - Load Map
+                    - Clear Canvas
+                - Notes
+                    - Add Existing Note
+                - Appearance
+                    - Dark/Light Mode
+                - Help
+                    - About
+                    - Controls
+
+         */
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        JMenu commsMenu = new JMenu("Communications");
+        JMenu canvasMenu = new JMenu("Canvas");
+        JMenu notesMenu = new JMenu("Notes");
+        JMenu appearanceMenu = new JMenu("Appearance");
+        JMenu helpMenu = new JMenu("Help");
+
+        menuBar.add(fileMenu);
+        menuBar.add(commsMenu);
+        menuBar.add(canvasMenu);
+        menuBar.add(notesMenu);
+        menuBar.add(appearanceMenu);
+        menuBar.add(helpMenu);
+        return menuBar;
     }
 }
