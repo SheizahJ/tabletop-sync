@@ -1,10 +1,13 @@
 package tabletopsync.chatbox.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.login.LoginView;
+import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 import tabletopsync.chatbox.view.ChatView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
@@ -24,6 +27,8 @@ public class ChatController {
     private final ChatView view;
     private final PrintWriter out;
     public Socket socket;
+
+    private LoginView loginView;
 
     /**
      * This is the main "brain" of the communications aspect of this application.
@@ -47,15 +52,35 @@ public class ChatController {
         List<MessageObject> systemHistory = PersistenceService.loadSystemMessages();
 
         SwingUtilities.invokeLater(() -> {
-            // Load system logs
             for (MessageObject msg : systemHistory) {
-                view.getChatArea().appendMessage(msg.getMessage());
+                view.getChatArea().appendMessage(
+                        "SYSTEM",
+                        msg.getMessage(),
+                        Color.GRAY
+                );
             }
 
-            // Load chat messages
             for (MessageObject msg : chatHistory) {
-                String formatted = msg.getUsername() + ": " + msg.getMessage();
-                view.getChatArea().appendMessage(formatted);
+
+                String username = msg.getUsername();
+                String message = msg.getMessage();
+
+                String rgb = ServerModel.userColours.get(username);
+
+                Color color = Color.WHITE; // fallback colour
+
+                if (rgb != null) {
+                    try {
+                        String[] parts = rgb.split(",");
+                        color = new Color(
+                                Integer.parseInt(parts[0]),
+                                Integer.parseInt(parts[1]),
+                                Integer.parseInt(parts[2])
+                        );
+                    } catch (Exception ignored) {}
+                }
+
+                view.getChatArea().appendMessage(username, message, color);
             }
         });
     }
@@ -81,11 +106,44 @@ public class ChatController {
 
         if (message.startsWith("USER_LIST:")) {
             String[] users = message.substring(10).split(",");
-            SwingUtilities.invokeLater(() -> view.getChatArea().updateUsers(Arrays.asList(users)));
+            SwingUtilities.invokeLater(() ->
+                    view.getChatArea().updateUsers(Arrays.asList(users))
+            );
+            return;
         }
-        else {
-            SwingUtilities.invokeLater(() -> view.getChatArea().appendMessage(message));
+
+        if (!message.contains(":")) {
+            SwingUtilities.invokeLater(() ->
+                    view.getChatArea().appendMessage("SYSTEM", message, Color.GRAY)
+            );
+            return;
         }
+
+
+        String[] parts = message.split(":", 2);
+        String username = parts[0];
+        String msg = parts[1].trim();
+
+        String rgb = ServerModel.userColours.get(username);
+
+        Color color = Color.WHITE; // fallback
+
+        if (rgb != null) {
+            try {
+                String[] c = rgb.split(",");
+                color = new Color(
+                        Integer.parseInt(c[0]),
+                        Integer.parseInt(c[1]),
+                        Integer.parseInt(c[2])
+                );
+            } catch (Exception ignored) {}
+        }
+
+        Color finalColor = color;
+
+        SwingUtilities.invokeLater(() ->
+                view.getChatArea().appendMessage(username, msg, finalColor)
+        );
     }
 
     /**

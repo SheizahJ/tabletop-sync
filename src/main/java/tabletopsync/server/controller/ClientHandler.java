@@ -1,6 +1,8 @@
 package tabletopsync.server.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.login.LoginModel;
+import tabletopsync.login.LoginView;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
@@ -214,6 +216,16 @@ public class ClientHandler extends Thread {
                         sendMessage("ERROR: Invalid sprite add format");
                     }
                 }
+                else if (message.startsWith("COLOR_SELECT:")) {
+                    try {
+                        String RGB = message.substring("COLOR_SELECT:".length());
+                        ServerModel.userColours.put(username, RGB);
+                        broadcast("COLOR_SELECT:" + username + ":" + RGB);
+                    }
+                    catch (Exception e) {
+                        sendMessage("ERROR: Invalid color format");
+                    }
+                }
                 // -------------------------------
                 // Regular chat message
                 // -------------------------------
@@ -230,7 +242,6 @@ public class ClientHandler extends Thread {
                     if (isNewMessage(chatMsg)) {
                         PersistenceService.saveChatMessage(chatMsg);
                     }
-
                 }
             }
         } catch (IOException e) {

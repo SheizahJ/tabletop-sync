@@ -16,20 +16,23 @@ import java.util.List;
  */
 public class ChatArea extends JPanel {
 
-    private final JTextArea chatTextArea;
+    private final JPanel chatPanel;
     private final JTextArea systemTextArea;
+    private final Color selectedColour;
 
     public JTextField textField;
     public JButton sendButton;
 
     private final UserMenu userMenu;
 
-    public ChatArea() {
+    public ChatArea(Color selectedColour) {
         try {
             UIManager.setLookAndFeel( new FlatLightLaf() );
         } catch( Exception ex ) {
             System.err.println( "Failed to initialize LaF" );
         }
+
+        this.selectedColour = selectedColour;
 
         setLayout(new BorderLayout());
 
@@ -54,17 +57,10 @@ public class ChatArea extends JPanel {
 
         JPanel center = new JPanel(new BorderLayout());
 
-        chatTextArea = new JTextArea();
-        chatTextArea.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createTitledBorder("Communications"),
-                        BorderFactory.createEmptyBorder(15,15,15,15)
-                )
-        );
-        chatTextArea.setMargin(new Insets(5, 5, 5, 5));
-        chatTextArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        chatTextArea.setLineWrap(true);
-        chatTextArea.setEditable(false);
+        chatPanel = new JPanel();
+        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+
+        JScrollPane chatScroll = new JScrollPane(chatPanel);
 
         systemTextArea = new JTextArea();
         systemTextArea.setBorder(
@@ -82,7 +78,7 @@ public class ChatArea extends JPanel {
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(systemTextArea),
-                new JScrollPane(chatTextArea)
+                new JScrollPane(chatScroll)
         );
         splitPane.setDividerLocation(150);
         splitPane.setResizeWeight(0.3);
@@ -101,20 +97,34 @@ public class ChatArea extends JPanel {
 
     /**
      * Prints the message onto the chat or system area
-     * @param msg the message to display
+     * @param username your username
+     * @param message your message
+     * @param color the assigned colour to the user
      */
-    public void appendMessage(String msg) {
-        // Ignore user list messages
-        if (msg.startsWith("USER_LIST")) return;
+    public void appendMessage(String username, String message, Color color) {
 
-        // System messages
-        if (msg.contains("joined") || msg.contains("left") || msg.contains("disconnected")) {
-            systemTextArea.append(msg + "\n");
+        if (username.equals("SYSTEM")) {
+            systemTextArea.append(message + "\n");
             systemTextArea.setCaretPosition(systemTextArea.getDocument().getLength());
-        } else {
-            chatTextArea.append(msg + "\n");
-            chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
+            return;
         }
+
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row.setOpaque(false);
+
+        JPanel colorBox = new JPanel();
+        colorBox.setBackground(color);
+        colorBox.setPreferredSize(new Dimension(12, 12));
+
+        JLabel label = new JLabel("<html><b>" + username + ":</b> " + message + "</html>");
+
+        row.add(colorBox);
+        row.add(Box.createHorizontalStrut(5));
+        row.add(label);
+
+        chatPanel.add(row);
+        chatPanel.revalidate();
+        chatPanel.repaint();
     }
 
     /**
@@ -123,5 +133,18 @@ public class ChatArea extends JPanel {
      */
     public void updateUsers(List<String> users) {
         userMenu.updateUsers(users);
+    }
+
+    @Override public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // rectangle
+        g.setColor(selectedColour);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // border
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, getWidth(), getHeight());
+
     }
 }

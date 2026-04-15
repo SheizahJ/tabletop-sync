@@ -11,8 +11,10 @@ import tabletopsync.linker.TableTopGUI;
 
 import tabletopsync.login.LoginModel;
 import tabletopsync.login.LoginView;
+import tabletopsync.server.model.ServerModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
@@ -25,7 +27,7 @@ import java.util.*;
  */
 
 public class ClientMain extends JFrame {
-    void main() {
+   public static void main(String[] args) {
         try {
             FlatLightLaf.setup();
             Socket socket = new Socket("localhost", 8080);
@@ -38,22 +40,24 @@ public class ClientMain extends JFrame {
             loginView.setVisible(true);
 
             String username = loginView.getSubmittedUsername();
-//            String colorSelection = loginView.getSubmittedColor();
+            Color colorSelection = loginView.getSubmittedColor();
 
             if (username == null) { System.exit(0); }
-//            if (colorSelection == null) { System.exit(0); }
-            loginModel.setUsername(username);
-//            loginModel.setColor(colorSelection);
+            if (colorSelection == null) { System.exit(0); }
 
-            // set color
+            loginModel.setUsername(username);
             out.println(loginModel.getUsername()); // send username to server
-//            out.println(loginModel.getColor());
+
+            String rgb = colorSelection.getRed() + "," +
+                    colorSelection.getGreen() + "," +
+                    colorSelection.getBlue();
+
+            out.println("COLOR_SELECT:" + rgb);
 
             // -----------------------
             // MVC setup
             // -----------------------
-            ChatModel chatModel = new ChatModel();
-            ChatView chatView = new ChatView(loginModel.getUsername());
+            ChatView chatView = new ChatView(loginModel.getUsername(), colorSelection);
             ChatController chatController = new ChatController(chatView, socket, out);
 
             CanvasModel canvasModel = new CanvasModel();
@@ -84,7 +88,7 @@ public class ClientMain extends JFrame {
 
             // TODO: reorient this to print to the server to update the location and broadcast it!!!!
 
-//        // attach network listener for canvas movement
+        // attach network listener for canvas movement
 //        canvasController.setNetworkListener((x, y) -> out.println("CANVAS:" + x + "," + y));
 
             SwingUtilities.invokeLater(() -> new TableTopGUI(chatView, canvasView));
@@ -119,8 +123,8 @@ public class ClientMain extends JFrame {
                                         // FOR TESTING PURPOSES: Creates default sprites
                                         System.out.println("Adding Default Sprites...");
                                         out.println("SPRITE_ADD:" + UUID.randomUUID() + ":/test_images/mario.png:0:0");
-                                        out.println("SPRITE_ADD:" + UUID.randomUUID() + ":/test_images/mario.png:0:0");
-                                        out.println("SPRITE_ADD:" + UUID.randomUUID() + ":/test_images/mario.png:0:0");
+                                        out.println("SPRITE_ADD:" + UUID.randomUUID() + ":/test_images/mario.png:100:100");
+                                        out.println("SPRITE_ADD:" + UUID.randomUUID() + ":/test_images/mario.png:200:200");
                                     } else {
                                         String[] sprites = parts[2].split(",");
                                         for (String sprite : sprites) {
@@ -151,7 +155,6 @@ public class ClientMain extends JFrame {
 
                                 if (sprite != null) {
                                     sprite.move(x, y);
-
                                     SwingUtilities.invokeLater(canvasController::repaint);
                                 }
                             } catch (Exception e) {
@@ -173,6 +176,24 @@ public class ClientMain extends JFrame {
                                 }
                             } catch (Exception e) {
                                 System.err.println("Invalid sprite add update: " + line);
+                            }
+                        }
+                        else if (line.startsWith("COLOR_SELECT:")) {
+                            try {
+                                String[] parts = line.split(":");
+
+                                String user = parts[1];
+                                String[] colourArray = parts[2].split(",");
+
+                                int r = Integer.parseInt(colourArray[0]);
+                                int g = Integer.parseInt(colourArray[1]);
+                                int b = Integer.parseInt(colourArray[2]);
+
+                                Color color = new Color(r, g, b);
+                                ServerModel.userColours.put(user, parts[2]); // store "r,g,b";
+
+                            } catch (Exception e) {
+                                System.err.println("Invalid color broadcast: " + line);
                             }
                         }
                         else {

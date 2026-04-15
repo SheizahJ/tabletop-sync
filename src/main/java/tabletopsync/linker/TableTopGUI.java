@@ -110,7 +110,7 @@ public class TableTopGUI extends JFrame {
         // split screen
         // Inner split: chat on top, notepad on bottom
         JSplitPane splitPane = getJSplitPane(chatView, notepadContainer, canvasWrapper);
-        splitPane.setResizeWeight(0.75); // 75% canvas, 25% right panel
+        splitPane.setResizeWeight(0.50); // 50% canvas, 50% right panel apparently
 
         add(splitPane, BorderLayout.CENTER);
         splitPane.setDividerLocation(1500);
@@ -128,12 +128,11 @@ public class TableTopGUI extends JFrame {
         );
         rightSplitPane.setResizeWeight(0.6); // 60% chat, 40% notepad
 
-// Outer split: canvas on left, right split on right
-        JSplitPane splitPane = new JSplitPane(
+        // Outer split: canvas on left, right split on right
+        return new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 canvasWrapper,        // LEFT: canvas
                 rightSplitPane        // RIGHT: chat + notepad stacked
         );
-        return splitPane;
     }
 }

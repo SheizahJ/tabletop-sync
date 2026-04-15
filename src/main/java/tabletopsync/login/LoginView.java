@@ -7,8 +7,9 @@ import java.awt.*;
 import java.io.IOException;
 
 public class LoginView extends JDialog {
+    static LoginModel.ColourSwatch selectedSwatch;
     private String submittedUsername;
-    private String submittedColor;
+    private Color submittedColor;
 
     public LoginView() throws IOException {
         try {
@@ -21,6 +22,8 @@ public class LoginView extends JDialog {
         this.setSize(800, 500);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
+
+        selectedSwatch = new LoginModel.ColourSwatch(Color.WHITE);
 
         JPanel panel = new JPanel(new BorderLayout());
         JSplitPane splitPane = new JSplitPane(
@@ -35,7 +38,7 @@ public class LoginView extends JDialog {
     }
 
     // Called by your login button in LoginComponents
-    public void submit(String username, String color) {
+    public void submit(String username) {
         if (username == null || username.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Please enter a username before continuing.",
@@ -43,18 +46,21 @@ public class LoginView extends JDialog {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-//        if (color == null || color.trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(this,
-//                    "Choose a color before continuing.",
-//                    "Color Required",
-//                    JOptionPane.WARNING_MESSAGE);
-//            return;
-//        }
+
+        if (selectedSwatch == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a colour before continuing.",
+                    "Colour Required",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
         this.submittedUsername = username.trim();
-//        this.submittedColor = color;
+        this.submittedColor = selectedSwatch.getColour();
         this.dispose();
     }
 
     public String getSubmittedUsername() { return submittedUsername; }
-    public String getSubmittedColor()    { return submittedColor; }
+    public Color getSubmittedColor()    { return submittedColor; }
 }
