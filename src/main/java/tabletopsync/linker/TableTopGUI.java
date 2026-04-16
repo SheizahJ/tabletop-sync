@@ -39,7 +39,7 @@ public class TableTopGUI extends JFrame {
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        canvasTopBar.setBackground(Color.WHITE);
+        canvasTopBar.setBackground(new Color(0,0,0,0));
 
         JButton addSpriteButton = new JButton("Add Sprite");
 

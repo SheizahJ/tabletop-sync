@@ -55,6 +55,13 @@ public class ClientHandler extends Thread {
         }
     }
 
+    private void sendExistingColours() {
+        for (String user : ServerModel.userColours.keySet()) {
+            String rgb = ServerModel.userColours.get(user);
+            sendMessage("COLOR_SELECT:" + user + ":" + rgb);
+        }
+    }
+
     /**
      * Unregisters the client and broadcasts a system message.
      */
@@ -134,6 +141,10 @@ public class ClientHandler extends Thread {
 
             // Register client
             registerClient();
+
+            // broadcast the colours of the existing users
+            // NOTE: there was an issue with colours not showing properly for later users so this is a quick fix.
+            sendExistingColours();
 
             // Listen for messages
             String message;
