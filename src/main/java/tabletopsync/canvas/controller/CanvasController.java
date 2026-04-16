@@ -4,6 +4,7 @@ import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
+import tabletopsync.login.LoginView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,9 +31,11 @@ public class CanvasController extends JPanel {
     public final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
 
+    public Color colorSelection;
 
-    public CanvasController(CanvasModel model) {
+    public CanvasController(CanvasModel model, Color colorSelection) throws IOException {
         this.model = model;
+        this.colorSelection = colorSelection;
         spritePopup = new SpritePopup(this, model);
         setBackground(Color.WHITE);
 
@@ -295,7 +298,7 @@ public class CanvasController extends JPanel {
                 Rectangle r = box.getBounds();
 
                 // draw border
-                g2.setColor(Color.decode("#DDBBFF")); // TODO: change to player's colour
+                g2.setColor(colorSelection);
                 g2.setStroke(new BasicStroke(2));
                 g2.drawRect(r.x, r.y, r.width, r.height);
 

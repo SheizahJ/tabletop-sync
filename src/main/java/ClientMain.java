@@ -65,7 +65,7 @@ public class ClientMain extends JFrame {
             // rami's stuff
             canvasModel.setUsername(loginModel.getUsername());
 
-            CanvasController canvasController = new CanvasController(canvasModel);
+            CanvasController canvasController = new CanvasController(canvasModel, colorSelection);
 
             canvasController.setCanvasListener(new CanvasController.CanvasUpdateListener() {
                 @Override
