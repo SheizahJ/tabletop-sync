@@ -1,10 +1,8 @@
 package tabletopsync.server.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.server.controller.ClientHandler;
 
-import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;

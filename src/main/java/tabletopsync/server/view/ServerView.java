@@ -1,6 +1,7 @@
 package tabletopsync.server.view;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
@@ -15,8 +16,11 @@ public class ServerView extends JFrame {
     public ServerView() {
         Font font = new Font("SansSerif", Font.PLAIN, 15);
 
-        try { UIManager.setLookAndFeel(new FlatMacDarkLaf()); }
-        catch (Exception e) { e.printStackTrace(); }
+        try {
+            UIManager.setLookAndFeel(new FlatMacDarkLaf());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         setTitle("Server");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

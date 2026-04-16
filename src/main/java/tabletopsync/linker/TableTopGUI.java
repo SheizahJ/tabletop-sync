@@ -1,9 +1,7 @@
 package tabletopsync.linker;
 
-import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.view.CanvasView;
-
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.notepad.controller.NavigationController;
 
@@ -21,7 +19,7 @@ import java.io.File;
 public class TableTopGUI extends JFrame {
 
     /**
-     * @param chatView the in-game chat GUI
+     * @param chatView   the in-game chat GUI
      * @param canvasView the in-game whiteboard area
      */
     public TableTopGUI(ChatView chatView, CanvasView canvasView) {
@@ -39,7 +37,7 @@ public class TableTopGUI extends JFrame {
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        canvasTopBar.setBackground(new Color(0,0,0,0));
+        canvasTopBar.setBackground(new Color(0, 0, 0, 0));
 
         JButton addSpriteButton = new JButton("Add Sprite");
 
@@ -92,8 +90,7 @@ public class TableTopGUI extends JFrame {
         snapToGrid.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 canvasController.model.setSnapToGridState(true);
-            }
-            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
                 canvasController.model.setSnapToGridState(false);
             }
         });
@@ -108,7 +105,7 @@ public class TableTopGUI extends JFrame {
         // notepad panels
         JPanel notepadContainer = new JPanel(new BorderLayout());
         new NavigationController(notepadContainer);
-        notepadContainer.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
+        notepadContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
 
         // split screen
@@ -146,7 +143,9 @@ public class TableTopGUI extends JFrame {
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         JMenuItem ExitMenuItem = new JMenuItem("Exit");
-        ExitMenuItem.addActionListener(e -> { System.exit(0); });
+        ExitMenuItem.addActionListener(e -> {
+            System.exit(0);
+        });
         fileMenu.add(ExitMenuItem);
         menuBar.add(fileMenu);
         return menuBar;

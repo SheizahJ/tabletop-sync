@@ -19,17 +19,15 @@ public class ChatArea extends JPanel {
     private final JPanel chatPanel;
     private final JTextArea systemTextArea;
     private final Color selectedColour;
-
+    private final UserMenu userMenu;
     public JTextField textField;
     public JButton sendButton;
 
-    private final UserMenu userMenu;
-
     public ChatArea(Color selectedColour) {
         try {
-            UIManager.setLookAndFeel( new FlatLightLaf() );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
         }
 
         this.selectedColour = selectedColour;
@@ -66,7 +64,7 @@ public class ChatArea extends JPanel {
         systemTextArea.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Systems"),
-                        BorderFactory.createEmptyBorder(10,10,10,10)
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
                 )
         );
         systemTextArea.setMargin(new Insets(5, 5, 5, 5));
@@ -87,7 +85,7 @@ public class ChatArea extends JPanel {
         add(center, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
-        bottom.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
+        bottom.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
         textField = new JTextField();
         sendButton = new JButton("SEND");
         bottom.add(textField, BorderLayout.CENTER);
@@ -97,9 +95,10 @@ public class ChatArea extends JPanel {
 
     /**
      * Prints the message onto the chat or system area
+     *
      * @param username your username
-     * @param message your message
-     * @param color the assigned colour to the user
+     * @param message  your message
+     * @param color    the assigned colour to the user
      */
     public void appendMessage(String username, String message, Color color) {
 
@@ -129,13 +128,15 @@ public class ChatArea extends JPanel {
 
     /**
      * Updates the displayed user list
+     *
      * @param users current usernames
      */
     public void updateUsers(List<String> users) {
         userMenu.updateUsers(users);
     }
 
-    @Override public void paintComponent(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         // rectangle

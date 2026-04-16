@@ -1,6 +1,5 @@
 package tabletopsync.server.controller;
 
-import tabletopsync.server.controller.ClientHandler;
 import tabletopsync.server.view.ServerView;
 
 import javax.swing.*;
@@ -11,7 +10,7 @@ import java.net.Socket;
 /**
  * ServerMainController:
  * Main entry point for server logic
- *
+ * <p>
  * READ------------------>
  * WHAT IT HANDLES:
  * - Starting the server socket
@@ -26,6 +25,7 @@ public class ServerMainController {
 
     /**
      * Server controller constructor
+     *
      * @param view the server GUI for logging
      */
     public ServerMainController(ServerView view) {
@@ -38,6 +38,7 @@ public class ServerMainController {
 
     /**
      * Starts the server
+     *
      * @param port --> port #
      */
     public void startServer(int port) {
@@ -67,6 +68,7 @@ public class ServerMainController {
 
     /**
      * Adds messages to the server GUI log
+     *
      * @param message the message to display
      */
     public void sendServerLog(String message) {

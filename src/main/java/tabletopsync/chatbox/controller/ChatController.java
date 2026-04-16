@@ -1,10 +1,10 @@
 package tabletopsync.chatbox.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.login.LoginView;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
-import tabletopsync.chatbox.view.ChatView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * This is the main "brain" of the communications aspect of this application.
- *
+ * <p>
  * Handles:
  * - Sending messages from client to server
  * - Receiving messages from server
@@ -33,9 +33,9 @@ public class ChatController {
     /**
      * This is the main "brain" of the communications aspect of this application.
      *
-     * @param view The GUI for the chat
+     * @param view   The GUI for the chat
      * @param socket The connection over the internet
-     * @param out The text coming from the server to the GUI
+     * @param out    The text coming from the server to the GUI
      */
     public ChatController(ChatView view, Socket socket, PrintWriter out) {
         this.view = view;
@@ -77,7 +77,8 @@ public class ChatController {
                                 Integer.parseInt(parts[1]),
                                 Integer.parseInt(parts[2])
                         );
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
 
                 view.getChatArea().appendMessage(username, message, color);
@@ -100,6 +101,7 @@ public class ChatController {
     /**
      * This takes the text from the user and puts it into the text area
      * MODIFICATION: Persistence in messages serverwide
+     *
      * @param message the message that you want to send over the network
      */
     public void receive(String message) {
@@ -136,7 +138,8 @@ public class ChatController {
                         Integer.parseInt(c[1]),
                         Integer.parseInt(c[2])
                 );
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         Color finalColor = color;
@@ -150,8 +153,12 @@ public class ChatController {
      * Closes the instance of client
      */
     public void shutdown() {
-        try { if (socket != null && !socket.isClosed()) { socket.close(); } }
-        catch (Exception ignored) {}
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (Exception ignored) {
+        }
         System.exit(0);
     }
 }

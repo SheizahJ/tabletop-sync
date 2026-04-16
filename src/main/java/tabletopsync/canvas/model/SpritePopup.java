@@ -1,6 +1,7 @@
 package tabletopsync.canvas.model;
 
 import tabletopsync.canvas.controller.CanvasController;
+
 import javax.swing.*;
 import java.awt.*;
 

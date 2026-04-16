@@ -16,6 +16,7 @@ public class UserMenu extends JPanel {
 
     /**
      * Constructs the user menu panel backed by the given model.
+     *
      * @param model the data model providing the list of connected usernames
      */
     public UserMenu(UserMenuModel model) {
@@ -27,6 +28,7 @@ public class UserMenu extends JPanel {
 
     /**
      * Updates the displayed user list with the provided usernames
+     *
      * @param users the current list of connected usernames
      */
     public void updateUsers(List<String> users) {

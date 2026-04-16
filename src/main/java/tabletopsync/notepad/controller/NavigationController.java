@@ -24,6 +24,20 @@ public class NavigationController {
         showList();
     }
 
+    // Temporary main for testing
+    static void main(String[] args) {
+        JFrame frame = new JFrame("TabletopSync");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(500, 500);
+
+        JPanel mainContainer = new JPanel(new BorderLayout());
+        frame.add(mainContainer);
+
+        new NavigationController(mainContainer);
+
+        frame.setVisible(true);
+    }
+
     private void setupListViewListeners() {
         listView.onNoteDoubleClicked(this::showEditor);
         listView.addNewButtonListener(e -> showEditor(null));
@@ -56,19 +70,5 @@ public class NavigationController {
             JOptionPane.showMessageDialog(container, "Could not open note: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    // Temporary main for testing
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("TabletopSync");
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
-
-        JPanel mainContainer = new JPanel(new BorderLayout());
-        frame.add(mainContainer);
-
-        new NavigationController(mainContainer);
-
-        frame.setVisible(true);
     }
 }

@@ -4,34 +4,31 @@ import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
-import tabletopsync.login.LoginView;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
-    private final SpritePopup spritePopup;
-    private Point lastCameraPoint;
-    private Point selectedOffset;
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
+    public final CanvasModel model;
+    private final SpritePopup spritePopup;
+    public Color colorSelection;
+    private Point lastCameraPoint;
+    private Point selectedOffset;
     private Point mapResizeStartPoint;
     private Dimension mapResizeStartSize;
-
-    public final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
-
-    public Color colorSelection;
 
     public CanvasController(CanvasModel model, Color colorSelection) throws IOException {
         this.model = model;
@@ -147,7 +144,8 @@ public class CanvasController extends JPanel {
     /**
      * draws sprite
      */
-    @Override protected void paintComponent(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
@@ -316,27 +314,33 @@ public class CanvasController extends JPanel {
         this.networkListener = listener;
     }
 
-    // interface for server updates
-    public interface CanvasUpdateListener {
-        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
-        void onSpriteMoved(String uuid, int x, int y);
-    }
-
     public void setCanvasListener(CanvasUpdateListener listener) {
         this.networkListener = listener;
     }
 
+    // interface for server updates
+    public interface CanvasUpdateListener {
+        void onSpriteAdded(String uuid, String resourcePath, int x, int y);
+
+        void onSpriteMoved(String uuid, int x, int y);
+    }
+
     public class CanvasMouseAdapter extends MouseAdapter {
-        @Override public void mousePressed(MouseEvent e) {
+        @Override
+        public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON2) {
                 lastCameraPoint = e.getPoint();
                 model.setCameraCanMove(true);
             }
         }
 
-        @Override public void mouseReleased(MouseEvent e) { model.setCameraCanMove(false); }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            model.setCameraCanMove(false);
+        }
 
-        @Override public void mouseDragged(MouseEvent e) {
+        @Override
+        public void mouseDragged(MouseEvent e) {
             if (model.canCameraMove()) {
                 int dx = e.getX() - lastCameraPoint.x;
                 int dy = e.getY() - lastCameraPoint.y;
@@ -365,8 +369,8 @@ public class CanvasController extends JPanel {
             }
 
             // get the mouse click coordinates
-            int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-            int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+            int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+            int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
             // start resizing map if the handle is clicked
             if (model.getMapImage() != null && getMapResizeHandleBounds().contains(worldX, worldY)) {
@@ -405,8 +409,8 @@ public class CanvasController extends JPanel {
         @Override
         public void mouseDragged(MouseEvent e) {
             if (model.isMapResizing()) {
-                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+                int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
                 int newWidth = mapResizeStartSize.width + (worldX - mapResizeStartPoint.x);
                 int newHeight = mapResizeStartSize.height + (worldY - mapResizeStartPoint.y);
@@ -418,18 +422,18 @@ public class CanvasController extends JPanel {
                 repaint();
                 return;
             }
-            
+
             if (model.isSelecting() && !model.getSelectedSprite().isLocked()) {
-                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+                int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
                 int targetX = worldX + selectedOffset.x;
                 int targetY = worldY + selectedOffset.y;
 
                 if (model.snapsToGrid()) {
                     int grid = CanvasModel.GRID_SIZE;
-                    targetX = Math.round((float)targetX / grid) * grid;
-                    targetY = Math.round((float)targetY / grid) * grid;
+                    targetX = Math.round((float) targetX / grid) * grid;
+                    targetY = Math.round((float) targetY / grid) * grid;
                 }
 
                 model.getSelectedSprite().move(targetX, targetY);

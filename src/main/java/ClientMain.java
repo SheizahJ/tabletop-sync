@@ -2,22 +2,21 @@ import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.view.CanvasView;
-
 import tabletopsync.chatbox.controller.ChatController;
-import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
-
 import tabletopsync.linker.TableTopGUI;
-
 import tabletopsync.login.LoginModel;
 import tabletopsync.login.LoginView;
 import tabletopsync.server.model.ServerModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.*;
+import java.util.UUID;
 
 /**
  * Client side GUI
@@ -27,7 +26,7 @@ import java.util.*;
  */
 
 public class ClientMain extends JFrame {
-   public static void main(String[] args) {
+    static void main(String[] args) {
         try {
             FlatLightLaf.setup();
             Socket socket = new Socket("localhost", 8080);
@@ -42,8 +41,12 @@ public class ClientMain extends JFrame {
             String username = loginView.getSubmittedUsername();
             Color colorSelection = loginView.getSubmittedColor();
 
-            if (username == null) { System.exit(0); }
-            if (colorSelection == null) { System.exit(0); }
+            if (username == null) {
+                System.exit(0);
+            }
+            if (colorSelection == null) {
+                System.exit(0);
+            }
 
             loginModel.setUsername(username);
             out.println(loginModel.getUsername()); // send username to server
@@ -88,7 +91,7 @@ public class ClientMain extends JFrame {
 
             // TODO: reorient this to print to the server to update the location and broadcast it!!!!
 
-        // attach network listener for canvas movement
+            // attach network listener for canvas movement
 //        canvasController.setNetworkListener((x, y) -> out.println("CANVAS:" + x + "," + y));
 
             SwingUtilities.invokeLater(() -> new TableTopGUI(chatView, canvasView));
@@ -111,7 +114,7 @@ public class ClientMain extends JFrame {
                             // update model (repaints automatically via listener)
                             canvasModel.setCamera(x, y);
 
-                        } else if(line.startsWith("INIT_CANVAS:")) {
+                        } else if (line.startsWith("INIT_CANVAS:")) {
                             try {
                                 String[] parts = line.split(":");
 
@@ -177,8 +180,7 @@ public class ClientMain extends JFrame {
                             } catch (Exception e) {
                                 System.err.println("Invalid sprite add update: " + line);
                             }
-                        }
-                        else if (line.startsWith("COLOR_SELECT:")) {
+                        } else if (line.startsWith("COLOR_SELECT:")) {
                             try {
                                 String[] parts = line.split(":");
 
@@ -195,8 +197,7 @@ public class ClientMain extends JFrame {
                             } catch (Exception e) {
                                 System.err.println("Invalid color broadcast: " + line);
                             }
-                        }
-                        else {
+                        } else {
                             // all other messages -> chat
                             chatController.receive(line);
                         }

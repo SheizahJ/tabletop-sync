@@ -1,6 +1,6 @@
 package tabletopsync.chatbox.model;
 
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -13,6 +13,7 @@ public class UserMenuModel {
 
     /**
      * Returns the list model used to back the JList in the view
+     *
      * @return DefaultListModel
      */
     public DefaultListModel<String> getListModel() {
@@ -21,6 +22,7 @@ public class UserMenuModel {
 
     /**
      * Replaces the current user list with a new list
+     *
      * @param users the updated list of connected usernames
      */
     public void setUsers(List<String> users) {

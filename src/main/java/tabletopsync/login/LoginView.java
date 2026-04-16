@@ -13,9 +13,9 @@ public class LoginView extends JDialog {
 
     public LoginView() throws IOException {
         try {
-            UIManager.setLookAndFeel( new FlatLightLaf() );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
         }
         super((Frame) null, "TableTopSync", true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -61,6 +61,11 @@ public class LoginView extends JDialog {
         this.dispose();
     }
 
-    public String getSubmittedUsername() { return submittedUsername; }
-    public Color getSubmittedColor()    { return submittedColor; }
+    public String getSubmittedUsername() {
+        return submittedUsername;
+    }
+
+    public Color getSubmittedColor() {
+        return submittedColor;
+    }
 }

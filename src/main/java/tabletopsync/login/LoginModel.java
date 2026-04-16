@@ -6,11 +6,11 @@ import java.awt.*;
 public class LoginModel {
     private String username;
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username){
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -23,13 +23,24 @@ public class LoginModel {
         }
 
 
-        public Color getColour() { return colour; }
-        public void setColour(Color colour) { this.colour = colour; }
+        public Color getColour() {
+            return colour;
+        }
 
-        public String getLabel() { return label; }
-        public void setLabel(String label) { this.label = label; }
+        public void setColour(Color colour) {
+            this.colour = colour;
+        }
 
-        @Override public void paintComponent(Graphics g) {
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
             super.paintComponent(g);
             // rectangle
             g.setColor(colour);
@@ -60,7 +71,8 @@ public class LoginModel {
             }
         }
 
-        @Override public Dimension getPreferredSize() {
+        @Override
+        public Dimension getPreferredSize() {
             return new Dimension(50, 100);
         }
     }

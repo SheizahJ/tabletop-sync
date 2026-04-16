@@ -1,7 +1,6 @@
 package tabletopsync.canvas.model;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -45,8 +44,8 @@ public class Sprite {
 
             double scale = Math.min((double) maxSize / width, (double) maxSize / height);
 
-            int newWidth = (int)(width * scale);
-            int newHeight = (int)(height * scale);
+            int newWidth = (int) (width * scale);
+            int newHeight = (int) (height * scale);
 
             Image scaled = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 
@@ -80,8 +79,8 @@ public class Sprite {
         if (width > maxSize || height > maxSize) {
             double scale = Math.min((double) maxSize / width, (double) maxSize / height);
 
-            int newWidth = (int)(width * scale);
-            int newHeight = (int)(height * scale);
+            int newWidth = (int) (width * scale);
+            int newHeight = (int) (height * scale);
 
             Image scaled = original.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 

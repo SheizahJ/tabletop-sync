@@ -38,7 +38,7 @@ public class NoteListPanel extends JPanel {
         notesList.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Notes"),
-                        BorderFactory.createEmptyBorder(10,10,10,10)
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
                 )
         );
 
@@ -46,21 +46,21 @@ public class NoteListPanel extends JPanel {
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(3,3,3,3);
+        gbc.insets = new Insets(3, 3, 3, 3);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        this.add(scrollPane,gbc);
+        this.add(scrollPane, gbc);
 
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy = 1;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        this.add(newButton,gbc);
+        this.add(newButton, gbc);
     }
 
     public File getSelectedNote() {

@@ -1,19 +1,23 @@
 package tabletopsync.canvas.model;
 
-import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasModel {
     // camera variables
     public static final int GRID_SIZE = 50;
-
+    private final double MIN_ZOOM = 0.25;
+    private final double MAX_ZOOM = 3.0;
+    // sprite variables
+    private final List<Sprite> sprites = new ArrayList<>();
+    private final List<CameraListener> listeners = new ArrayList<>();
+    //---------------------QUARANTINE------------------------//
+    public String username;
     private boolean cameraCanMove = false;
     private int cameraX = 0;
     private int cameraY = 0;
     private double zoom = 1.0;
-    private final double MIN_ZOOM = 0.25;
-    private final double MAX_ZOOM = 3.0;
     // map background
     private BufferedImage mapImage;
     private int mapX = 0;
@@ -21,23 +25,14 @@ public class CanvasModel {
     private int mapWidth = 0;
     private int mapHeight = 0;
     private boolean mapIsResizing = false;
-
+    private Sprite selectedSprite;
+    //------------------------------------------------------//
+    private boolean isSelecting = false;
+    private boolean spriteSnapsToGrid = true;
 
     public BufferedImage getMapImage() {
         return mapImage;
     }
-
-    //---------------------QUARANTINE------------------------//
-    public String username;
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-    //------------------------------------------------------//
 
     public void setMapImage(BufferedImage image) {
         this.mapImage = image;
@@ -49,43 +44,53 @@ public class CanvasModel {
 
         notifyListeners();
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     // Background getters and setter
     public int getMapX() {
         return mapX;
     }
+
     public int getMapY() {
         return mapY;
     }
+
     public void setMapPosition(int x, int y) {
         this.mapX = x;
         this.mapY = y;
         notifyListeners();
     }
+
     public int getMapWidth() {
         return mapWidth;
     }
+
     public int getMapHeight() {
         return mapHeight;
     }
+
     public void setMapSize(int width, int height) {
         this.mapWidth = width;
         this.mapHeight = height;
         notifyListeners();
     }
+
     public boolean isMapResizing() {
         return mapIsResizing;
     }
+
+    // CAMERA METHODS
+
     public void setMapResizing(boolean resizing) {
         this.mapIsResizing = resizing;
     }
-
-    // sprite variables
-    private final List<Sprite> sprites = new ArrayList<>();
-    private Sprite selectedSprite;
-    private boolean isSelecting = false;
-    private boolean spriteSnapsToGrid = true;
-
-    // CAMERA METHODS
 
     public boolean canCameraMove() {
         return cameraCanMove;
@@ -95,10 +100,13 @@ public class CanvasModel {
         this.cameraCanMove = moveable;
     }
 
-    private final List<CameraListener> listeners = new ArrayList<>();
+    public int getCameraX() {
+        return cameraX;
+    }
 
-    public int getCameraX() { return cameraX; }
-    public int getCameraY() { return cameraY; }
+    public int getCameraY() {
+        return cameraY;
+    }
 
     public void moveCamera(int dx, int dy) {
         cameraX -= dx;
@@ -175,11 +183,6 @@ public class CanvasModel {
         this.spriteSnapsToGrid = enabled;
     }
 
-    // Functional interface
-    public interface CameraListener {
-        void cameraMoved(int x, int y);
-    }
-
     public void addListener(CameraListener listener) {
         listeners.add(listener);
     }
@@ -192,6 +195,11 @@ public class CanvasModel {
             }
         }
         return null;
+    }
+
+    // Functional interface
+    public interface CameraListener {
+        void cameraMoved(int x, int y);
     }
 
 }

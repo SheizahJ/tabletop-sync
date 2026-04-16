@@ -1,18 +1,17 @@
 package tabletopsync.server.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
-import tabletopsync.login.LoginModel;
-import tabletopsync.login.LoginView;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
-import java.io.*;
-import java.net.ServerSocket;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles a single client connection on its own thread.
@@ -32,10 +31,64 @@ public class ClientHandler extends Thread {
         this.socket = socket;
     }
 
-    public String getUsername() { return username; }
+    // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
+    private static boolean isNewMessage(MessageObject message) {
+        List<MessageObject> existingMessages = new ArrayList<>();
+        existingMessages.addAll(PersistenceService.loadChatMessages());
+        existingMessages.addAll(PersistenceService.loadSystemMessages());
+
+        return existingMessages.stream().noneMatch(msg ->
+                msg.getUsername() != null &&
+                        msg.getUsername().equals(message.getUsername()) &&
+                        msg.getMessage().equals(message.getMessage())
+        );
+    }
+
+    /**
+     * Broadcasts a message to all connected clients.
+     *
+     * @param message The message to send
+     */
+    private static void broadcast(String message) {
+        for (ClientHandler client : ServerModel.clients.values()) {
+            client.sendMessage(message);
+        }
+    }
+
+    /**
+     * Broadcasts a system message to all connected clients and persists it.
+     *
+     * @param message The system message
+     */
+    private static void broadcastSystemMessage(String message) {
+        MessageObject systemMsg = new MessageObject(
+                null,
+                message,
+                new Time(System.currentTimeMillis()),
+                "SYSTEM"
+        );
+
+        if (isNewMessage(systemMsg)) {
+            PersistenceService.saveSystemMessage(systemMsg);
+        }
+        broadcast(message);
+    }
+
+    /**
+     * Broadcasts a user list update to all clients
+     */
+    private static void broadcastUserList() {
+        String userListMessage = "USER_LIST:" + String.join(",", ServerModel.clients.keySet());
+        broadcast(userListMessage);
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     /**
      * Sends a message to this client.
+     *
      * @param message The message to send
      */
     public void sendMessage(String message) {
@@ -71,55 +124,6 @@ public class ClientHandler extends Thread {
             broadcastUserList();
             broadcastSystemMessage(username + " left the chat");
         }
-    }
-
-    // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
-    private static boolean isNewMessage(MessageObject message) {
-        List<MessageObject> existingMessages = new ArrayList<>();
-        existingMessages.addAll(PersistenceService.loadChatMessages());
-        existingMessages.addAll(PersistenceService.loadSystemMessages());
-
-        return existingMessages.stream().noneMatch(msg ->
-                msg.getUsername() != null &&
-                msg.getUsername().equals(message.getUsername()) &&
-                msg.getMessage().equals(message.getMessage())
-        );
-    }
-
-    /**
-     * Broadcasts a message to all connected clients.
-     * @param message The message to send
-     */
-    private static void broadcast(String message) {
-        for (ClientHandler client : ServerModel.clients.values()) {
-            client.sendMessage(message);
-        }
-    }
-
-    /**
-     * Broadcasts a system message to all connected clients and persists it.
-     * @param message The system message
-     */
-    private static void broadcastSystemMessage(String message) {
-        MessageObject systemMsg = new MessageObject(
-                null,
-                message,
-                new Time(System.currentTimeMillis()),
-                "SYSTEM"
-        );
-
-        if (isNewMessage(systemMsg)) {
-            PersistenceService.saveSystemMessage(systemMsg);
-        }
-        broadcast(message);
-    }
-
-    /**
-     * Broadcasts a user list update to all clients
-     */
-    private static void broadcastUserList() {
-        String userListMessage = "USER_LIST:" + String.join(",", ServerModel.clients.keySet());
-        broadcast(userListMessage);
     }
 
     /**
@@ -226,14 +230,12 @@ public class ClientHandler extends Thread {
                     } catch (Exception e) {
                         sendMessage("ERROR: Invalid sprite add format");
                     }
-                }
-                else if (message.startsWith("COLOR_SELECT:")) {
+                } else if (message.startsWith("COLOR_SELECT:")) {
                     try {
                         String RGB = message.substring("COLOR_SELECT:".length());
                         ServerModel.userColours.put(username, RGB);
                         broadcast("COLOR_SELECT:" + username + ":" + RGB);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         sendMessage("ERROR: Invalid color format");
                     }
                 }
@@ -264,6 +266,7 @@ public class ClientHandler extends Thread {
 
     /**
      * Handles client commands such as /quit or /users
+     *
      * @param input raw input starting with /
      */
     private void handleCommand(String input) {
@@ -288,7 +291,8 @@ public class ClientHandler extends Thread {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         unregisterClient();
     }

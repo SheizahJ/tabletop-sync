@@ -18,9 +18,9 @@ public class NotepadPanel extends JPanel {
 
     public NotepadPanel() {
         try {
-            UIManager.setLookAndFeel( new FlatLightLaf() );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
         }
 
         titleField = new JTextField("Untitled*");
@@ -41,13 +41,18 @@ public class NotepadPanel extends JPanel {
                 SwingUtilities.invokeLater(notesArea::requestFocusInWindow);
             }
 
-            @Override public void ancestorRemoved(AncestorEvent event) {}
-            @Override public void ancestorMoved(AncestorEvent event) {}
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+            }
         });
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(3,3,3,3);
+        gbc.insets = new Insets(3, 3, 3, 3);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridwidth = 2;
@@ -89,12 +94,12 @@ public class NotepadPanel extends JPanel {
         return titleField.getText();
     }
 
-    public String getNoteText() {
-        return notesArea.getText();
-    }
-
     public void setTitleText(String title) {
         titleField.setText(title);
+    }
+
+    public String getNoteText() {
+        return notesArea.getText();
     }
 
     public void setNoteText(String text) {
