@@ -38,6 +38,7 @@ public class ChatView {
         panel.setVisible(true);
     }
 
+
     /**
      * Placeholder for window close handling
      * @param onClose callback

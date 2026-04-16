@@ -1,7 +1,9 @@
 package tabletopsync.linker;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.view.CanvasView;
+
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.notepad.controller.NavigationController;
 
@@ -23,9 +25,9 @@ public class TableTopGUI extends JFrame {
      * @param canvasView the in-game whiteboard area
      */
     public TableTopGUI(ChatView chatView, CanvasView canvasView) {
-
         this.setTitle("TableTopSync");
         this.setSize(1000, 800);
+        this.setLocationRelativeTo(null);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(createMenuBar());
@@ -116,7 +118,6 @@ public class TableTopGUI extends JFrame {
 
         add(splitPane, BorderLayout.CENTER);
         splitPane.setDividerLocation(1500);
-        add(splitPane, BorderLayout.CENTER);
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -139,46 +140,15 @@ public class TableTopGUI extends JFrame {
     }
 
     private JMenuBar createMenuBar() {
-        /*
-            TODO:
-             - create the following JMenus':
-                - File
-                    - Exit
-                - Communications
-                    - Show/Hide Active Users
-                    - Show/Hide System Messages
-                    - Show/Hide Chat
-                    - Show/Hide Notepad
-                    - Clear Chat
-                    - Clear System Logs
-                - Canvas
-                    - Add Sprite
-                    - Load Map
-                    - Clear Canvas
-                - Notes
-                    - Add Existing Note
-                - Appearance
-                    - Dark/Light Mode
-                - Help
-                    - About
-                    - Controls
-
-         */
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
-        JMenu commsMenu = new JMenu("Communications");
-        JMenu canvasMenu = new JMenu("Canvas");
-        JMenu notesMenu = new JMenu("Notes");
-        JMenu appearanceMenu = new JMenu("Appearance");
-        JMenu helpMenu = new JMenu("Help");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
 
+        JMenuItem ExitMenuItem = new JMenuItem("Exit");
+        ExitMenuItem.addActionListener(e -> { System.exit(0); });
+        fileMenu.add(ExitMenuItem);
         menuBar.add(fileMenu);
-        menuBar.add(commsMenu);
-        menuBar.add(canvasMenu);
-        menuBar.add(notesMenu);
-        menuBar.add(appearanceMenu);
-        menuBar.add(helpMenu);
         return menuBar;
     }
 }
