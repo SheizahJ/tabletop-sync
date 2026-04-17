@@ -1,6 +1,5 @@
 package tabletopsync.server.controller;
 
-import tabletopsync.server.controller.ClientHandler;
 import tabletopsync.server.view.ServerView;
 
 import javax.swing.*;
@@ -19,7 +18,7 @@ import java.net.Socket;
  * - Client threads
  * - Sending logs
  */
-public class ServerMainController {
+public class ServerController {
 
     private final ServerView view;
     private ServerSocket serverSocket;
@@ -28,7 +27,7 @@ public class ServerMainController {
      * Server controller constructor
      * @param view the server GUI for logging
      */
-    public ServerMainController(ServerView view) {
+    public ServerController(ServerView view) {
         this.view = view;
     }
 

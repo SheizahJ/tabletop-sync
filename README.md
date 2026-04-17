@@ -55,7 +55,7 @@ _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 
 ## How to Run
 1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
-2. Run `MainServer.java` 
+2. Run `Server.java` 
 3. Run `ClientApp.java`
    * Can run multiple Clients at once...
 
