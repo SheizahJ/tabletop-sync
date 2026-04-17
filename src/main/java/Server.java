@@ -1,5 +1,5 @@
-import tabletopsync.server.controller.ServerMainController;
 import tabletopsync.server.view.ServerView;
+import tabletopsync.server.controller.ServerController;
 
 import javax.swing.*;
 
@@ -8,14 +8,14 @@ import javax.swing.*;
  * - Launches server GUI
  * - Starts ServerMainController on defined port
  */
-public class MainServer {
+public class Server {
     static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Create server GUI
             ServerView serverView = new ServerView();
 
             // Create controller and start listening on port 8080
-            ServerMainController controller = new ServerMainController(serverView);
+            ServerController controller = new ServerController(serverView);
             controller.startServer(8080);
 
             // Make GUI visible

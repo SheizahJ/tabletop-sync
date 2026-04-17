@@ -93,7 +93,7 @@ public class ChatController {
         String msg = view.chatArea.textField.getText();
 
         if (!msg.trim().isEmpty()) {
-            out.println(msg);
+            out.println("SEND_MSG;" + msg);
             view.chatArea.textField.setText("");
         }
     }
@@ -106,7 +106,7 @@ public class ChatController {
      */
     public void receive(String message) {
 
-        if (message.startsWith("USER_LIST:")) {
+        if (message.startsWith("USER_LIST")) {
             String[] users = message.substring(10).split(",");
             SwingUtilities.invokeLater(() ->
                     view.getChatArea().updateUsers(Arrays.asList(users))

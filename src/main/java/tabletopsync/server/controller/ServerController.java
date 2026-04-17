@@ -18,7 +18,7 @@ import java.net.Socket;
  * - Client threads
  * - Sending logs
  */
-public class ServerMainController {
+public class ServerController {
 
     private final ServerView view;
     private ServerSocket serverSocket;
@@ -28,7 +28,7 @@ public class ServerMainController {
      *
      * @param view the server GUI for logging
      */
-    public ServerMainController(ServerView view) {
+    public ServerController(ServerView view) {
         this.view = view;
     }
 

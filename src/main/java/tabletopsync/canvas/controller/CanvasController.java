@@ -33,6 +33,16 @@ public class CanvasController extends JPanel {
     private Dimension mapResizeStartSize;
     private CanvasUpdateListener networkListener; // send updates to server
 
+    /**
+     * Handles the canvas functions interacting with the Sprite object and other model attributes:
+     *  - initializes objects, visual attributes, action listeners, and various functionality of the canvas.
+     *  - creates action controller elements and functions for SPRITES:
+     *      - mouse pressed
+     *      - mouse released
+     *      - show menu
+     *   ** Further info below
+     * @param model
+     */
     public CanvasController(CanvasModel model, Color colorSelection) throws IOException {
         this.model = model;
         this.colorSelection = colorSelection;
@@ -86,15 +96,29 @@ public class CanvasController extends JPanel {
             }
         });
 
-        // Sprite Popup Menu
+
+        /** ---------- Sprite Popup Menu - Sprite Action Functions--------------
+         * M3 button functionality:
+         */
         addMouseListener(new MouseAdapter() {
+            /**
+             * Creates an event function for M3 mouse button when it is pressed
+             * {@code @references} showMenu
+             * @param e the event to be processed
+             */
             @Override
             public void mousePressed(MouseEvent e) {
+                // checks right click (M3)
                 if (e.isPopupTrigger()) {
                     showMenu(e);
                 }
             }
 
+            /**
+             * Creates an event function for M3 mouse button when it is released (while pressed)
+             * {@code @references} showMenu
+             * @param e the event to be processed
+             */
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
@@ -102,6 +126,12 @@ public class CanvasController extends JPanel {
                 }
             }
 
+            /**
+             * Helper method:
+             * Uses spritePopup to display menu where the mouse is per x-y coordinates
+             * {@code @helper} mouseReleased, mousePressed
+             * @param e
+             */
             private void showMenu(MouseEvent e) {
                 if (model.getSelectedSprite() != null) {
                     spritePopup.show(e.getComponent(), e.getX(), e.getY());
@@ -111,7 +141,8 @@ public class CanvasController extends JPanel {
     }
 
     /**
-     * Draws the canvas grid background
+     * Utilizes graphics to display canvas and draws the canvas grid background utilizing the Graphics2D library
+     * @param g2
      */
     private void drawCanvasGrid(Graphics2D g2) {
         g2.setColor(new Color(220, 220, 220)); // light gray grid color
@@ -145,10 +176,14 @@ public class CanvasController extends JPanel {
     }
 
     /**
-     * draws sprite
+     * Handles various view functionalities:
+     *  - camera movement and zoom
+     *  - draws background map
+     *  - draws a grid of the map
+     *  - draws sprites
+     * @param g the <code>Graphics</code> object to protect
      */
-    @Override
-    protected void paintComponent(Graphics g) {
+    @Override protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
@@ -181,7 +216,10 @@ public class CanvasController extends JPanel {
         drawSpritesOnCanvas(g2);
     }
 
-
+    /**
+     * Sets a map from a chosen image file
+     * @param file
+     */
     public void setMapFromFile(File file) {
         try {
             BufferedImage img = ImageIO.read(file);
@@ -196,6 +234,10 @@ public class CanvasController extends JPanel {
         }
     }
 
+    /**
+     * Gets the bounds of the gui component for the map
+     * @return rectangle image of map
+     */
     private Rectangle getMapBounds() {
         return new Rectangle(
                 model.getMapX(),
@@ -205,6 +247,10 @@ public class CanvasController extends JPanel {
         );
     }
 
+    /**
+     * handles resizing the map to fit the GUI bounds
+     * @return rectangle
+     */
     private Rectangle getMapResizeHandleBounds() {
         return new Rectangle(
                 model.getMapX() + model.getMapWidth() - MAP_HANDLE_SIZE,
@@ -214,6 +260,10 @@ public class CanvasController extends JPanel {
         );
     }
 
+    /**
+     * redraws the map to fill the gui component
+     * @param g2
+     */
     private void drawMapResizeHandle(Graphics2D g2) {
         if (model.getMapImage() == null) {
             return;
@@ -228,6 +278,10 @@ public class CanvasController extends JPanel {
         g2.drawRect(handle.x, handle.y, handle.width, handle.height);
     }
 
+    /**
+     * adds sprite to the map
+     * @param fileURL
+     */
     public void addSpriteToCanvas(URL fileURL) {
         try {
             if (fileURL != null) {
@@ -250,6 +304,10 @@ public class CanvasController extends JPanel {
         }
     }
 
+    /**
+     * Adds the uploaded sprite file to the map
+     * @param file
+     */
     public void addSpriteFromFile(File file) {
         try {
             if (file == null) return;
@@ -286,6 +344,13 @@ public class CanvasController extends JPanel {
         }
     }
 
+    /**
+     * updates the sprite to server
+     * @param resourcePath
+     * @param uuid
+     * @param x
+     * @param y
+     */
     public void addSpriteFromNetwork(String resourcePath, String uuid, int x, int y) {
         try {
             Sprite sprite = new Sprite(model, resourcePath, uuid);
@@ -297,6 +362,7 @@ public class CanvasController extends JPanel {
         }
     }
 
+
     public void removeSpriteFromNetwork(String uuid) {
         Sprite sprite = model.getSpriteByUuid(uuid);
         if (sprite != null) {
@@ -307,6 +373,10 @@ public class CanvasController extends JPanel {
         }
     }
 
+    /**
+     * adds resource path of sprite to be updated and accessed by multiple threads
+     * @param resourcePath
+     */
     public void addSharedSpriteToCanvas(String resourcePath) {
         try {
             Sprite sprite = new Sprite(model, resourcePath);
@@ -328,6 +398,10 @@ public class CanvasController extends JPanel {
         }
     }
 
+    /**
+     * draws sprites on canvas element
+     * @param g2
+     */
     public void drawSpritesOnCanvas(Graphics2D g2) {
         for (Sprite s : model.getSpritesOnCanvas()) {
             g2.drawImage(
@@ -376,21 +450,16 @@ public class CanvasController extends JPanel {
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
-        @Override
-        public void mousePressed(MouseEvent e) {
+        @Override public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON2) {
                 lastCameraPoint = e.getPoint();
                 model.setCameraCanMove(true);
             }
         }
 
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            model.setCameraCanMove(false);
-        }
+        @Override public void mouseReleased(MouseEvent e) { model.setCameraCanMove(false); }
 
-        @Override
-        public void mouseDragged(MouseEvent e) {
+        @Override public void mouseDragged(MouseEvent e) {
             if (model.canCameraMove()) {
                 int dx = e.getX() - lastCameraPoint.x;
                 int dy = e.getY() - lastCameraPoint.y;

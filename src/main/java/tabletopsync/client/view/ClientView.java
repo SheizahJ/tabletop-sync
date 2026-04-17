@@ -1,4 +1,4 @@
-package tabletopsync.linker;
+package tabletopsync.client.view;
 
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.model.CanvasModel;
@@ -17,13 +17,13 @@ import java.io.File;
  * This is the primary GUI for the application
  * where we take our modules (chat, canvas) and combine them
  */
-public class TableTopGUI extends JFrame {
+public class ClientView extends JFrame {
 
     /**
      * @param chatView   the in-game chat GUI
      * @param canvasView the in-game whiteboard area
      */
-    public TableTopGUI(ChatView chatView, CanvasView canvasView) {
+    public ClientView(ChatView chatView, CanvasView canvasView) {
         this.setTitle("TableTopSync");
         this.setSize(1000, 800);
         this.setLocationRelativeTo(null);
@@ -40,92 +40,13 @@ public class TableTopGUI extends JFrame {
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         canvasTopBar.setBackground(new Color(0, 0, 0, 0));
 
-        JButton addSpriteButton = new JButton("Add Sprite");
-
-        addSpriteButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Choose a sprite");
-
-            // allow png / jpg / jpeg only
-            FileNameExtensionFilter imageFilter =
-                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
-            fileChooser.setFileFilter(imageFilter);
-            fileChooser.setAcceptAllFileFilterUsed(false);
-
-            int result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                canvasController.addSpriteFromFile(selectedFile);
-//                canvasController.addSharedSpriteToCanvas(selectedFile.toURI().toString());
-            }
-        });
-
+        JButton addSpriteButton = getSpriteButton(canvasController);
         canvasTopBar.add(addSpriteButton);
 
-        JButton returnOriginButton = new JButton("Return to Origin");
-
-        returnOriginButton.addActionListener(e -> {
-            canvasController.model.setCamera(0, 0);
-            repaint();
-        });
-
-        canvasTopBar.add(returnOriginButton);
-
-        JButton returnToSelectedSpriteButton = new JButton("Return to Selected Sprite");
-        returnToSelectedSpriteButton.addActionListener(e -> {
-            Sprite selected = canvasModel.getSelectedSprite();
-            Point spritePosition;
-
-            if (selected != null) {
-                spritePosition = selected.getPosition();
-                canvasModel.setCamera(spritePosition.x, spritePosition.y);
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Please select sprite before continuing.",
-                        "Sprite Required",
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
-        });
-
-        canvasTopBar.add(returnToSelectedSpriteButton);
-
-
-        JButton changeMapButton = new JButton("Change Map");
-
-        changeMapButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Choose map image");
-
-            FileNameExtensionFilter filter =
-                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
-
-            fileChooser.setFileFilter(filter);
-            fileChooser.setAcceptAllFileFilterUsed(false);
-
-            int result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                canvasController.setMapFromFile(selectedFile);
-            }
-        });
-
+        JButton changeMapButton = getMapButton(canvasController);
         canvasTopBar.add(changeMapButton);
 
-        // snap to grid feature
-        JCheckBox snapToGrid = new JCheckBox("Snap to Grid", true);
-        canvasController.model.setSnapToGridState(true);
-
-        snapToGrid.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                canvasController.model.setSnapToGridState(true);
-            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                canvasController.model.setSnapToGridState(false);
-            }
-        });
-
+        JCheckBox snapToGrid = getSnapButton(canvasController);
         canvasTopBar.add(snapToGrid);
 
         JCheckBox showGrid = new JCheckBox("Show Grid", true);
@@ -153,7 +74,6 @@ public class TableTopGUI extends JFrame {
         new NavigationController(notepadContainer);
         notepadContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-
         // split screen
         // Inner split: chat on top, notepad on bottom
         JSplitPane splitPane = getJSplitPane(chatView, notepadContainer, canvasWrapper);
@@ -180,5 +100,66 @@ public class TableTopGUI extends JFrame {
                 canvasWrapper,        // LEFT: canvas
                 rightSplitPane        // RIGHT: chat + notepad stacked
         );
+    }
+
+    private JButton getMapButton(CanvasController canvasController) {
+        JButton changeMapButton = new JButton("Change Map");
+
+        changeMapButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose map image");
+
+            FileNameExtensionFilter filter =
+                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
+
+            fileChooser.setFileFilter(filter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                canvasController.setMapFromFile(selectedFile);
+            }
+        });
+        return changeMapButton;
+    }
+
+    private JButton getSpriteButton(CanvasController canvasController) {
+        JButton addSpriteButton = new JButton("Add Sprite");
+
+        addSpriteButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose a sprite");
+
+            // allow png / jpg / jpeg only
+            FileNameExtensionFilter imageFilter =
+                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
+            fileChooser.setFileFilter(imageFilter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                canvasController.addSpriteFromFile(selectedFile);
+            }
+        });
+        return addSpriteButton;
+    }
+
+    private JCheckBox getSnapButton(CanvasController canvasController) {
+        JCheckBox snapToGrid = new JCheckBox("Snap to Grid", true);
+        canvasController.model.setSnapToGridState(true);
+
+        snapToGrid.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                canvasController.model.setSnapToGridState(true);
+            }
+            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                canvasController.model.setSnapToGridState(false);
+            }
+        });
+        return snapToGrid;
     }
 }

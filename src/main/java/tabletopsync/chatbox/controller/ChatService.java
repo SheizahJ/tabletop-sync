@@ -16,7 +16,7 @@ public class ChatService {
      * Constructs a message prefixed with USER_LIST: followed by a comma-separated list of usernames.
      */
     public static void broadcastUserList() {
-        String userListMessage = "USER_LIST:" + String.join(",", clients.keySet());
+        String userListMessage = "USER_LIST;" + String.join(",", clients.keySet());
         broadcast(userListMessage);
     }
 
