@@ -170,7 +170,9 @@ public class CanvasController extends JPanel {
         }
 
         // draw the grid first (background)
-        drawCanvasGrid(g2);
+        if (model.isGridVisible()) {
+            drawCanvasGrid(g2);
+        }
 
         // draw sprites on top of grid
         drawSpritesOnCanvas(g2);

@@ -29,6 +29,8 @@ public class CanvasModel {
     //------------------------------------------------------//
     private boolean isSelecting = false;
     private boolean spriteSnapsToGrid = true;
+    private boolean gridVisible = true;
+
 
     public BufferedImage getMapImage() {
         return mapImage;
@@ -181,6 +183,15 @@ public class CanvasModel {
 
     public void setSnapToGridState(boolean enabled) {
         this.spriteSnapsToGrid = enabled;
+    }
+
+    public void setGridVisibility(boolean visible) {
+        this.gridVisible = visible;
+        notifyListeners();
+    }
+
+    public boolean isGridVisible() {
+        return gridVisible;
     }
 
     public void addListener(CameraListener listener) {

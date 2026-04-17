@@ -46,22 +46,31 @@ public class TableTopGUI extends JFrame {
         JButton returnOriginButton = new JButton("Return to Origin");
 
         returnOriginButton.addActionListener(e -> {
-            List<Sprite> spritesOnCanvas = canvasModel.getSpritesOnCanvas();
+            canvasController.model.setCamera(0,0);
+            repaint();
+        });
+
+        canvasTopBar.add(returnOriginButton);
+
+        JButton returnToSelectedSpriteButton = new JButton("Return to Selected Sprite");
+        returnToSelectedSpriteButton.addActionListener(e -> {
             Sprite selected = canvasModel.getSelectedSprite();
             Point spritePosition;
 
-            // either return camera to selected sprite or to return to the first sprite on the list
             if (selected != null) {
                 spritePosition = selected.getPosition();
                 canvasModel.setCamera(spritePosition.x, spritePosition.y);
             }
-            else if (!spritesOnCanvas.isEmpty()) {
-                spritePosition = spritesOnCanvas.getFirst().getPosition();
-                canvasModel.setCamera(spritePosition.x, spritePosition.y);
+            else {
+                JOptionPane.showMessageDialog(this,
+                        "Please select sprite before continuing.",
+                        "Sprite Required",
+                        JOptionPane.WARNING_MESSAGE
+                );
             }
         });
 
-        canvasTopBar.add(returnOriginButton);
+        canvasTopBar.add(returnToSelectedSpriteButton);
 
         JButton addSpriteButton = new JButton("Add Sprite");
 
@@ -120,6 +129,22 @@ public class TableTopGUI extends JFrame {
         });
 
         canvasTopBar.add(snapToGrid);
+
+        JCheckBox showGrid = new JCheckBox("Show Grid", true);
+        canvasController.model.setGridVisibility(true);
+
+        showGrid.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                canvasController.model.setGridVisibility(true);
+                repaint();
+            }
+            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                canvasController.model.setGridVisibility(false);
+                repaint();
+            }
+        });
+
+        canvasTopBar.add(showGrid);
 
         // wrapper for canvas area
         JPanel canvasWrapper = new JPanel(new BorderLayout());
