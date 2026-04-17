@@ -39,6 +39,13 @@ public class TableTopGUI extends JFrame {
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         canvasTopBar.setBackground(new Color(0, 0, 0, 0));
 
+        JButton returnOriginButton = new JButton("Return to Origin");
+
+        returnOriginButton.addActionListener(e -> {
+            // TODO: create a way to reset the camera (with a button) to 0,0
+
+        });
+
         JButton addSpriteButton = new JButton("Add Sprite");
 
         addSpriteButton.addActionListener(e -> {

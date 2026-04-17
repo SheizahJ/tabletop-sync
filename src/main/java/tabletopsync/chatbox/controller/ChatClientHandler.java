@@ -60,6 +60,7 @@ public class ChatClientHandler extends Thread {
             // Register client
             ChatService.addClient(this);
 
+
             // Notify everyone
             ChatService.broadcast(username + " joined the chat");
 

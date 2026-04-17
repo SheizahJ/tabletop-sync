@@ -5,6 +5,10 @@ import tabletopsync.chatbox.model.UserMenuModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -93,6 +97,9 @@ public class ChatArea extends JPanel {
         add(bottom, BorderLayout.SOUTH);
     }
 
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+
     /**
      * Prints the message onto the chat or system area
      *
@@ -115,7 +122,11 @@ public class ChatArea extends JPanel {
         colorBox.setBackground(color);
         colorBox.setPreferredSize(new Dimension(12, 12));
 
-        JLabel label = new JLabel("<html><b>" + username + ":</b> " + message + "</html>");
+        String time = formatter.format(Instant.now());
+
+        JLabel label = new JLabel(
+                "<html>" + time + "<br> " + "<b>" + username + ":</b> " + message + "</html>"
+        );
 
         row.add(colorBox);
         row.add(Box.createHorizontalStrut(5));
