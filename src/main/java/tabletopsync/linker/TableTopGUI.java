@@ -1,9 +1,11 @@
 package tabletopsync.linker;
 
 import tabletopsync.canvas.controller.CanvasController;
+import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.view.CanvasView;
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.notepad.controller.NavigationController;
+import tabletopsync.canvas.model.CanvasModel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -11,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.List;
 
 /**
  * This is the primary GUI for the application
@@ -34,6 +37,7 @@ public class TableTopGUI extends JFrame {
 
         // get the canvas controller from canvas view
         CanvasController canvasController = (CanvasController) canvasView.getComponent(0);
+        CanvasModel canvasModel = canvasController.model;
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -42,9 +46,22 @@ public class TableTopGUI extends JFrame {
         JButton returnOriginButton = new JButton("Return to Origin");
 
         returnOriginButton.addActionListener(e -> {
-            // TODO: create a way to reset the camera (with a button) to 0,0
+            List<Sprite> spritesOnCanvas = canvasModel.getSpritesOnCanvas();
+            Sprite selected = canvasModel.getSelectedSprite();
+            Point spritePosition;
 
+            // either return camera to selected sprite or to return to the first sprite on the list
+            if (selected != null) {
+                spritePosition = selected.getPosition();
+                canvasModel.setCamera(spritePosition.x, spritePosition.y);
+            }
+            else if (!spritesOnCanvas.isEmpty()) {
+                spritePosition = spritesOnCanvas.getFirst().getPosition();
+                canvasModel.setCamera(spritePosition.x, spritePosition.y);
+            }
         });
+
+        canvasTopBar.add(returnOriginButton);
 
         JButton addSpriteButton = new JButton("Add Sprite");
 
