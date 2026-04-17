@@ -1,19 +1,17 @@
 package tabletopsync.linker;
 
 import tabletopsync.canvas.controller.CanvasController;
+import tabletopsync.canvas.model.CanvasModel;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.view.CanvasView;
 import tabletopsync.chatbox.view.ChatView;
 import tabletopsync.notepad.controller.NavigationController;
-import tabletopsync.canvas.model.CanvasModel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.List;
 
 /**
  * This is the primary GUI for the application
@@ -31,7 +29,6 @@ public class TableTopGUI extends JFrame {
         this.setLocationRelativeTo(null);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setJMenuBar(createMenuBar());
 
         setLayout(new BorderLayout());
 
@@ -46,7 +43,7 @@ public class TableTopGUI extends JFrame {
         JButton returnOriginButton = new JButton("Return to Origin");
 
         returnOriginButton.addActionListener(e -> {
-            canvasController.model.setCamera(0,0);
+            canvasController.model.setCamera(0, 0);
             repaint();
         });
 
@@ -60,8 +57,7 @@ public class TableTopGUI extends JFrame {
             if (selected != null) {
                 spritePosition = selected.getPosition();
                 canvasModel.setCamera(spritePosition.x, spritePosition.y);
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(this,
                         "Please select sprite before continuing.",
                         "Sprite Required",
@@ -71,6 +67,7 @@ public class TableTopGUI extends JFrame {
         });
 
         canvasTopBar.add(returnToSelectedSpriteButton);
+
 
         JButton addSpriteButton = new JButton("Add Sprite");
 
@@ -137,8 +134,7 @@ public class TableTopGUI extends JFrame {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 canvasController.model.setGridVisibility(true);
                 repaint();
-            }
-            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
                 canvasController.model.setGridVisibility(false);
                 repaint();
             }
@@ -183,20 +179,5 @@ public class TableTopGUI extends JFrame {
                 canvasWrapper,        // LEFT: canvas
                 rightSplitPane        // RIGHT: chat + notepad stacked
         );
-    }
-
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-
-        JMenuItem ExitMenuItem = new JMenuItem("Exit");
-        ExitMenuItem.addActionListener(e -> {
-            System.exit(0);
-        });
-        fileMenu.add(ExitMenuItem);
-        menuBar.add(fileMenu);
-        return menuBar;
     }
 }
