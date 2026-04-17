@@ -1,5 +1,7 @@
 package tabletopsync.notepad.view;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -15,6 +17,12 @@ public class NotepadPanel extends JPanel {
     private final JButton backButton;
 
     public NotepadPanel() {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+
         titleField = new JTextField("Untitled*");
         lastSavedLabel = new JLabel("Last saved: ");
         notesArea = new JTextArea();
@@ -33,13 +41,18 @@ public class NotepadPanel extends JPanel {
                 SwingUtilities.invokeLater(notesArea::requestFocusInWindow);
             }
 
-            @Override public void ancestorRemoved(AncestorEvent event) {}
-            @Override public void ancestorMoved(AncestorEvent event) {}
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+            }
         });
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(3,3,3,3);
+        gbc.insets = new Insets(3, 3, 3, 3);
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridwidth = 2;
@@ -81,12 +94,12 @@ public class NotepadPanel extends JPanel {
         return titleField.getText();
     }
 
-    public String getNoteText() {
-        return notesArea.getText();
-    }
-
     public void setTitleText(String title) {
         titleField.setText(title);
+    }
+
+    public String getNoteText() {
+        return notesArea.getText();
     }
 
     public void setNoteText(String text) {

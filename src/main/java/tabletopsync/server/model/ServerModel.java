@@ -22,6 +22,9 @@ public class ServerModel {
     // Thread-safe collection of all connected clients
     public static final ConcurrentHashMap<String, ClientHandler> clients = new ConcurrentHashMap<>();
 
+    // Thread-safe collection of the user selected colors
+    public static final ConcurrentHashMap<String, String> userColours = new ConcurrentHashMap<>();
+
     // ========================
     // LOG FILE ROOT
     // ========================

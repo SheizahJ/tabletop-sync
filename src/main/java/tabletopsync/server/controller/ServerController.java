@@ -10,7 +10,7 @@ import java.net.Socket;
 /**
  * ServerMainController:
  * Main entry point for server logic
- *
+ * <p>
  * READ------------------>
  * WHAT IT HANDLES:
  * - Starting the server socket
@@ -25,6 +25,7 @@ public class ServerController {
 
     /**
      * Server controller constructor
+     *
      * @param view the server GUI for logging
      */
     public ServerController(ServerView view) {
@@ -37,6 +38,7 @@ public class ServerController {
 
     /**
      * Starts the server
+     *
      * @param port --> port #
      */
     public void startServer(int port) {
@@ -66,6 +68,7 @@ public class ServerController {
 
     /**
      * Adds messages to the server GUI log
+     *
      * @param message the message to display
      */
     public void sendServerLog(String message) {

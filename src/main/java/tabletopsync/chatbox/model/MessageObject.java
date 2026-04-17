@@ -24,17 +24,37 @@ public class MessageObject {
         this.type = type;
     }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public Time getTimestamp() { return timestamp; }
-    public void setTimestamp(Time timestamp) { this.timestamp = timestamp; }
+    public String getMessage() {
+        return message;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Time getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Time timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     @Override
     public String toString() {

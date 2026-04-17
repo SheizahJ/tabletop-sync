@@ -5,29 +5,32 @@ import tabletopsync.canvas.model.SelectionBox;
 import tabletopsync.canvas.model.Sprite;
 import tabletopsync.canvas.model.SpritePopup;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
-    private final SpritePopup spritePopup;
-    private Point lastCameraPoint;
-    private Point selectedOffset;
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
+    public final CanvasModel model;
+    private final SpritePopup spritePopup;
+    public Color colorSelection;
+    private Point lastCameraPoint;
+    private Point selectedOffset;
     private Point mapResizeStartPoint;
     private Dimension mapResizeStartSize;
-
-    public final CanvasModel model;
     private CanvasUpdateListener networkListener; // send updates to server
 
     /**
@@ -40,8 +43,9 @@ public class CanvasController extends JPanel {
      *   ** Further info below
      * @param model
      */
-    public CanvasController(CanvasModel model) {
+    public CanvasController(CanvasModel model, Color colorSelection) throws IOException {
         this.model = model;
+        this.colorSelection = colorSelection;
         spritePopup = new SpritePopup(this, model);
         setBackground(Color.WHITE);
 
@@ -50,7 +54,7 @@ public class CanvasController extends JPanel {
 
         // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
         // TODO: Create "Add Sprite" button to do this instead
-        // button to add sprite
+
         // ------------------------------------------------------------
 
         // Canvas adapter
@@ -84,7 +88,7 @@ public class CanvasController extends JPanel {
                     if (selectedSprite != null) {
                         // remove sprite
                         model.removeSprite(selectedSprite);
-
+                        networkListener.onSpriteRemoved(selectedSprite.getUuid());
                         // redraw canvas
                         repaint();
                     }
@@ -204,7 +208,9 @@ public class CanvasController extends JPanel {
         }
 
         // draw the grid first (background)
-        drawCanvasGrid(g2);
+        if (model.isGridVisible()) {
+            drawCanvasGrid(g2);
+        }
 
         // draw sprites on top of grid
         drawSpritesOnCanvas(g2);
@@ -284,6 +290,13 @@ public class CanvasController extends JPanel {
                 // Creates sprite with the camera's current position
                 sprite.move(model.getCameraX(), model.getCameraY());
                 model.addSprite(sprite);
+
+                    networkListener.onSpriteAdded(
+                            sprite.getUuid(),
+                            sprite.getResourcePath(),
+                            sprite.getPosition().x,
+                            sprite.getPosition().y
+                    );
                 repaint();
             }
         } catch (IOException e) {
@@ -297,10 +310,36 @@ public class CanvasController extends JPanel {
      */
     public void addSpriteFromFile(File file) {
         try {
-            if (file != null) {
-                addSpriteToCanvas(file.toURI().toURL());
+            if (file == null) return;
+
+            // copy file into resources/sprites folder
+            String resourceFolder = "src/main/resources/test_images/";
+            new File(resourceFolder).mkdirs();
+
+            String fileName = file.getName();
+            File destination = new File(resourceFolder + fileName);
+            Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // use classpath resource path
+            String resourcePath = "/test_images/" + fileName;
+
+            String uuid = UUID.randomUUID().toString();
+
+            Sprite sprite = new Sprite(model, resourcePath);
+//            sprite.move(model.getCameraX(), model.getCameraY());
+//            model.addSprite(sprite);
+
+            if (networkListener != null) {
+                networkListener.onSpriteAdded(
+                        sprite.getUuid(),
+                        sprite.getResourcePath(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
             }
-        } catch (Exception e) {
+
+            repaint();
+        } catch (IOException e) {
             System.err.println("Error when adding sprite from file: " + e.getMessage());
         }
     }
@@ -320,6 +359,17 @@ public class CanvasController extends JPanel {
             repaint();
         } catch (IOException e) {
             System.err.println("Error when adding sprite from network: " + e.getMessage());
+        }
+    }
+
+
+    public void removeSpriteFromNetwork(String uuid) {
+        Sprite sprite = model.getSpriteByUuid(uuid);
+        if (sprite != null) {
+            model.removeSprite(sprite);
+            repaint();
+        } else {
+            System.err.println("Could not find sprite with uuid: " + uuid);
         }
     }
 
@@ -368,7 +418,7 @@ public class CanvasController extends JPanel {
                 Rectangle r = box.getBounds();
 
                 // draw border
-                g2.setColor(Color.decode("#DDBBFF")); // TODO: change to player's colour
+                g2.setColor(colorSelection);
                 g2.setStroke(new BasicStroke(2));
                 g2.drawRect(r.x, r.y, r.width, r.height);
 
@@ -386,14 +436,17 @@ public class CanvasController extends JPanel {
         this.networkListener = listener;
     }
 
+    public void setCanvasListener(CanvasUpdateListener listener) {
+        this.networkListener = listener;
+    }
+
     // interface for server updates
     public interface CanvasUpdateListener {
         void onSpriteAdded(String uuid, String resourcePath, int x, int y);
-        void onSpriteMoved(String uuid, int x, int y);
-    }
 
-    public void setCanvasListener(CanvasUpdateListener listener) {
-        this.networkListener = listener;
+        void onSpriteMoved(String uuid, int x, int y);
+
+        void onSpriteRemoved(String uuid);
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
@@ -435,8 +488,8 @@ public class CanvasController extends JPanel {
             }
 
             // get the mouse click coordinates
-            int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-            int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+            int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+            int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
             // start resizing map if the handle is clicked
             if (model.getMapImage() != null && getMapResizeHandleBounds().contains(worldX, worldY)) {
@@ -459,6 +512,7 @@ public class CanvasController extends JPanel {
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
                     model.getSelectedSprite().select(model.username);
+                    model.setIsSelecting(true);
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
                     repaint();
                     break;
@@ -475,8 +529,8 @@ public class CanvasController extends JPanel {
         @Override
         public void mouseDragged(MouseEvent e) {
             if (model.isMapResizing()) {
-                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+                int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
                 int newWidth = mapResizeStartSize.width + (worldX - mapResizeStartPoint.x);
                 int newHeight = mapResizeStartSize.height + (worldY - mapResizeStartPoint.y);
@@ -488,18 +542,18 @@ public class CanvasController extends JPanel {
                 repaint();
                 return;
             }
-            
+
             if (model.isSelecting() && !model.getSelectedSprite().isLocked()) {
-                int worldX = (int)(e.getX() / model.getZoom()) + model.getCameraX();
-                int worldY = (int)(e.getY() / model.getZoom()) + model.getCameraY();
+                int worldX = (int) (e.getX() / model.getZoom()) + model.getCameraX();
+                int worldY = (int) (e.getY() / model.getZoom()) + model.getCameraY();
 
                 int targetX = worldX + selectedOffset.x;
                 int targetY = worldY + selectedOffset.y;
 
                 if (model.snapsToGrid()) {
                     int grid = CanvasModel.GRID_SIZE;
-                    targetX = Math.round((float)targetX / grid) * grid;
-                    targetY = Math.round((float)targetY / grid) * grid;
+                    targetX = Math.round((float) targetX / grid) * grid;
+                    targetY = Math.round((float) targetY / grid) * grid;
                 }
 
                 model.getSelectedSprite().move(targetX, targetY);

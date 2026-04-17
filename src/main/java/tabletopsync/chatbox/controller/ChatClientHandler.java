@@ -3,7 +3,10 @@ package tabletopsync.chatbox.controller;
 import tabletopsync.chatbox.model.MessageObject;
 import tabletopsync.server.service.PersistenceService;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Time;
 
@@ -30,6 +33,7 @@ public class ChatClientHandler extends Thread {
 
     /**
      * Prints the message onto the client screen
+     *
      * @param message the message the user sends
      */
     public void sendMessage(String message) {
@@ -55,6 +59,7 @@ public class ChatClientHandler extends Thread {
 
             // Register client
             ChatService.addClient(this);
+
 
             // Notify everyone
             ChatService.broadcast(username + " joined the chat");
@@ -104,7 +109,10 @@ public class ChatClientHandler extends Thread {
      * Disconnect from the server
      */
     public void disconnect() {
-        try { socket.close(); } catch (IOException ignored) {}
+        try {
+            socket.close();
+        } catch (IOException ignored) {
+        }
         ChatService.removeClient(this);
         ChatService.broadcast(username + " left the chat");
     }

@@ -5,7 +5,8 @@ public class Note {
     String body;
     long lastSaved;
 
-    public Note() {} // Required for Jackson API
+    public Note() {
+    } // Required for Jackson API
 
     public Note(String title, String body, long lastSaved) {
         this.title = title;
@@ -17,20 +18,20 @@ public class Note {
         return title;
     }
 
-    public String getBody() {
-        return body;
-    }
-
-    public long getLastSaved() {
-        return lastSaved;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public String getBody() {
+        return body;
+    }
+
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public long getLastSaved() {
+        return lastSaved;
     }
 
     public void setLastSaved(long lastSaved) {

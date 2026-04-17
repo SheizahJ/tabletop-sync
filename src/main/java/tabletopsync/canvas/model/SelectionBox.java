@@ -1,13 +1,17 @@
 package tabletopsync.canvas.model;
 
+import tabletopsync.login.LoginView;
+
 import java.awt.*;
+import java.io.IOException;
 
 public class SelectionBox {
     private final Sprite owner;
+    LoginView loginView = new LoginView();
     private String selectedBy;
     private boolean visible = false;
 
-    public SelectionBox(Sprite owner) {
+    public SelectionBox(Sprite owner) throws IOException {
         this.owner = owner;
     }
 

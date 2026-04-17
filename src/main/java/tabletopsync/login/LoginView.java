@@ -1,70 +1,71 @@
 package tabletopsync.login;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-public class LoginView extends JFrame {
+public class LoginView extends JDialog {
+    static LoginModel.ColourSwatch selectedSwatch;
+    private String submittedUsername;
+    private Color submittedColor;
 
     public LoginView() throws IOException {
-        this.setTitle("TableTopSync");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(500, 500);
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+        super((Frame) null, "TableTopSync", true);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setSize(800, 500);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        selectedSwatch = new LoginModel.ColourSwatch(Color.WHITE);
 
-        JPanel titlePanel = new JPanel(new BorderLayout());
-
-        JLabel titleLabel = new JLabel("Connect to Server");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-
-        titlePanel.add(titleLabel, BorderLayout.CENTER);
-        mainPanel.add(titlePanel, BorderLayout.NORTH);
-
-        // ===== Center Wrapper =====
-        JPanel centerWrapper = new JPanel();
-        centerWrapper.setLayout(new BoxLayout(centerWrapper, BoxLayout.Y_AXIS));
-
-        JSeparator separator = new JSeparator();
-        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
-        centerWrapper.add(separator);
-
-        centerWrapper.add(Box.createVerticalStrut(20));
-
-        JPanel loginPanel = getJPanel();
-
-        // center it nicely
-        centerWrapper.add(Box.createVerticalGlue());
-        centerWrapper.add(loginPanel);
-        centerWrapper.add(Box.createVerticalGlue());
-
-        mainPanel.add(centerWrapper, BorderLayout.CENTER);
-
-        this.setContentPane(mainPanel);
-        this.setVisible(true);
+        JPanel panel = new JPanel(new BorderLayout());
+        JSplitPane splitPane = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                LoginComponents.leftPanel(),
+                LoginComponents.rightPanel(this)
+        );
+        splitPane.setDividerSize(0);
+        splitPane.setEnabled(false);
+        panel.add(splitPane, BorderLayout.CENTER);
+        this.add(panel);
     }
 
-    private static JPanel getJPanel() {
-        JPanel loginPanel = new JPanel(new GridLayout(5, 1, 10, 10));
-        loginPanel.setBorder(BorderFactory.createEmptyBorder(20, 80, 20, 80));
-        loginPanel.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+    // Called by your login button in LoginComponents
+    public void submit(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter a username before continuing.",
+                    "Username Required",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        if (selectedSwatch == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a colour before continuing.",
+                    "Colour Required",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
-        JTextField usernameField = new JTextField();
-
-        JButton loginButton = new JButton("Join");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 16));
-
-        loginPanel.add(usernameLabel);
-        loginPanel.add(usernameField);
-        loginPanel.add(loginButton);
-        return loginPanel;
+        this.submittedUsername = username.trim();
+        this.submittedColor = selectedSwatch.getColour();
+        this.dispose();
     }
 
+    public String getSubmittedUsername() {
+        return submittedUsername;
+    }
+
+    public Color getSubmittedColor() {
+        return submittedColor;
+    }
 }

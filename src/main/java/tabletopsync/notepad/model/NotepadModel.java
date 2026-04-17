@@ -6,9 +6,9 @@ import tabletopsync.server.model.ServerModel;
 import java.io.File;
 
 public class NotepadModel {
+    private final ObjectMapper mapper = ServerModel.mapper;
     private File currentFile;
     private Note currentNote;
-    private final ObjectMapper mapper = ServerModel.mapper;
 
     public void open(File file) throws Exception {
         if (file == null) {

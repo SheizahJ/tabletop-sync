@@ -18,6 +18,7 @@ public class PersistenceService {
 
     /**
      * Saves a chat message to JSON file
+     *
      * @param messageObject the message to save
      */
     public static synchronized void saveChatMessage(MessageObject messageObject) {
@@ -26,6 +27,7 @@ public class PersistenceService {
 
     /**
      * Saves a system message to JSON file
+     *
      * @param messageObject the system message to save
      */
     public static synchronized void saveSystemMessage(MessageObject messageObject) {
@@ -36,15 +38,21 @@ public class PersistenceService {
     private static void ensureFileExistence(File file) {
         try {
             File parent = file.getParentFile();
-            if (parent != null && !parent.exists()) { parent.mkdirs(); }
-            if (!file.exists()) { file.createNewFile(); }
+            if (parent != null && !parent.exists()) {
+                parent.mkdirs();
+            }
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (IOException e) { e.printStackTrace(); }
     }
 
     /**
      * File write method
-     * @param file target file
+     *
+     * @param file          target file
      * @param messageObject message object to serialize
      */
     private static void saveToFile(File file, MessageObject messageObject) {
@@ -59,6 +67,7 @@ public class PersistenceService {
 
     /**
      * Loads chat messages from saved file
+     *
      * @return list of chat messages
      */
     public static synchronized List<MessageObject> loadChatMessages() {
@@ -67,6 +76,7 @@ public class PersistenceService {
 
     /**
      * Loads system messages from saved file
+     *
      * @return list of system messages
      */
     public static synchronized List<MessageObject> loadSystemMessages() {
@@ -75,6 +85,7 @@ public class PersistenceService {
 
     /**
      * File read
+     *
      * @param file target file
      * @return list of messages read
      */

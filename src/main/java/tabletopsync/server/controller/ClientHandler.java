@@ -6,11 +6,17 @@ import tabletopsync.server.model.commands.ChatServerCmds;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
-import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles a single client connection on its own thread.
@@ -34,6 +40,17 @@ public class ClientHandler extends Thread {
         chatCommands = new ChatServerCmds(this);
     }
 
+    // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
+    private static boolean isNewMessage(MessageObject message) {
+        List<MessageObject> existingMessages = new ArrayList<>();
+        existingMessages.addAll(PersistenceService.loadChatMessages());
+        existingMessages.addAll(PersistenceService.loadSystemMessages());
+
+        return existingMessages.stream().noneMatch(msg ->
+                msg.getUsername() != null &&
+                        msg.getUsername().equals(message.getUsername()) &&
+                        msg.getMessage().equals(message.getMessage())
+        );
     public String getUsername() { return username; }
 
     /**
@@ -80,6 +97,7 @@ public class ClientHandler extends Thread {
 
     /**
      * Broadcasts a system message to all connected clients and persists it.
+     *
      * @param message The system message
      */
     public void broadcastSystemMessage(String message) {
@@ -104,19 +122,6 @@ public class ClientHandler extends Thread {
         broadcast(userListMessage);
     }
 
-    // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
-    public static boolean isNewMessage(MessageObject message) {
-        List<MessageObject> existingMessages = new ArrayList<>();
-        existingMessages.addAll(PersistenceService.loadChatMessages());
-        existingMessages.addAll(PersistenceService.loadSystemMessages());
-
-        return existingMessages.stream().noneMatch(msg ->
-                msg.getUsername() != null &&
-                msg.getUsername().equals(message.getUsername()) &&
-                msg.getMessage().equals(message.getMessage())
-        );
-    }
-
     /**
      * Main thread method.
      * Handles username assignment, message reading, chat and canvas updates.
@@ -136,6 +141,10 @@ public class ClientHandler extends Thread {
 
             // Register client
             registerClient();
+
+            // broadcast the colours of the existing users
+            // NOTE: there was an issue with colours not showing properly for later users so this is a quick fix.
+            sendExistingColours();
 
             // Listen for messages
             String message;

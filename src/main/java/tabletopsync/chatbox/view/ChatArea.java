@@ -1,9 +1,13 @@
 package tabletopsync.chatbox.view;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import tabletopsync.chatbox.model.UserMenuModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -15,15 +19,24 @@ import java.util.List;
  */
 public class ChatArea extends JPanel {
 
-    private final JTextArea chatTextArea;
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+    private final JPanel chatPanel;
     private final JTextArea systemTextArea;
-
+    private final Color selectedColour;
+    private final UserMenu userMenu;
     public JTextField textField;
     public JButton sendButton;
 
-    private final UserMenu userMenu;
+    public ChatArea(Color selectedColour) {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
 
-    public ChatArea() {
+        this.selectedColour = selectedColour;
+
         setLayout(new BorderLayout());
 
         JPanel top = new JPanel(new BorderLayout());
@@ -47,23 +60,16 @@ public class ChatArea extends JPanel {
 
         JPanel center = new JPanel(new BorderLayout());
 
-        chatTextArea = new JTextArea();
-        chatTextArea.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createTitledBorder("Communications"),
-                        BorderFactory.createEmptyBorder(15,15,15,15)
-                )
-        );
-        chatTextArea.setMargin(new Insets(5, 5, 5, 5));
-        chatTextArea.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        chatTextArea.setLineWrap(true);
-        chatTextArea.setEditable(false);
+        chatPanel = new JPanel();
+        chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+
+        JScrollPane chatScroll = new JScrollPane(chatPanel);
 
         systemTextArea = new JTextArea();
         systemTextArea.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createTitledBorder("Systems"),
-                        BorderFactory.createEmptyBorder(10,10,10,10)
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
                 )
         );
         systemTextArea.setMargin(new Insets(5, 5, 5, 5));
@@ -75,7 +81,7 @@ public class ChatArea extends JPanel {
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(systemTextArea),
-                new JScrollPane(chatTextArea)
+                new JScrollPane(chatScroll)
         );
         splitPane.setDividerLocation(150);
         splitPane.setResizeWeight(0.3);
@@ -84,7 +90,7 @@ public class ChatArea extends JPanel {
         add(center, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
-        bottom.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
+        bottom.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
         textField = new JTextField();
         sendButton = new JButton("SEND");
         bottom.add(textField, BorderLayout.CENTER);
@@ -94,27 +100,61 @@ public class ChatArea extends JPanel {
 
     /**
      * Prints the message onto the chat or system area
-     * @param msg the message to display
+     *
+     * @param username your username
+     * @param message  your message
+     * @param color    the assigned colour to the user
      */
-    public void appendMessage(String msg) {
-        // Ignore user list messages
-        if (msg.startsWith("USER_LIST")) return;
+    public void appendMessage(String username, String message, Color color) {
 
-        // System messages
-        if (msg.contains("joined") || msg.contains("left") || msg.contains("disconnected")) {
-            systemTextArea.append(msg + "\n");
+        if (username.equals("SYSTEM")) {
+            systemTextArea.append(message + "\n");
             systemTextArea.setCaretPosition(systemTextArea.getDocument().getLength());
-        } else {
-            chatTextArea.append(msg + "\n");
-            chatTextArea.setCaretPosition(chatTextArea.getDocument().getLength());
+            return;
         }
+
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        row.setOpaque(false);
+
+        JPanel colorBox = new JPanel();
+        colorBox.setBackground(color);
+        colorBox.setPreferredSize(new Dimension(12, 12));
+
+        String time = formatter.format(Instant.now());
+
+        JLabel label = new JLabel(
+                "<html>" + time + "<br> " + "<b>" + username + ":</b> " + message + "</html>"
+        );
+
+        row.add(colorBox);
+        row.add(Box.createHorizontalStrut(5));
+        row.add(label);
+
+        chatPanel.add(row);
+        chatPanel.revalidate();
+        chatPanel.repaint();
     }
 
     /**
      * Updates the displayed user list
+     *
      * @param users current usernames
      */
     public void updateUsers(List<String> users) {
         userMenu.updateUsers(users);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // rectangle
+        g.setColor(selectedColour);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        // border
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, getWidth(), getHeight());
+
     }
 }
