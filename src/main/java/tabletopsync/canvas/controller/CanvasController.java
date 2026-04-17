@@ -14,6 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
@@ -233,6 +236,13 @@ public class CanvasController extends JPanel {
                 // Creates sprite with the camera's current position
                 sprite.move(model.getCameraX(), model.getCameraY());
                 model.addSprite(sprite);
+
+                    networkListener.onSpriteAdded(
+                            sprite.getUuid(),
+                            sprite.getResourcePath(),
+                            sprite.getPosition().x,
+                            sprite.getPosition().y
+                    );
                 repaint();
             }
         } catch (IOException e) {
@@ -242,10 +252,36 @@ public class CanvasController extends JPanel {
 
     public void addSpriteFromFile(File file) {
         try {
-            if (file != null) {
-                addSpriteToCanvas(file.toURI().toURL());
+            if (file == null) return;
+
+            // copy file into resources/sprites folder
+            String resourceFolder = "src/main/resources/test_images/";
+            new File(resourceFolder).mkdirs();
+
+            String fileName = file.getName();
+            File destination = new File(resourceFolder + fileName);
+            Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // use classpath resource path
+            String resourcePath = "/test_images/" + fileName;
+
+            String uuid = UUID.randomUUID().toString();
+
+            Sprite sprite = new Sprite(model, resourcePath);
+//            sprite.move(model.getCameraX(), model.getCameraY());
+//            model.addSprite(sprite);
+
+            if (networkListener != null) {
+                networkListener.onSpriteAdded(
+                        sprite.getUuid(),
+                        sprite.getResourcePath(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
             }
-        } catch (Exception e) {
+
+            repaint();
+        } catch (IOException e) {
             System.err.println("Error when adding sprite from file: " + e.getMessage());
         }
     }
@@ -395,6 +431,7 @@ public class CanvasController extends JPanel {
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
                     model.getSelectedSprite().select(model.username);
+                    model.setIsSelecting(true);
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
                     repaint();
                     break;

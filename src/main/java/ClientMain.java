@@ -76,6 +76,8 @@ public class ClientMain extends JFrame {
                     out.println("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y);
                 }
 
+                // TODO: be able to globally remove a sprite and broadcast changes to sprite list on canvas
+
                 @Override
                 public void onSpriteMoved(String uuid, int x, int y) {
                     out.println("SPRITE_MOVE:" + uuid + ":" + x + ":" + y);
@@ -165,20 +167,36 @@ public class ClientMain extends JFrame {
                             }
                         } else if (line.startsWith("SPRITE_ADD:")) {
                             try {
+                                // TODO: broadcast changes to sprite list and position on canvas
                                 String[] parts = line.split(":");
                                 String uuid = parts[1];
                                 String resourcePath = parts[2];
                                 int x = Integer.parseInt(parts[3]);
                                 int y = Integer.parseInt(parts[4]);
 
-                                // only add if sprite does not already exist
-                                if (canvasModel.getSpriteByUuid(uuid) == null) {
-                                    SwingUtilities.invokeLater(() ->
-                                            canvasController.addSpriteFromNetwork(resourcePath, uuid, x, y)
-                                    );
-                                }
+                                SwingUtilities.invokeLater(() -> {
+                                    canvasController.addSpriteFromNetwork(resourcePath, uuid, x, y);
+                                    }
+                                );
+
                             } catch (Exception e) {
                                 System.err.println("Invalid sprite add update: " + line);
+                            }
+                        }
+                        // TODO: be able to globally remove a sprite and broadcast changes to sprite list on canvas
+                        else if (line.startsWith("SPRITE_REMOVE:")) {
+                            try {
+                                String[] parts = line.split(":");
+                                String uuid = parts[1];
+                                String resourcePath = parts[2];
+                                int x = Integer.parseInt(parts[3]);
+                                int y = Integer.parseInt(parts[4]);
+
+                                // TODO: check existence of sprite, then remove globally
+
+                            }
+                            catch (NumberFormatException e) {
+                                System.err.println("Failed to remove sprite...");
                             }
                         } else if (line.startsWith("COLOR_SELECT:")) {
                             try {
@@ -197,6 +215,7 @@ public class ClientMain extends JFrame {
                             } catch (Exception e) {
                                 System.err.println("Invalid color broadcast: " + line);
                             }
+                            // TODO: make comms over network: Sprite (add/delete from canvas, lock/unlock, see selected)
                         } else {
                             // all other messages -> chat
                             chatController.receive(line);

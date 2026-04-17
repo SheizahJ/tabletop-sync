@@ -1,9 +1,12 @@
 package tabletopsync.server.controller;
 
+import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.chatbox.model.MessageObject;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -180,10 +183,10 @@ public class ClientHandler extends Thread {
                     System.out.println("Attempting to initialize " + username + "'s canvas...");
                     System.out.println("Sprites in Server: " + ServerModel.sprites);
                     if (ServerModel.sprites.isEmpty()) {
-                        broadcast("INIT_CANVAS:" + username);
+                        sendMessage("INIT_CANVAS:" + username);
                     } else {
                         String spriteData = String.join(",", ServerModel.sprites.values());
-                        broadcast("INIT_CANVAS:" + username + ":" + spriteData);
+                        sendMessage("INIT_CANVAS:" + username + ":" + spriteData);
                     }
                 }
                 // -------------------------------
@@ -227,6 +230,7 @@ public class ClientHandler extends Thread {
 
                         // broadcast sprite creation to all clients
                         broadcast("SPRITE_ADD:" + uuid + ":" + resourcePath + ":" + x + ":" + y);
+
                     } catch (Exception e) {
                         sendMessage("ERROR: Invalid sprite add format");
                     }

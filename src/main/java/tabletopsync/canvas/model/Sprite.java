@@ -3,6 +3,7 @@ package tabletopsync.canvas.model;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
@@ -33,7 +34,14 @@ public class Sprite {
         this.resourcePath = resourcePath;
 
         URL imageURL = getClass().getResource(resourcePath);
-        BufferedImage original = ImageIO.read(imageURL);
+        BufferedImage original;
+        if (imageURL != null) {
+            original = ImageIO.read(imageURL);
+        } else {
+            // fallback: load directly from src/main/resources on disk
+            File fallback = new File("src/main/resources" + resourcePath);
+            original = ImageIO.read(fallback);
+        }
 
         // make sure the sprite is a max size we choose, if not make it smaller
         int maxSize = 512;
@@ -97,6 +105,7 @@ public class Sprite {
         this.selectionBox = new SelectionBox(this);
         resetSpriteDefaults();
     }
+
 
     public String getUuid() {
         return uuid;

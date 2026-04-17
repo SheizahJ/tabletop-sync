@@ -40,6 +40,29 @@ public class TableTopGUI extends JFrame {
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         canvasTopBar.setBackground(new Color(0, 0, 0, 0));
 
+        JButton addSpriteButton = new JButton("Add Sprite");
+
+        addSpriteButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Choose a sprite");
+
+            // allow png / jpg / jpeg only
+            FileNameExtensionFilter imageFilter =
+                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
+            fileChooser.setFileFilter(imageFilter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                canvasController.addSpriteFromFile(selectedFile);
+//                canvasController.addSharedSpriteToCanvas(selectedFile.toURI().toString());
+            }
+        });
+
+        canvasTopBar.add(addSpriteButton);
+
         JButton returnOriginButton = new JButton("Return to Origin");
 
         returnOriginButton.addActionListener(e -> {
@@ -68,28 +91,6 @@ public class TableTopGUI extends JFrame {
 
         canvasTopBar.add(returnToSelectedSpriteButton);
 
-
-        JButton addSpriteButton = new JButton("Add Sprite");
-
-        addSpriteButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Choose a sprite");
-
-            // allow png / jpg / jpeg only
-            FileNameExtensionFilter imageFilter =
-                    new FileNameExtensionFilter("Image Files (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg");
-            fileChooser.setFileFilter(imageFilter);
-            fileChooser.setAcceptAllFileFilterUsed(false);
-
-            int result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                canvasController.addSpriteFromFile(selectedFile);
-            }
-        });
-
-        canvasTopBar.add(addSpriteButton);
 
         JButton changeMapButton = new JButton("Change Map");
 
