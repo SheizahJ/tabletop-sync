@@ -1,6 +1,5 @@
 package tabletopsync.server.controller;
 
-import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.chatbox.model.MessageObject;
 import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
@@ -234,7 +233,15 @@ public class ClientHandler extends Thread {
                     } catch (Exception e) {
                         sendMessage("ERROR: Invalid sprite add format");
                     }
-                } else if (message.startsWith("COLOR_SELECT:")) {
+
+                }
+                else if (message.startsWith("SPRITE_REMOVE:")) {
+                    String[] parts = message.split(":");
+                    String uuid = parts[1];
+                    ServerModel.sprites.remove(uuid);
+                    broadcast("SPRITE_REMOVE:" + uuid);
+                }
+                else if (message.startsWith("COLOR_SELECT:")) {
                     try {
                         String RGB = message.substring("COLOR_SELECT:".length());
                         ServerModel.userColours.put(username, RGB);

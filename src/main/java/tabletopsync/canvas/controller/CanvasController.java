@@ -78,7 +78,7 @@ public class CanvasController extends JPanel {
                     if (selectedSprite != null) {
                         // remove sprite
                         model.removeSprite(selectedSprite);
-
+                        networkListener.onSpriteRemoved(selectedSprite.getUuid());
                         // redraw canvas
                         repaint();
                     }
@@ -297,6 +297,16 @@ public class CanvasController extends JPanel {
         }
     }
 
+    public void removeSpriteFromNetwork(String uuid) {
+        Sprite sprite = model.getSpriteByUuid(uuid);
+        if (sprite != null) {
+            model.removeSprite(sprite);
+            repaint();
+        } else {
+            System.err.println("Could not find sprite with uuid: " + uuid);
+        }
+    }
+
     public void addSharedSpriteToCanvas(String resourcePath) {
         try {
             Sprite sprite = new Sprite(model, resourcePath);
@@ -361,6 +371,8 @@ public class CanvasController extends JPanel {
         void onSpriteAdded(String uuid, String resourcePath, int x, int y);
 
         void onSpriteMoved(String uuid, int x, int y);
+
+        void onSpriteRemoved(String uuid);
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {

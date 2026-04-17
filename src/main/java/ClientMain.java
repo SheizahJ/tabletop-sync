@@ -82,6 +82,11 @@ public class ClientMain extends JFrame {
                 public void onSpriteMoved(String uuid, int x, int y) {
                     out.println("SPRITE_MOVE:" + uuid + ":" + x + ":" + y);
                 }
+
+                @Override
+                public void onSpriteRemoved(String uuid) {
+                    out.println("SPRITE_REMOVE:" + uuid);
+                }
             });
 
             // Initialize player's canvas
@@ -193,6 +198,10 @@ public class ClientMain extends JFrame {
                                 int y = Integer.parseInt(parts[4]);
 
                                 // TODO: check existence of sprite, then remove globally
+                                SwingUtilities.invokeLater(() -> {
+                                            canvasController.removeSpriteFromNetwork(uuid);
+                                        }
+                                );
 
                             }
                             catch (NumberFormatException e) {

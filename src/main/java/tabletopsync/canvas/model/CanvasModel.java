@@ -12,6 +12,7 @@ public class CanvasModel {
     // sprite variables
     private final List<Sprite> sprites = new ArrayList<>();
     private final List<CameraListener> listeners = new ArrayList<>();
+
     //---------------------QUARANTINE------------------------//
     public String username;
     private boolean cameraCanMove = false;
