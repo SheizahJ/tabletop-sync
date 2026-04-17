@@ -2,16 +2,11 @@
 
 ## Meet the Team 
 
-- **Sheizah Jimenez**: 
-  - Project Lead + Front-End Developer
-- **Shawn Heer**: 
-  - Lead Front-End Developer + UX Designer
-- **Mina Si Nan Yang**: 
-  - Persistence Manager + UI Designer
-- **Graeme Jeffreys**: 
-  - Primary Network Manager + Back-End Developer
-- **Ramiyan Gangatharan**: 
-  - Lead Back-End Developer + Network Support
+- **Sheizah Jimenez**: Project Lead + Front-End Developer
+- **Shawn Heer**: Lead Front-End Developer + UX Designer
+- **Mina Si Nan Yang**: Persistence Manager + UI Designer
+- **Graeme Jeffreys**: Primary Network Manager + Back-End Developer
+- **Ramiyan Gangatharan**: Lead Back-End Developer + Network Support
 
 ## Project Overview 
 
@@ -32,17 +27,13 @@ TabletopSync is a multiplayer 2D tabletop RPG board application that allows mult
     - *TextField to type messages into
     - Send message (using Send button or 'Enter' key)
     - Player List w/ Player names and assigned colours
-  - **Notepad [INCOMPLETE / NOT STARTED]**
+  - **Notepad**
     - Create New notes
     - *TextArea to write/update notes into
     - Open Saved notes (a list of saved notes is provided)
     - Save new/opened notes
     - Delete new/opened notes
-  - **Toolbox [INCOMPLETE / NOT STARTED]**
-    - AoE Overlay: "Area of Effect" circular tool that measures the radius from the center 
-    - Dice: a random number generator 
-    - Ruler: a measuring tool that tells you the distance from one point to another
-
+  
   _*These features are Client-sided only. All other features communicate to the Server in some way._
 
 ### Process & Documentation
@@ -55,8 +46,9 @@ _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 
 ## How to Run
 1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
-2. Run `MainServer.java` 
-3. Run `ClientApp.java`
+2. Change directory to the project folder (ex. `cd ..\Software Systems\Assignments\w26-csci2020u-finalproject-w26-team16`)
+3. Run `Server.java`
+4. Run `Client.java`
    * Can run multiple Clients at once...
 
 ## AI Disclosure
@@ -64,7 +56,10 @@ _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 - Assistance with debugging code snippets.
 - Minor UI inquiries (e.g. How to create items in a JPopupMenu)
 - Assisted with mathematical equations related to the camera movement, grid-related features, sprite dragging, etc.
+- Consultation purposes (e.g. What is the best way to do <insert-topic-here>)
 
 ## Resources
-- _**TODO**: ADD LATER IF ANY..._
+- **Flatlaf Dependency**: Creates the Server UI in a similar fashion to a regular Terminal.
+- **Jackson Databind Dependency**: Used for JSON inquiries.
+- **Stack Overflow**: Used to help with implementation of network and minor UI inquiries.
 
