@@ -94,6 +94,42 @@ public class CanvasClientCmds {
                     System.err.println("Invalid sprite add update: " + e.getMessage());
                 }
             }
+            case "SPRITE_SELECTED" -> {
+                try {
+                    String uuid = parts[1];
+                    String selectedBy = parts[2];
+                    int r = Integer.parseInt(parts[3]);
+                    int g = Integer.parseInt(parts[4]);
+                    int b = Integer.parseInt(parts[5]);
+                    Color color = new Color(r, g, b);
+                    System.out.println("SPRITE_SELECTED received: " + uuid + " by " + selectedBy); // debug
+                    var sprite = canvasModel.getSpriteByUuid(uuid);
+                    System.out.println("Sprite found: " + (sprite != null)); // debug
+                    if (sprite != null) {
+                        SwingUtilities.invokeLater(() -> {
+                            sprite.select(selectedBy, color);
+                            System.out.println("SelectionBox visible: " + sprite.getSelectionBox().isVisible()); // debug
+                            canvasController.repaint();
+                        });
+                    }
+                } catch (Exception e) {
+                    System.err.println("Invalid sprite selected update: " + e.getMessage());
+                }
+            }
+            case "SPRITE_DESELECTED" -> {
+                try {
+                    String uuid = parts[1];
+                    var sprite = canvasModel.getSpriteByUuid(uuid);
+                    if (sprite != null) {
+                        SwingUtilities.invokeLater(() -> {
+                            sprite.deselect();
+                            canvasController.repaint();
+                        });
+                    }
+                } catch (Exception e) {
+                    System.err.println("Invalid sprite deselected update: " + e.getMessage());
+                }
+            }
         }
     }
 }

@@ -29,12 +29,12 @@ public class ClientModel {
     private final PrintWriter out;
 
     public ClientModel(Socket socket, PrintWriter out, String username, Color colorSelection) throws IOException {
+        this.colorSelection = colorSelection;
+
         // Initialize Canvas
         this.canvasModel = new CanvasModel();
         canvasModel.setUsername(username);
-
         this.canvasController = getCanvasController(canvasModel);
-
         this.canvasView = new CanvasView();
         canvasView.add(canvasController);
 
@@ -42,8 +42,6 @@ public class ClientModel {
         this.chatModel = new ChatModel();
         this.chatView = new ChatView(username, colorSelection);
         this.chatController = new ChatController(chatView, socket, out);
-        this.colorSelection = colorSelection;
-
         this.out = out;
     }
 
@@ -65,6 +63,19 @@ public class ClientModel {
             @Override
             public void onSpriteRemoved(String uuid) {
 
+            }
+
+            @Override
+            public void onSpriteSelected(String uuid, String selectedBy, Color color) {
+                out.println("SPRITE_SELECTED;" + uuid + ";" + selectedBy + ";"
+                        + colorSelection.getRed() + ";"
+                        + colorSelection.getGreen() + ";"
+                        + colorSelection.getBlue());
+            }
+
+            @Override
+            public void onSpriteDeselected(String uuid) {
+                out.println("SPRITE_DESELECTED;" + uuid);
             }
         });
         return canvasController;
