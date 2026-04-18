@@ -34,6 +34,7 @@ public class ClientView extends JFrame {
 
         // get the canvas controller from canvas view
         CanvasController canvasController = (CanvasController) canvasView.getComponent(0);
+        CanvasModel canvasModel = canvasController.model;
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
