@@ -7,28 +7,31 @@ import java.awt.*;
 
 public class SpritePopup extends JPopupMenu {
     private final JMenuItem lockSprite;
-    private final CanvasModel model;
+    private final CanvasController canvasController;
+    private final CanvasModel canvasModel;
 
-    public SpritePopup(CanvasController canvas, CanvasModel model) {
-        this.model = model;
+    public SpritePopup(CanvasController canvasController, CanvasModel canvasModel) {
+        this.canvasController = canvasController;
+        this.canvasModel = canvasModel;
 
         // lock/unlock sprite button
         this.lockSprite = new JMenuItem("Lock");
         lockSprite.addActionListener(e -> {
-            Sprite selectedSprite = model.getSelectedSprite();
+            Sprite selectedSprite = canvasModel.getSelectedSprite();
             if (selectedSprite != null && selectedSprite.isSelected()) {
                 selectedSprite.setLockedState(!selectedSprite.isLocked());
-                canvas.repaint();
+                canvasController.repaint();
             }
         });
 
         // delete sprite button
         JMenuItem deleteSprite = new JMenuItem("Delete");
         deleteSprite.addActionListener(e -> {
-            Sprite selectedSprite = model.getSelectedSprite();
+            Sprite selectedSprite = canvasModel.getSelectedSprite();
             if (selectedSprite != null && selectedSprite.isSelected()) {
-                model.removeSprite(selectedSprite);
-                canvas.repaint();
+                canvasModel.removeSprite(selectedSprite);
+                this.canvasController.networkListener.onSpriteRemoved(selectedSprite.getUuid());
+                canvasController.repaint();
             }
         });
 
@@ -43,6 +46,6 @@ public class SpritePopup extends JPopupMenu {
         super.show(invoker, x, y);
 
         this.setVisible(true);
-        this.lockSprite.setText(model.getSelectedSprite().isLocked() ? "Unlock" : "Lock");
+        this.lockSprite.setText(canvasModel.getSelectedSprite().isLocked() ? "Unlock" : "Lock");
     }
 }

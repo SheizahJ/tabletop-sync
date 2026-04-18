@@ -34,7 +34,6 @@ public class ClientView extends JFrame {
 
         // get the canvas controller from canvas view
         CanvasController canvasController = (CanvasController) canvasView.getComponent(0);
-        CanvasModel canvasModel = canvasController.model;
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -50,8 +49,6 @@ public class ClientView extends JFrame {
         canvasTopBar.add(snapToGrid);
 
         JCheckBox showGrid = getGridButton(canvasController);
-        canvasTopBar.add(showGrid);
-
         canvasTopBar.add(showGrid);
 
         // wrapper for canvas area
@@ -109,7 +106,7 @@ public class ClientView extends JFrame {
 
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                canvasController.setMapFromFile(selectedFile);
+                canvasController.setMapFromFile(selectedFile, 1000, 700);
             }
         });
         return changeMapButton;

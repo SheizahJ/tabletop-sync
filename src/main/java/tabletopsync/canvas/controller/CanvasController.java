@@ -13,15 +13,20 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
  */
 public class CanvasController extends JPanel {
+    private static final String resourceFolder = "src/main/resources/test_images/";
+
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
     public final CanvasModel model;
@@ -31,7 +36,7 @@ public class CanvasController extends JPanel {
     private Point selectedOffset;
     private Point mapResizeStartPoint;
     private Dimension mapResizeStartSize;
-    private CanvasUpdateListener networkListener; // send updates to server
+    public CanvasUpdateListener networkListener; // send updates to server
 
     /**
      * Handles the canvas functions interacting with the Sprite object and other model attributes:
@@ -51,11 +56,6 @@ public class CanvasController extends JPanel {
 
         // listen to model updates for repaint
         model.addListener((x, y) -> SwingUtilities.invokeLater(this::repaint));
-
-        // FOR TESTING PURPOSES: ADD TEST SPRITES ---------------------
-        // TODO: Create "Add Sprite" button to do this instead
-
-        // ------------------------------------------------------------
 
         // Canvas adapter
         CanvasMouseAdapter canvasControl = new CanvasMouseAdapter();
@@ -86,9 +86,12 @@ public class CanvasController extends JPanel {
                 if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
                     Sprite selectedSprite = model.getSelectedSprite();
                     if (selectedSprite != null) {
-                        // remove sprite
+                        String uuidToDelete = selectedSprite.getUuid();
+
+                        // delete sprite
                         model.removeSprite(selectedSprite);
-                        networkListener.onSpriteRemoved(selectedSprite.getUuid());
+                        networkListener.onSpriteRemoved(uuidToDelete);
+
                         // redraw canvas
                         repaint();
                     }
@@ -146,8 +149,8 @@ public class CanvasController extends JPanel {
      */
     private void drawCanvasGrid(Graphics2D g2) {
         g2.setColor(new Color(220, 220, 220)); // light gray grid color
-
         int cameraX = model.getCameraX();
+
         int cameraY = model.getCameraY();
 
         double zoom = model.getZoom();
@@ -220,18 +223,58 @@ public class CanvasController extends JPanel {
      * Sets a map from a chosen image file
      * @param file
      */
-    public void setMapFromFile(File file) {
+    public void setMapFromFile(File file, int width, int height) {
         try {
+            String resourcePath = addToImageResource(file);
+            model.setMapResourcePath(resourcePath);
+
             BufferedImage img = ImageIO.read(file);
             model.setMapImage(img);
 
-            // place map at current canvas view
             model.setMapPosition(model.getCameraX(), model.getCameraY());
+            model.setMapSize(width, height);
+
+            if (networkListener != null) {
+                networkListener.onMapUpdate(resourcePath, width, height);
+            }
 
             repaint();
         } catch (IOException e) {
             System.err.println("Failed to load map image: " + e.getMessage());
         }
+    }
+
+    /**
+     * Updates map with provided params
+     * @param resourcePath
+     */
+    public void setMap(String resourcePath, int width, int height) {
+        try {
+            URL mapURL = Objects.requireNonNull(getClass().getResource(resourcePath)).toURI().toURL();
+            BufferedImage img = ImageIO.read(mapURL);
+            model.setMapResourcePath(resourcePath);
+            model.setMapImage(img);
+
+            // place map at current canvas view
+            model.setMapPosition(model.getCameraX(), model.getCameraY());
+            model.setMapSize(width, height);
+
+            repaint();
+        } catch (IOException | URISyntaxException e) {
+            System.err.println("Failed to load map image using resource path: " + e.getMessage());
+        }
+    }
+
+    public String addToImageResource(File file) throws IOException {
+        // copy file into resources/sprites folder
+        new File(resourceFolder).mkdirs();
+
+        String fileName = file.getName();
+        File destination = new File(resourceFolder + fileName);
+        Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        // use classpath resource path
+        return "/test_images/" + fileName;
     }
 
     /**
@@ -312,22 +355,8 @@ public class CanvasController extends JPanel {
         try {
             if (file == null) return;
 
-            // copy file into resources/sprites folder
-            String resourceFolder = "src/main/resources/test_images/";
-            new File(resourceFolder).mkdirs();
-
-            String fileName = file.getName();
-            File destination = new File(resourceFolder + fileName);
-            Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-            // use classpath resource path
-            String resourcePath = "/test_images/" + fileName;
-
-            String uuid = UUID.randomUUID().toString();
-
+            String resourcePath = addToImageResource(file);
             Sprite sprite = new Sprite(model, resourcePath);
-//            sprite.move(model.getCameraX(), model.getCameraY());
-//            model.addSprite(sprite);
 
             if (networkListener != null) {
                 networkListener.onSpriteAdded(
@@ -447,6 +476,8 @@ public class CanvasController extends JPanel {
         void onSpriteMoved(String uuid, int x, int y);
 
         void onSpriteRemoved(String uuid);
+
+        void onMapUpdate(String resourcePath, int width, int height);
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
@@ -539,6 +570,12 @@ public class CanvasController extends JPanel {
                 newHeight = Math.max(MIN_MAP_SIZE, newHeight);
 
                 model.setMapSize(newWidth, newHeight);
+
+                if (networkListener != null) {
+                    String currentPath = model.getMapResourcePath();
+                    networkListener.onMapUpdate(currentPath, newWidth, newHeight);
+                }
+
                 repaint();
                 return;
             }

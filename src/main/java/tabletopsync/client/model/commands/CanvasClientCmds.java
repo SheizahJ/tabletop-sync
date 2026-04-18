@@ -94,6 +94,34 @@ public class CanvasClientCmds {
                     System.err.println("Invalid sprite add update: " + e.getMessage());
                 }
             }
+
+            case "SPRITE_DELETE" -> {
+                try {
+                    String uuid = parts[1];
+
+                    // Run on UI thread to prevent flickering or crashes
+                    SwingUtilities.invokeLater(() -> {
+                        canvasController.removeSpriteFromNetwork(uuid);
+                    });
+                } catch (Exception e) {
+                    System.err.println("Invalid sprite delete update: " + e.getMessage());
+                }
+            }
+
+            case "UPDATE_MAP" -> {
+                try {
+                    String resourcePath = parts[1];
+                    int width = Integer.parseInt(parts[2]);
+                    int height = Integer.parseInt(parts[3]);
+
+                    SwingUtilities.invokeLater(() -> {
+                        canvasController.setMap(resourcePath, width, height);
+                    });
+                }
+                catch (Exception e) {
+                    System.err.println("ERROR occurred while setting up client's map.. " + e.getMessage());
+                }
+            }
         }
     }
 }

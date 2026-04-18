@@ -21,6 +21,7 @@ public class CanvasModel {
     private double zoom = 1.0;
     // map background
     private BufferedImage mapImage;
+    private String mapResourcePath;
     private int mapX = 0;
     private int mapY = 0;
     private int mapWidth = 0;
@@ -207,6 +208,14 @@ public class CanvasModel {
             }
         }
         return null;
+    }
+
+    public void setMapResourcePath(String path) {
+        this.mapResourcePath = path;
+    }
+
+    public String getMapResourcePath() {
+        return mapResourcePath;
     }
 
     // Functional interface

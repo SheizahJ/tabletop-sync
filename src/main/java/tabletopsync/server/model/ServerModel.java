@@ -44,7 +44,8 @@ public class ServerModel {
 
 
     // ========================
-    // SPRITE
+    // CANVAS
     // ========================
+    public static String map = "";
     public static HashMap<String, String> sprites = new HashMap<>();
 }

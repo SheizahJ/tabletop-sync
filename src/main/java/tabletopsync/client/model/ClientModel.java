@@ -64,7 +64,14 @@ public class ClientModel {
 
             @Override
             public void onSpriteRemoved(String uuid) {
+                String command = "SPRITE_DELETE;" + uuid;
+                out.println(command);
+            }
 
+            @Override
+            public void onMapUpdate(String resourcePath, int width, int height) {
+                String command = "UPDATE_MAP;" + resourcePath + ";" + width + ";" + height;
+                out.println(command);
             }
         });
         return canvasController;

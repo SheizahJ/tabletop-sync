@@ -31,6 +31,14 @@ public class CanvasServerCmds {
             case "INIT_CANVAS" -> {
                 System.out.println("Attempting to initialize " + clientHandler.username + "'s canvas...");
                 System.out.println("Sprites in Server: " + ServerModel.sprites);
+
+                // Initialize Map
+                if (ServerModel.map != null && !ServerModel.map.isEmpty()) {
+                    // Just send the stored string as-is because it's already "UPDATE_MAP;path;w;h"
+                    clientHandler.sendToClient(ServerModel.map);
+                }
+
+                // Initialize Sprites
                 if (ServerModel.sprites.isEmpty()) {
                     clientHandler.sendToClient("INIT_CANVAS");
                 } else {
@@ -81,6 +89,37 @@ public class CanvasServerCmds {
                     clientHandler.broadcast("SPRITE_ADD;" + uuid + ";" + resourcePath + ";" + x + ";" + y);
                 } catch (Exception e) {
                     System.err.println("ERROR: Invalid sprite add format");
+                }
+            }
+
+            case "SPRITE_DELETE" -> {
+                try {
+                    String uuid = parts[1];
+
+                    // Remove from server memory so it doesn't reappear on INIT_CANVAS
+                    ServerModel.sprites.remove(uuid);
+
+                    // Tell everyone else to delete it
+                    clientHandler.broadcast("SPRITE_DELETE;" + uuid);
+
+                    System.out.println("Sprite " + uuid + " deleted by " + clientHandler.username);
+                } catch (Exception e) {
+                    System.err.println("ERROR: Invalid sprite delete format");
+                }
+            }
+
+            case "UPDATE_MAP" -> {
+                try {
+                    String resourcePath = parts[1];
+                    int width = Integer.parseInt(parts[2]);
+                    int height = Integer.parseInt(parts[3]);
+
+                    String toBroadcast = "UPDATE_MAP;" + resourcePath + ";" + width + ";" + height;
+                    ServerModel.map = toBroadcast;
+
+                    clientHandler.broadcast(toBroadcast);
+                } catch (Exception e) {
+                    System.err.println("ERROR occurred while updating the server's map: " + e.getMessage());
                 }
             }
 
