@@ -3,6 +3,8 @@ package tabletopsync.server.model.commands;
 import tabletopsync.server.controller.ClientHandler;
 import tabletopsync.server.model.ServerModel;
 
+import java.awt.*;
+
 public class CanvasServerCmds {
     private final ClientHandler clientHandler;
 
@@ -80,6 +82,36 @@ public class CanvasServerCmds {
                 } catch (Exception e) {
                     System.err.println("ERROR: Invalid sprite add format");
                 }
+            }
+
+            case "SET_USER" -> {
+                String username = parts[1];
+                clientHandler.setUsername(username);
+
+                // Register client
+                clientHandler.registerClient();
+
+                // broadcast the colours of the existing users
+                // NOTE: there was an issue with colours not showing properly for later users so this is a quick fix.
+                clientHandler.sendExistingColours();
+            }
+
+            case "COLOR_SELECT" -> {
+                try {
+                    String user = parts[1];
+                    String[] colourArray = parts[2].split(",");
+
+                    int r = Integer.parseInt(colourArray[0]);
+                    int g = Integer.parseInt(colourArray[1]);
+                    int b = Integer.parseInt(colourArray[2]);
+
+                    Color color = new Color(r, g, b);
+                    ServerModel.userColours.put(user, parts[2]); // store "r,g,b";
+
+                } catch (Exception e) {
+                    System.err.println("Invalid color broadcast: " + message);
+                }
+                // TODO: make comms over network: Sprite (add/delete from canvas, lock/unlock, see selected)
             }
         }
     }

@@ -41,7 +41,7 @@ public class ClientHandler extends Thread {
     }
 
     // TO HANDLE DUPLICATE ENTRIES ON LOAD - rami
-    private static boolean isNewMessage(MessageObject message) {
+    public static boolean isNewMessage(MessageObject message) {
         List<MessageObject> existingMessages = new ArrayList<>();
         existingMessages.addAll(PersistenceService.loadChatMessages());
         existingMessages.addAll(PersistenceService.loadSystemMessages());
@@ -51,12 +51,18 @@ public class ClientHandler extends Thread {
                         msg.getUsername().equals(message.getUsername()) &&
                         msg.getMessage().equals(message.getMessage())
         );
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getUsername() { return username; }
 
     /**
      * Registers the client and broadcasts a system message.
      */
-    private void registerClient() {
+    public void registerClient() {
         if (username != null && !username.isBlank()) {
             ServerModel.clients.put(username, this);
             broadcastUserList();
@@ -67,7 +73,7 @@ public class ClientHandler extends Thread {
     /**
      * Unregisters the client and broadcasts a system message.
      */
-    private void unregisterClient() {
+    public void unregisterClient() {
         if (username != null) {
             ServerModel.clients.remove(username);
             broadcastUserList();
@@ -101,6 +107,7 @@ public class ClientHandler extends Thread {
      * @param message The system message
      */
     public void broadcastSystemMessage(String message) {
+        System.out.println(message);
         MessageObject systemMsg = new MessageObject(
                 null,
                 message,
@@ -111,7 +118,7 @@ public class ClientHandler extends Thread {
         if (isNewMessage(systemMsg)) {
             PersistenceService.saveSystemMessage(systemMsg);
         }
-        broadcast("SEND_MSG;" + message);
+        broadcast("SYS_MSG;" + message);
     }
 
     /**
@@ -130,21 +137,6 @@ public class ClientHandler extends Thread {
     public void run() {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             out = new PrintWriter(socket.getOutputStream(), true);
-
-            // Get username from client
-            username = in.readLine();
-
-            if (username == null || username.trim().isEmpty()) {
-                socket.close();
-                return;
-            }
-
-            // Register client
-            registerClient();
-
-            // broadcast the colours of the existing users
-            // NOTE: there was an issue with colours not showing properly for later users so this is a quick fix.
-            sendExistingColours();
 
             // Listen for messages
             String message;
@@ -171,5 +163,12 @@ public class ClientHandler extends Thread {
         } catch (IOException ignored) {}
 
         unregisterClient();
+    }
+
+    public void sendExistingColours() {
+        for (String user : ServerModel.userColours.keySet()) {
+            String rgb = ServerModel.userColours.get(user);
+            sendToClient("COLOR_SELECT;" + user + ";" + rgb);
+        }
     }
 }

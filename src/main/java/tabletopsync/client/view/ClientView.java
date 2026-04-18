@@ -38,7 +38,7 @@ public class ClientView extends JFrame {
 
         // top bar for canvas buttons
         JPanel canvasTopBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        canvasTopBar.setBackground(new Color(0, 0, 0, 0));
+        canvasTopBar.setOpaque(false);
 
         JButton addSpriteButton = getSpriteButton(canvasController);
         canvasTopBar.add(addSpriteButton);
@@ -49,18 +49,8 @@ public class ClientView extends JFrame {
         JCheckBox snapToGrid = getSnapButton(canvasController);
         canvasTopBar.add(snapToGrid);
 
-        JCheckBox showGrid = new JCheckBox("Show Grid", true);
-        canvasController.model.setGridVisibility(true);
-
-        showGrid.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                canvasController.model.setGridVisibility(true);
-                repaint();
-            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                canvasController.model.setGridVisibility(false);
-                repaint();
-            }
-        });
+        JCheckBox showGrid = getGridButton(canvasController);
+        canvasTopBar.add(showGrid);
 
         canvasTopBar.add(showGrid);
 
@@ -161,5 +151,21 @@ public class ClientView extends JFrame {
             }
         });
         return snapToGrid;
+    }
+
+    private JCheckBox getGridButton(CanvasController canvasController) {
+        JCheckBox showGrid = new JCheckBox("Show Grid", true);
+        canvasController.model.setGridVisibility(true);
+
+        showGrid.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                canvasController.model.setGridVisibility(true);
+                repaint();
+            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                canvasController.model.setGridVisibility(false);
+                repaint();
+            }
+        });
+        return showGrid;
     }
 }

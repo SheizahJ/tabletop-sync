@@ -35,12 +35,7 @@ public class NoteListPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(notesList);
 
-        notesList.setBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createTitledBorder("Notes"),
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
-                )
-        );
+        notesList.setBorder(BorderFactory.createTitledBorder("Notes"));
 
         newButton = new JButton("new");
 

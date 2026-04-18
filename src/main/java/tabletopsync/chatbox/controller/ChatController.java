@@ -97,58 +97,7 @@ public class ChatController {
             view.chatArea.textField.setText("");
         }
     }
-
-    /**
-     * This takes the text from the user and puts it into the text area
-     * MODIFICATION: Persistence in messages serverwide
-     *
-     * @param message the message that you want to send over the network
-     */
-    public void receive(String message) {
-
-        if (message.startsWith("USER_LIST")) {
-            String[] users = message.substring(10).split(",");
-            SwingUtilities.invokeLater(() ->
-                    view.getChatArea().updateUsers(Arrays.asList(users))
-            );
-            return;
-        }
-
-        if (!message.contains(":")) {
-            SwingUtilities.invokeLater(() ->
-                    view.getChatArea().appendMessage("SYSTEM", message, Color.GRAY)
-            );
-            return;
-        }
-
-
-        String[] parts = message.split(":", 2);
-        String username = parts[0];
-        String msg = parts[1].trim();
-
-        String rgb = ServerModel.userColours.get(username);
-
-        Color color = Color.WHITE; // fallback
-
-        if (rgb != null) {
-            try {
-                String[] c = rgb.split(",");
-                color = new Color(
-                        Integer.parseInt(c[0]),
-                        Integer.parseInt(c[1]),
-                        Integer.parseInt(c[2])
-                );
-            } catch (Exception ignored) {
-            }
-        }
-
-        Color finalColor = color;
-
-        SwingUtilities.invokeLater(() ->
-                view.getChatArea().appendMessage(username, msg, finalColor)
-        );
-    }
-
+    
     /**
      * Closes the instance of client
      */

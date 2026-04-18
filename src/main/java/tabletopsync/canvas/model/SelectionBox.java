@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public class SelectionBox {
     private final Sprite owner;
-    LoginView loginView = new LoginView();
     private String selectedBy;
     private boolean visible = false;
 

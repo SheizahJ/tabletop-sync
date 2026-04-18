@@ -35,19 +35,37 @@ public class ChatServerCmds {
             String[] parts = message.split(";");
             String command = parts[0];
 
-            if (command.equals("SEND_MSG")) {
-                String formatted = clientHandler.username + ": " + parts[1];
-                clientHandler.broadcast("SEND_MSG;" + formatted);
+            switch (command) {
+                case "SEND_MSG" -> {
+                    String chatMessage = parts[1];
+                    clientHandler.broadcast("SEND_MSG;" + clientHandler.username + ";" + chatMessage);
 
-                MessageObject chatMsg = new MessageObject(
-                        clientHandler.username,
-                        message,
-                        new Time(System.currentTimeMillis()),
-                        "CHAT"
-                );
+                    MessageObject chatMsg = new MessageObject(
+                            clientHandler.username,
+                            chatMessage,
+                            new Time(System.currentTimeMillis()),
+                            "CHAT"
+                    );
 
-                if (ClientHandler.isNewMessage(chatMsg)) {
-                    PersistenceService.saveChatMessage(chatMsg);
+                    if (ClientHandler.isNewMessage(chatMsg)) {
+                        PersistenceService.saveChatMessage(chatMsg);
+                    }
+                }
+
+                case "SYS_MSG" -> {
+                    String systemMessage = parts[1];
+                    clientHandler.broadcast("SYS_MSG;" + systemMessage);
+
+                    MessageObject systemMsg = new MessageObject(
+                            "SYSTEM",
+                            systemMessage,
+                            new Time(System.currentTimeMillis()),
+                            "CHAT"
+                    );
+
+                    if (ClientHandler.isNewMessage(systemMsg)) {
+                        PersistenceService.saveSystemMessage(systemMsg);
+                    }
                 }
             }
         }

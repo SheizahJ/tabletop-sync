@@ -2,8 +2,10 @@ package tabletopsync.client.model.commands;
 
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.model.CanvasModel;
+import tabletopsync.server.model.ServerModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.UUID;
