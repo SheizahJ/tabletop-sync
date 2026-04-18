@@ -152,6 +152,28 @@ public class CanvasServerCmds {
                 }
                 // TODO: make comms over network: Sprite (add/delete from canvas, lock/unlock, see selected)
             }
+
+            case "SPRITE_SELECTED" -> {
+                try {
+                    String uuid = parts[1];
+                    String selectedBy = parts[2];
+                    String r = parts[3];
+                    String g = parts[4];
+                    String b = parts[5];
+                    clientHandler.broadcast("SPRITE_SELECTED;" + uuid + ";" + selectedBy + ";" + r + ";" + g + ";" + b);
+                } catch (Exception e) {
+                    System.err.println("ERROR: Invalid sprite selected format");
+                }
+            }
+
+            case "SPRITE_DESELECTED" -> {
+                try {
+                    String uuid = parts[1];
+                    clientHandler.broadcast("SPRITE_DESELECTED;" + uuid);
+                } catch (Exception e) {
+                    System.err.println("ERROR: Invalid sprite deselected format");
+                }
+            }
         }
     }
 }

@@ -166,14 +166,14 @@ public class Sprite {
         this.position.setLocation(x, y);
     }
 
-    public void select(String username) {
+    public void select(String username, Color color) {
         // bring sprite to front
         model.removeSprite(this);
         model.addSprite(this);
 
         this.isSelected = true;
         model.selectSprite(this);
-        selectionBox.show(username);
+        selectionBox.show(username, color);
     }
 
     public void deselect() {

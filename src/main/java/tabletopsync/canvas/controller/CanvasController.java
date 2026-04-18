@@ -31,7 +31,7 @@ public class CanvasController extends JPanel {
     private static final int MIN_MAP_SIZE = 50;
     public final CanvasModel model;
     private final SpritePopup spritePopup;
-    public Color colorSelection;
+    public static Color colorSelection;
     private Point lastCameraPoint;
     private Point selectedOffset;
     private Point mapResizeStartPoint;
@@ -150,7 +150,6 @@ public class CanvasController extends JPanel {
     private void drawCanvasGrid(Graphics2D g2) {
         g2.setColor(new Color(220, 220, 220)); // light gray grid color
         int cameraX = model.getCameraX();
-
         int cameraY = model.getCameraY();
 
         double zoom = model.getZoom();
@@ -446,13 +445,16 @@ public class CanvasController extends JPanel {
             if (box.isVisible()) {
                 Rectangle r = box.getBounds();
 
+                Color boxColor = colorSelection != null ? colorSelection : Color.RED;
+
                 // draw border
-                g2.setColor(colorSelection);
+                g2.setColor(boxColor);
                 g2.setStroke(new BasicStroke(2));
                 g2.drawRect(r.x, r.y, r.width, r.height);
 
                 // player username
                 g2.setFont(new Font("Arial", Font.BOLD, 12));
+                g2.setColor(box.getColor());
                 g2.drawString(box.getSelectedBy().toUpperCase(), r.x, r.y - 5);
             }
         }
@@ -478,6 +480,8 @@ public class CanvasController extends JPanel {
         void onSpriteRemoved(String uuid);
 
         void onMapUpdate(String resourcePath, int width, int height);
+        void onSpriteSelected(String uuid, String selectedBy, Color color);
+        void onSpriteDeselected(String uuid);
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
@@ -506,14 +510,17 @@ public class CanvasController extends JPanel {
     public class SpriteMouseAdapter extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            // only register if mouse button 1 (left click)
+            // only register if mouse button 1 (left click) or right click
             if (e.getButton() != MouseEvent.BUTTON1 && e.getButton() != MouseEvent.BUTTON3) {
                 return;
             }
             requestFocusInWindow();
 
-            // deselect previous sprite
+            // deselect previous sprite and broadcast
             if (model.getSelectedSprite() != null) {
+                if (networkListener != null) {
+                    networkListener.onSpriteDeselected(model.getSelectedSprite().getUuid());
+                }
                 model.getSelectedSprite().deselect();
                 repaint();
             }
@@ -539,12 +546,17 @@ public class CanvasController extends JPanel {
                 boolean isInWidthBounds = worldX >= pos.x && worldX <= pos.x + sprite.getWidth();
                 boolean isInHeightBounds = worldY >= pos.y && worldY <= pos.y + sprite.getHeight();
 
-                // select sprite
                 if (isInWidthBounds && isInHeightBounds) {
                     model.selectSprite(sprite);
-                    model.getSelectedSprite().select(model.username);
+                    model.getSelectedSprite().select(model.username, colorSelection);
                     model.setIsSelecting(true);
                     selectedOffset = new Point(pos.x - worldX, pos.y - worldY);
+
+                    // broadcast AFTER sprite is confirmed selected
+                    if (networkListener != null) {
+                        networkListener.onSpriteSelected(sprite.getUuid(), model.username, CanvasController.colorSelection);
+                    }
+
                     repaint();
                     break;
                 }
