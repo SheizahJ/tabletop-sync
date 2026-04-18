@@ -67,6 +67,11 @@ public class ChatClientCmds {
                         chatView.getChatArea().appendMessage(username, msg, finalColor)
                 );
             }
+            case "COLOR_SELECT" -> {
+                String username = parts[1];
+                String rgb = parts[2];
+                ServerModel.userColours.put(username, rgb);
+            }
         }
     }
 }
