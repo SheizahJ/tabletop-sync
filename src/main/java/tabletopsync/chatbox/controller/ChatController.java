@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,7 +96,7 @@ public class ChatController {
             view.chatArea.textField.setText("");
         }
     }
-    
+
     /**
      * Closes the instance of client
      */

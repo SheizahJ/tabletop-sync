@@ -1,13 +1,11 @@
 package tabletopsync.server.controller;
 
 import tabletopsync.chatbox.model.MessageObject;
+import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.model.commands.CanvasServerCmds;
 import tabletopsync.server.model.commands.ChatServerCmds;
-import tabletopsync.server.model.ServerModel;
 import tabletopsync.server.service.PersistenceService;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +14,6 @@ import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles a single client connection on its own thread.
@@ -30,9 +27,8 @@ public class ClientHandler extends Thread {
     private final CanvasServerCmds canvasCommands;
     private final ChatServerCmds chatCommands;
     private final Socket socket;
-    private PrintWriter out;
-
     public String username;
+    private PrintWriter out;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -53,11 +49,13 @@ public class ClientHandler extends Thread {
         );
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
-
-    public String getUsername() { return username; }
 
     /**
      * Registers the client and broadcasts a system message.
@@ -83,6 +81,7 @@ public class ClientHandler extends Thread {
 
     /**
      * Sends a message to this client.
+     *
      * @param message The message to send
      */
     public void sendToClient(String message) {
@@ -93,6 +92,7 @@ public class ClientHandler extends Thread {
 
     /**
      * Broadcasts a message to all connected clients.
+     *
      * @param message The message to send
      */
     public void broadcast(String message) {
@@ -160,7 +160,8 @@ public class ClientHandler extends Thread {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
 
         unregisterClient();
     }

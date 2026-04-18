@@ -34,8 +34,7 @@ public class Client extends JFrame {
 
             //
             SwingUtilities.invokeLater(() -> new ClientController(loginView, loginModel));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("ERROR while logging in...");
         }
     }

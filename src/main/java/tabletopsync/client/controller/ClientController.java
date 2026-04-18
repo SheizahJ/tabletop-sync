@@ -1,8 +1,8 @@
 package tabletopsync.client.controller;
 
+import tabletopsync.client.model.ClientModel;
 import tabletopsync.client.model.commands.CanvasClientCmds;
 import tabletopsync.client.model.commands.ChatClientCmds;
-import tabletopsync.client.model.ClientModel;
 import tabletopsync.client.view.ClientView;
 import tabletopsync.login.LoginModel;
 import tabletopsync.login.LoginView;
@@ -48,7 +48,7 @@ public class ClientController {
             this.chatCommands = new ChatClientCmds(out, clientModel.chatController, clientModel.chatView);
 
             Color colorSelection = clientModel.colorSelection;
-            String rgb = colorSelection.getRed() + "," +  colorSelection.getGreen() + "," + colorSelection.getBlue();
+            String rgb = colorSelection.getRed() + "," + colorSelection.getGreen() + "," + colorSelection.getBlue();
             out.println("COLOR_SELECT;" + rgb);
 
             // -----------------------

@@ -1,5 +1,5 @@
-import tabletopsync.server.view.ServerView;
 import tabletopsync.server.controller.ServerController;
+import tabletopsync.server.view.ServerView;
 
 import javax.swing.*;
 

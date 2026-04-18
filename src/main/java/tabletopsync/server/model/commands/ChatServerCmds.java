@@ -18,12 +18,10 @@ public class ChatServerCmds {
         if (message.startsWith("/")) {
             if (message.equals("/users")) {
                 clientHandler.sendToClient("Users: " + ServerModel.clients.keySet());
-            }
-            else if (message.equals("/quit")) {
+            } else if (message.equals("/quit")) {
                 clientHandler.sendToClient("You have disconnected.");
                 clientHandler.disconnect();
-            }
-            else {
+            } else {
                 clientHandler.sendToClient("Unknown command");
             }
         }

@@ -1,7 +1,5 @@
 package tabletopsync.canvas.model;
 
-import tabletopsync.login.LoginView;
-
 import java.awt.*;
 import java.io.IOException;
 

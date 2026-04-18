@@ -2,7 +2,6 @@ package tabletopsync.client.model.commands;
 
 import tabletopsync.canvas.controller.CanvasController;
 import tabletopsync.canvas.model.CanvasModel;
-import tabletopsync.server.model.ServerModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +22,7 @@ public class CanvasClientCmds {
 
     /**
      * Executes commands handled in the CLIENT. (Server > Client communication)
+     *
      * @param message The command message
      */
     public void handleCommand(String message) {
@@ -117,8 +117,7 @@ public class CanvasClientCmds {
                     SwingUtilities.invokeLater(() -> {
                         canvasController.setMap(resourcePath, width, height);
                     });
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.err.println("ERROR occurred while setting up client's map.. " + e.getMessage());
                 }
             }

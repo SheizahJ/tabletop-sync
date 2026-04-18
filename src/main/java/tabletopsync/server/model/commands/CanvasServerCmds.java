@@ -14,6 +14,7 @@ public class CanvasServerCmds {
 
     /**
      * Executes commands handled in the SERVER. (Client > Server communication)
+     *
      * @param message The command message
      */
     public void handleCommand(String message) {

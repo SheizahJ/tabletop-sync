@@ -13,13 +13,11 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Handles camera drag controls on canvas and redraws the canvas sprites
@@ -29,28 +27,29 @@ public class CanvasController extends JPanel {
 
     private static final int MAP_HANDLE_SIZE = 12;
     private static final int MIN_MAP_SIZE = 50;
+    public static Color colorSelection;
     public final CanvasModel model;
     private final SpritePopup spritePopup;
-    public static Color colorSelection;
+    public CanvasUpdateListener networkListener; // send updates to server
     private Point lastCameraPoint;
     private Point selectedOffset;
     private Point mapResizeStartPoint;
     private Dimension mapResizeStartSize;
-    public CanvasUpdateListener networkListener; // send updates to server
 
     /**
      * Handles the canvas functions interacting with the Sprite object and other model attributes:
-     *  - initializes objects, visual attributes, action listeners, and various functionality of the canvas.
-     *  - creates action controller elements and functions for SPRITES:
-     *      - mouse pressed
-     *      - mouse released
-     *      - show menu
-     *   ** Further info below
+     * - initializes objects, visual attributes, action listeners, and various functionality of the canvas.
+     * - creates action controller elements and functions for SPRITES:
+     * - mouse pressed
+     * - mouse released
+     * - show menu
+     * ** Further info below
+     *
      * @param model
      */
     public CanvasController(CanvasModel model, Color colorSelection) throws IOException {
         this.model = model;
-        this.colorSelection = colorSelection;
+        CanvasController.colorSelection = colorSelection;
         spritePopup = new SpritePopup(this, model);
         setBackground(Color.WHITE);
 
@@ -145,6 +144,7 @@ public class CanvasController extends JPanel {
 
     /**
      * Utilizes graphics to display canvas and draws the canvas grid background utilizing the Graphics2D library
+     *
      * @param g2
      */
     private void drawCanvasGrid(Graphics2D g2) {
@@ -179,13 +179,15 @@ public class CanvasController extends JPanel {
 
     /**
      * Handles various view functionalities:
-     *  - camera movement and zoom
-     *  - draws background map
-     *  - draws a grid of the map
-     *  - draws sprites
+     * - camera movement and zoom
+     * - draws background map
+     * - draws a grid of the map
+     * - draws sprites
+     *
      * @param g the <code>Graphics</code> object to protect
      */
-    @Override protected void paintComponent(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
@@ -220,6 +222,7 @@ public class CanvasController extends JPanel {
 
     /**
      * Sets a map from a chosen image file
+     *
      * @param file
      */
     public void setMapFromFile(File file, int width, int height) {
@@ -245,6 +248,7 @@ public class CanvasController extends JPanel {
 
     /**
      * Updates map with provided params
+     *
      * @param resourcePath
      */
     public void setMap(String resourcePath, int width, int height) {
@@ -278,6 +282,7 @@ public class CanvasController extends JPanel {
 
     /**
      * Gets the bounds of the gui component for the map
+     *
      * @return rectangle image of map
      */
     private Rectangle getMapBounds() {
@@ -291,6 +296,7 @@ public class CanvasController extends JPanel {
 
     /**
      * handles resizing the map to fit the GUI bounds
+     *
      * @return rectangle
      */
     private Rectangle getMapResizeHandleBounds() {
@@ -304,6 +310,7 @@ public class CanvasController extends JPanel {
 
     /**
      * redraws the map to fill the gui component
+     *
      * @param g2
      */
     private void drawMapResizeHandle(Graphics2D g2) {
@@ -322,6 +329,7 @@ public class CanvasController extends JPanel {
 
     /**
      * adds sprite to the map
+     *
      * @param fileURL
      */
     public void addSpriteToCanvas(URL fileURL) {
@@ -333,12 +341,12 @@ public class CanvasController extends JPanel {
                 sprite.move(model.getCameraX(), model.getCameraY());
                 model.addSprite(sprite);
 
-                    networkListener.onSpriteAdded(
-                            sprite.getUuid(),
-                            sprite.getResourcePath(),
-                            sprite.getPosition().x,
-                            sprite.getPosition().y
-                    );
+                networkListener.onSpriteAdded(
+                        sprite.getUuid(),
+                        sprite.getResourcePath(),
+                        sprite.getPosition().x,
+                        sprite.getPosition().y
+                );
                 repaint();
             }
         } catch (IOException e) {
@@ -348,6 +356,7 @@ public class CanvasController extends JPanel {
 
     /**
      * Adds the uploaded sprite file to the map
+     *
      * @param file
      */
     public void addSpriteFromFile(File file) {
@@ -374,6 +383,7 @@ public class CanvasController extends JPanel {
 
     /**
      * updates the sprite to server
+     *
      * @param resourcePath
      * @param uuid
      * @param x
@@ -403,6 +413,7 @@ public class CanvasController extends JPanel {
 
     /**
      * adds resource path of sprite to be updated and accessed by multiple threads
+     *
      * @param resourcePath
      */
     public void addSharedSpriteToCanvas(String resourcePath) {
@@ -428,6 +439,7 @@ public class CanvasController extends JPanel {
 
     /**
      * draws sprites on canvas element
+     *
      * @param g2
      */
     public void drawSpritesOnCanvas(Graphics2D g2) {
@@ -480,21 +492,28 @@ public class CanvasController extends JPanel {
         void onSpriteRemoved(String uuid);
 
         void onMapUpdate(String resourcePath, int width, int height);
+
         void onSpriteSelected(String uuid, String selectedBy, Color color);
+
         void onSpriteDeselected(String uuid);
     }
 
     public class CanvasMouseAdapter extends MouseAdapter {
-        @Override public void mousePressed(MouseEvent e) {
+        @Override
+        public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON2) {
                 lastCameraPoint = e.getPoint();
                 model.setCameraCanMove(true);
             }
         }
 
-        @Override public void mouseReleased(MouseEvent e) { model.setCameraCanMove(false); }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            model.setCameraCanMove(false);
+        }
 
-        @Override public void mouseDragged(MouseEvent e) {
+        @Override
+        public void mouseDragged(MouseEvent e) {
             if (model.canCameraMove()) {
                 int dx = e.getX() - lastCameraPoint.x;
                 int dy = e.getY() - lastCameraPoint.y;

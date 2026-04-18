@@ -6,10 +6,6 @@ import tabletopsync.canvas.view.CanvasView;
 import tabletopsync.chatbox.controller.ChatController;
 import tabletopsync.chatbox.model.ChatModel;
 import tabletopsync.chatbox.view.ChatView;
-import tabletopsync.client.model.commands.CanvasClientCmds;
-import tabletopsync.client.model.commands.ChatClientCmds;
-import tabletopsync.login.LoginModel;
-import tabletopsync.login.LoginView;
 
 import java.awt.*;
 import java.io.IOException;
@@ -17,16 +13,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientModel {
+    private final PrintWriter out;
     public CanvasModel canvasModel;
     public CanvasView canvasView;
     public CanvasController canvasController;
-
     public ChatModel chatModel;
     public ChatView chatView;
     public ChatController chatController;
     public Color colorSelection;
-
-    private final PrintWriter out;
 
     public ClientModel(Socket socket, PrintWriter out, String username, Color colorSelection) throws IOException {
         this.colorSelection = colorSelection;

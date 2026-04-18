@@ -55,7 +55,6 @@ public class ClientView extends JFrame {
         canvasTopBar.add(returnToSelectedSpriteButton);
 
 
-
         JButton changeMapButton = getMapButton(canvasController);
         canvasTopBar.add(changeMapButton);
 
@@ -87,6 +86,22 @@ public class ClientView extends JFrame {
         setVisible(true);
     }
 
+    private static JSplitPane getJSplitPane(ChatView chatView, JPanel notepadContainer, JPanel canvasWrapper) {
+        JSplitPane rightSplitPane = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                chatView.panel,       // TOP: chat
+                notepadContainer      // BOTTOM: notepad
+        );
+        rightSplitPane.setResizeWeight(0.6); // 60% chat, 40% notepad
+
+        // Outer split: canvas on left, right split on right
+        return new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT,
+                canvasWrapper,        // LEFT: canvas
+                rightSplitPane        // RIGHT: chat + notepad stacked
+        );
+    }
+
     private JButton getReturnToSelectedSpriteButton(CanvasModel canvasModel) {
         JButton returnToSelectedSpriteButton = new JButton("Return to Selected Sprite");
         returnToSelectedSpriteButton.addActionListener(e -> {
@@ -105,22 +120,6 @@ public class ClientView extends JFrame {
             }
         });
         return returnToSelectedSpriteButton;
-    }
-
-    private static JSplitPane getJSplitPane(ChatView chatView, JPanel notepadContainer, JPanel canvasWrapper) {
-        JSplitPane rightSplitPane = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
-                chatView.panel,       // TOP: chat
-                notepadContainer      // BOTTOM: notepad
-        );
-        rightSplitPane.setResizeWeight(0.6); // 60% chat, 40% notepad
-
-        // Outer split: canvas on left, right split on right
-        return new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                canvasWrapper,        // LEFT: canvas
-                rightSplitPane        // RIGHT: chat + notepad stacked
-        );
     }
 
     private JButton getMapButton(CanvasController canvasController) {
@@ -176,8 +175,7 @@ public class ClientView extends JFrame {
         snapToGrid.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 canvasController.model.setSnapToGridState(true);
-            }
-            else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            } else if (e.getStateChange() == ItemEvent.DESELECTED) {
                 canvasController.model.setSnapToGridState(false);
             }
         });

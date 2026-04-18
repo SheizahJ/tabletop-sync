@@ -210,12 +210,12 @@ public class CanvasModel {
         return null;
     }
 
-    public void setMapResourcePath(String path) {
-        this.mapResourcePath = path;
-    }
-
     public String getMapResourcePath() {
         return mapResourcePath;
+    }
+
+    public void setMapResourcePath(String path) {
+        this.mapResourcePath = path;
     }
 
     // Functional interface
