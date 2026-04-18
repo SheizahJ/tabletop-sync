@@ -66,7 +66,36 @@ TabletopSync is a multiplayer 2D tabletop RPG board application that allows mult
 
 ## Project Demo
 
-_**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
+### Video Demo
+https://github.com/user-attachments/assets/fb3e13fc-6d39-431e-ab7a-c59f1e5eabd3
+
+
+### Login Page
+<img width="990" height="624" alt="image" src="https://github.com/user-attachments/assets/3592152d-273e-4ab0-9f56-dfe6cc71a957" />
+
+### Canvas (Join Messages + Initial State)
+<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/f641d3f8-33fc-41be-9911-bc96df9c4aa5" />
+
+### Move Sprites + Selected Sprite Highlight
+<img width="1920" height="1028" alt="image" src="https://github.com/user-attachments/assets/f54f846c-a11c-4405-a8ee-e34089ce7e27" />
+
+### Add a Sprite
+<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/5259e615-ea4d-4090-a0bd-353f7abe1e52" />
+
+### Running 2 Clients
+<img width="1920" height="1029" alt="image" src="https://github.com/user-attachments/assets/372cdc44-af94-497f-ab6f-ea8b698ee47e" />
+
+### Chatbox
+<div align="center">
+  <img width="350" alt="image" src="https://github.com/user-attachments/assets/310785de-eda0-4013-b1c0-61de27b02c6b" />
+  <img width="350" alt="image" src="https://github.com/user-attachments/assets/9e73b2ea-be48-498c-9b18-6d23c5fd13ce" />
+</div>
+
+### Notepad
+<div align="center">
+  <img width="350" alt="image" src="https://github.com/user-attachments/assets/47854402-882f-46d7-8fe3-26f970974d45" />
+  <img width="350" alt="image" src="https://github.com/user-attachments/assets/25d54d28-30df-4053-adf3-c1be8a8250c4" />
+</div>
 
 ## How to Run
 1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
