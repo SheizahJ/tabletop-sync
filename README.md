@@ -2,16 +2,11 @@
 
 ## Meet the Team 
 
-- **Sheizah Jimenez**: 
-  - Project Lead + Front-End Developer
-- **Shawn Heer**: 
-  - Lead Front-End Developer + UX Designer
-- **Mina Si Nan Yang**: 
-  - Persistence Manager + UI Designer
-- **Graeme Jeffreys**: 
-  - Primary Network Manager + Back-End Developer
-- **Ramiyan Gangatharan**: 
-  - Lead Back-End Developer + Network Support
+- **Sheizah Jimenez**: Project Lead + Front-End Developer
+- **Shawn Heer**: Lead Front-End Developer + UX Designer
+- **Mina Si Nan Yang**: Persistence Manager + UI Designer
+- **Graeme Jeffreys**: Primary Network Manager + Back-End Developer
+- **Ramiyan Gangatharan**: Lead Back-End Developer + Network Support
 
 ## Project Overview 
 
@@ -32,22 +27,42 @@ TabletopSync is a multiplayer 2D tabletop RPG board application that allows mult
     - *TextField to type messages into
     - Send message (using Send button or 'Enter' key)
     - Player List w/ Player names and assigned colours
-  - **Notepad [INCOMPLETE / NOT STARTED]**
+  - **Notepad**
     - Create New notes
     - *TextArea to write/update notes into
     - Open Saved notes (a list of saved notes is provided)
     - Save new/opened notes
     - Delete new/opened notes
-  - **Toolbox [INCOMPLETE / NOT STARTED]**
-    - AoE Overlay: "Area of Effect" circular tool that measures the radius from the center 
-    - Dice: a random number generator 
-    - Ruler: a measuring tool that tells you the distance from one point to another
-
+  
   _*These features are Client-sided only. All other features communicate to the Server in some way._
 
 ### Process & Documentation
 
-_**TODO**: ADD DATA FLOW DIAGRAMS + UI DESIGN CONCEPTS HERE..._
+
+
+**Data Flow Diagrams (DFD)**: The initial expectations of how the system interacts with one another
+
+<div align="center">
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/2351ad08-d229-4e24-9805-d3d2443965e9" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/543957f3-79dd-47f8-b484-34fb9ff6c240" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/da91310c-e340-4196-b765-6fe7c3eba054" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/a288ee4a-930c-4430-b7df-8c89f5eb6b3f" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/61d075a3-ec50-46e8-9b7f-33d2694d2f12" />
+</div>
+
+<br/>
+
+**UI Diagrams**: A basic idea of how the application should look/feel when the user uses the application.
+
+<div align="center">
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/1deb8004-000d-4349-9b23-3cef42ecbdb0" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/c8895bdc-4bf3-48e8-825e-22c6f9c1b255" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/85e5946d-9c7d-429d-b0ad-ee45cdd59267" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/feeda490-97cd-4dce-993f-b88a4455aeb7" />
+  <img width="1000" alt="image" src="https://github.com/user-attachments/assets/b63a7af9-9c6a-46ea-83c1-c744d1cde27e" />
+  <img width="1000" alt="image" src="https://github.com/user-attachments/assets/0e064d2c-fa3a-43f0-8522-ccc7520ec0eb" />
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/54ec1d98-bad9-4356-a1d3-b66a5e60a740" />
+</div>
 
 ## Project Demo
 
@@ -55,8 +70,9 @@ _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 
 ## How to Run
 1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
-2. Run `Server.java` 
-3. Run `ClientApp.java`
+2. Change directory to the project folder (ex. `cd ..\Software Systems\Assignments\w26-csci2020u-finalproject-w26-team16`)
+3. Run `Server.java`
+4. Run `Client.java`
    * Can run multiple Clients at once...
 
 ## AI Disclosure
@@ -64,7 +80,10 @@ _**TODO**: ADD SCREENSHOTS AND RECORDING OF THE APPLICATION HERE..._
 - Assistance with debugging code snippets.
 - Minor UI inquiries (e.g. How to create items in a JPopupMenu)
 - Assisted with mathematical equations related to the camera movement, grid-related features, sprite dragging, etc.
+- Consultation purposes (e.g. What is the best way to do <insert-topic-here>)
 
 ## Resources
-- _**TODO**: ADD LATER IF ANY..._
+- **Flatlaf Dependency**: Creates the Server UI in a similar fashion to a regular Terminal.
+- **Jackson Databind Dependency**: Used for JSON inquiries.
+- **Stack Overflow**: Used to help with implementation of network and minor UI inquiries.
 
