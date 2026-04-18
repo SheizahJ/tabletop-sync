@@ -43,6 +43,19 @@ public class ClientView extends JFrame {
         JButton addSpriteButton = getSpriteButton(canvasController);
         canvasTopBar.add(addSpriteButton);
 
+        JButton returnOriginButton = new JButton("Return to Origin");
+        returnOriginButton.addActionListener(e -> {
+            canvasController.model.setCamera(0, 0);
+            repaint();
+        });
+
+        canvasTopBar.add(returnOriginButton);
+
+        JButton returnToSelectedSpriteButton = getReturnToSelectedSpriteButton(canvasModel);
+        canvasTopBar.add(returnToSelectedSpriteButton);
+
+
+
         JButton changeMapButton = getMapButton(canvasController);
         canvasTopBar.add(changeMapButton);
 
@@ -74,6 +87,26 @@ public class ClientView extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private JButton getReturnToSelectedSpriteButton(CanvasModel canvasModel) {
+        JButton returnToSelectedSpriteButton = new JButton("Return to Selected Sprite");
+        returnToSelectedSpriteButton.addActionListener(e -> {
+            Sprite selected = canvasModel.getSelectedSprite();
+            Point spritePosition;
+
+            if (selected != null) {
+                spritePosition = selected.getPosition();
+                canvasModel.setCamera(spritePosition.x, spritePosition.y);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Please select sprite before continuing.",
+                        "Sprite Required",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+        });
+        return returnToSelectedSpriteButton;
     }
 
     private static JSplitPane getJSplitPane(ChatView chatView, JPanel notepadContainer, JPanel canvasWrapper) {
