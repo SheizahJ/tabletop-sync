@@ -67,6 +67,11 @@ public class ChatServerCmds {
                         PersistenceService.saveSystemMessage(systemMsg);
                     }
                 }
+                case "COLOR_SELECT" -> {
+                    String rgb = parts[1];
+                    ServerModel.userColours.put(clientHandler.username, rgb);
+                    clientHandler.broadcast("COLOR_SELECT;" + clientHandler.username + ";" + rgb);
+                }
             }
         }
     }

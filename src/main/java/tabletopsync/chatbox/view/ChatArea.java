@@ -36,10 +36,11 @@ public class ChatArea extends JPanel {
         }
 
         this.selectedColour = selectedColour;
-
         setLayout(new BorderLayout());
 
+        // TOP
         JPanel top = new JPanel(new BorderLayout());
+        top.setOpaque(false);
         JButton showUsersButton = new JButton("Show Users");
         top.add(showUsersButton, BorderLayout.WEST);
         top.setBorder(BorderFactory.createEmptyBorder(5, 2, 15, 2));
@@ -58,12 +59,17 @@ public class ChatArea extends JPanel {
             top.repaint();
         });
 
+        // CENTER
         JPanel center = new JPanel(new BorderLayout());
+        center.setOpaque(false);
 
         chatPanel = new JPanel();
         chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+        chatPanel.setOpaque(false);
 
         JScrollPane chatScroll = new JScrollPane(chatPanel);
+        chatScroll.setOpaque(false);
+        chatScroll.getViewport().setOpaque(false);
 
         systemTextArea = new JTextArea();
         systemTextArea.setBorder(
@@ -78,18 +84,25 @@ public class ChatArea extends JPanel {
         systemTextArea.setLineWrap(true);
         systemTextArea.setEditable(false);
 
+        JScrollPane systemScroll = new JScrollPane(systemTextArea);
+        systemScroll.setOpaque(false);
+        systemScroll.getViewport().setOpaque(false);
+
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
-                new JScrollPane(systemTextArea),
-                new JScrollPane(chatScroll)
+                systemScroll,
+                chatScroll        // no longer double-wrapped
         );
+        splitPane.setOpaque(false);
         splitPane.setDividerLocation(150);
         splitPane.setResizeWeight(0.3);
 
         center.add(splitPane, BorderLayout.CENTER);
         add(center, BorderLayout.CENTER);
 
+        // BOTTOM
         JPanel bottom = new JPanel(new BorderLayout());
+        bottom.setOpaque(false);
         bottom.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
         textField = new JTextField();
         sendButton = new JButton("SEND");
@@ -116,9 +129,17 @@ public class ChatArea extends JPanel {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
         row.setOpaque(false);
 
-        JPanel colorBox = new JPanel();
-        colorBox.setBackground(color);
+        JComponent colorBox = new JComponent() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(color);
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
         colorBox.setPreferredSize(new Dimension(12, 12));
+        colorBox.setMinimumSize(new Dimension(12, 12));
+        colorBox.setMaximumSize(new Dimension(12, 12));
 
         String time = formatter.format(Instant.now());
 
@@ -144,17 +165,17 @@ public class ChatArea extends JPanel {
         userMenu.updateUsers(users);
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        // rectangle
-        g.setColor(selectedColour);
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        // border
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, getWidth(), getHeight());
-
-    }
+//    @Override
+//    public void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+//
+//        // rectangle
+//        g.setColor(selectedColour);
+//        g.fillRect(0, 0, getWidth(), getHeight());
+//
+//        // border
+//        g.setColor(Color.BLACK);
+//        g.drawRect(0, 0, getWidth(), getHeight());
+//
+//    }
 }
