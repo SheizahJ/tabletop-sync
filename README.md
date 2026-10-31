@@ -98,8 +98,8 @@ https://github.com/user-attachments/assets/353b6d14-e371-485c-8f1b-ccfc631fa5b4
 </div>
 
 ## How to Run
-1. git clone `https://github.com/OntarioTech-CS-program/w26-csci2020u-finalproject-w26-team16`
-2. Change directory to the project folder (ex. `cd ..\Software Systems\Assignments\w26-csci2020u-finalproject-w26-team16`)
+1. git clone `https://github.com/SheizahJ/tabletop-sync`
+2. Change directory to the project folder (ex. `cd ..\Projects\tabletop-sync`)
 3. Run `Server.java`
 4. Run `Client.java`
    * Can run multiple Clients at once...
