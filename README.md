@@ -67,7 +67,7 @@ TabletopSync is a multiplayer 2D tabletop RPG board application that allows mult
 ## Project Demo
 
 ### Video Demo
-https://github.com/user-attachments/assets/fb3e13fc-6d39-431e-ab7a-c59f1e5eabd3
+<video controls src="assets/demonstration.mp4.mp4" title="Title"></video>
 
 
 ### Login Page
